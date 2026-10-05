@@ -68,7 +68,7 @@ export function Navbar() {
               width={140}
               height={48}
               priority
-              className="h-13.75 w-auto"
+              className="h-[55px] w-auto"
             />
           </Link>
 
@@ -115,7 +115,6 @@ export function Navbar() {
         </nav>
       </header>
 
-      {/* Mobile drawer — unchanged */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
