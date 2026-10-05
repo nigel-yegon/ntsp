@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
 import FadeIn from "../components/fade-in";
+import { Stagger } from "../components/stagger";
 
 import {
   listDestinations,
@@ -70,29 +71,17 @@ type ModuleKey =
  * and editor are all visually distinct but still siblings.
  */
 type ModuleTone = {
-  /** Focus/hover ring, tinted */
   ring: string;
-  /** Default border */
   border: string;
-  /** Hover border */
   borderHover: string;
-  /** Very light background (light-mode tint) */
   bgSoft: string;
-  /** Sidebar active background + heavier tints */
   bgActive: string;
-  /** Headline/label text */
   text: string;
-  /** Button background */
   button: string;
-  /** Button hover background */
   buttonHover: string;
-  /** Vertical/horizontal accent strip */
   bar: string;
-  /** Badge background */
   pillBg: string;
-  /** Badge text */
   pillText: string;
-  /** Small icon */
   icon: React.ReactNode;
 };
 
@@ -304,66 +293,70 @@ export function DashboardClient() {
           <div className="p-6 lg:p-8">
             {error && <ErrorBanner>{error}</ErrorBanner>}
 
-            {activeModule === "overview" && (
-              <Overview stats={stats} onNavigate={setActiveModule} />
-            )}
+            {/* Each module is keyed so that when the active module changes,
+                the fade-in replays for the new content. */}
+            <div key={activeModule}>
+              {activeModule === "overview" && (
+                <Overview stats={stats} onNavigate={setActiveModule} />
+              )}
 
-            {activeModule === "destinations" && (
-              <DestinationsModule
-                destinations={destinations}
-                setDestinations={setDestinations}
-                loading={loading}
-                tone={TONES.destinations}
-              />
-            )}
+              {activeModule === "destinations" && (
+                <DestinationsModule
+                  destinations={destinations}
+                  setDestinations={setDestinations}
+                  loading={loading}
+                  tone={TONES.destinations}
+                />
+              )}
 
-            {activeModule === "experiences" && (
-              <ExperiencesModule
-                experiences={filteredExperiences}
-                setExperiences={setExperiences}
-                destinations={destinations}
-                loading={loading}
-                tone={TONES.experiences}
-              />
-            )}
+              {activeModule === "experiences" && (
+                <ExperiencesModule
+                  experiences={filteredExperiences}
+                  setExperiences={setExperiences}
+                  destinations={destinations}
+                  loading={loading}
+                  tone={TONES.experiences}
+                />
+              )}
 
-            {activeModule === "packages" && (
-              <PackagesModule
-                packages={filteredPackages}
-                setPackages={setPackages}
-                destinations={destinations}
-                loading={loading}
-                tone={TONES.packages}
-              />
-            )}
+              {activeModule === "packages" && (
+                <PackagesModule
+                  packages={filteredPackages}
+                  setPackages={setPackages}
+                  destinations={destinations}
+                  loading={loading}
+                  tone={TONES.packages}
+                />
+              )}
 
-            {activeModule === "stay" && (
-              <StaysModule
-                stays={filteredStays}
-                setStays={setStays}
-                destinations={destinations}
-                loading={loading}
-                tone={TONES.stay}
-              />
-            )}
+              {activeModule === "stay" && (
+                <StaysModule
+                  stays={filteredStays}
+                  setStays={setStays}
+                  destinations={destinations}
+                  loading={loading}
+                  tone={TONES.stay}
+                />
+              )}
 
-            {activeModule === "events" && (
-              <EventsModule
-                events={filteredEvents}
-                setEvents={setEvents}
-                loading={loading}
-                tone={TONES.events}
-              />
-            )}
+              {activeModule === "events" && (
+                <EventsModule
+                  events={filteredEvents}
+                  setEvents={setEvents}
+                  loading={loading}
+                  tone={TONES.events}
+                />
+              )}
 
-            {activeModule === "blog" && (
-              <PostsModule
-                posts={filteredPosts}
-                setPosts={setPosts}
-                loading={loading}
-                tone={TONES.blog}
-              />
-            )}
+              {activeModule === "blog" && (
+                <PostsModule
+                  posts={filteredPosts}
+                  setPosts={setPosts}
+                  loading={loading}
+                  tone={TONES.blog}
+                />
+              )}
+            </div>
           </div>
         </main>
       </div>
@@ -419,7 +412,8 @@ function DashboardSidebar({
           <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
             Content
           </div>
-          <nav className="space-y-1">
+          {/* Sidebar items stagger in on mount */}
+          <Stagger delayStart={0.05} delayStep={0.04} maxDelay={0.4}>
             {modules.map((m) => {
               const active = activeModule === m.key;
               const tone = m.tone;
@@ -437,7 +431,6 @@ function DashboardSidebar({
                         : "text-deep-600 hover:bg-cream-200 hover:text-deep-900 dark:text-cream-400 dark:hover:bg-deep-800 dark:hover:text-cream-100",
                   ].join(" ")}
                 >
-                  {/* Left accent strip when active */}
                   {active && tone && (
                     <span
                       aria-hidden
@@ -480,7 +473,7 @@ function DashboardSidebar({
                 </button>
               );
             })}
-          </nav>
+          </Stagger>
         </div>
 
         <div className="border-t border-deep-200 p-4 dark:border-deep-800">
@@ -527,32 +520,38 @@ function DashboardHeader({
   return (
     <header className="border-b border-deep-200 bg-cream-100/85 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/85">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <div>
-          <div
-            className={`text-xs font-medium uppercase tracking-[0.16em] ${
-              tone?.text ?? "text-brand-600 dark:text-brand-400"
-            }`}
-          >
-            NTSP Content
+        {/* Header text fades in on module change; keying on the module
+            replays the animation each time the user switches. */}
+        <FadeIn key={`title-${activeModule}`} duration={400}>
+          <div>
+            <div
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${
+                tone?.text ?? "text-brand-600 dark:text-brand-400"
+              }`}
+            >
+              NTSP Content
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
+              {titles[activeModule]}
+            </h1>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
-            {titles[activeModule]}
-          </h1>
-        </div>
+        </FadeIn>
 
         {searchable && tone && (
-          <div className="relative w-full lg:w-80">
-            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500">
-              <SearchIcon />
-            </span>
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={`Search ${titles[activeModule].toLowerCase()}...`}
-              className={`w-full rounded-xl border ${tone.border} bg-cream-50 py-2.5 pl-10 pr-4 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:bg-cream-100 focus:ring-2 ${tone.ring} dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:bg-deep-950`}
-            />
-          </div>
+          <FadeIn key={`search-${activeModule}`} delay={0.1} duration={400}>
+            <div className="relative w-full lg:w-80">
+              <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500">
+                <SearchIcon />
+              </span>
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${titles[activeModule].toLowerCase()}...`}
+                className={`w-full rounded-xl border ${tone.border} bg-cream-50 py-2.5 pl-10 pr-4 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:bg-cream-100 focus:ring-2 ${tone.ring} dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:bg-deep-950`}
+              />
+            </div>
+          </FadeIn>
         )}
       </div>
     </header>
@@ -583,12 +582,15 @@ function Overview({
         </div>
       </FadeIn>
 
+      {/* Stagger the six stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {stats.map((stat, i) => {
-          const tone = stat.module !== "overview" ? TONES[stat.module] : undefined;
-          return (
-            <FadeIn key={stat.label} delay={i * 0.05}>
+        <Stagger delayStart={0.08} delayStep={0.06} maxDelay={0.5}>
+          {stats.map((stat) => {
+            const tone =
+              stat.module !== "overview" ? TONES[stat.module] : undefined;
+            return (
               <button
+                key={stat.label}
                 type="button"
                 onClick={() => onNavigate(stat.module)}
                 className={[
@@ -598,7 +600,6 @@ function Overview({
                     : "border-deep-200 hover:border-brand-400 dark:border-deep-800 dark:hover:border-brand-500",
                 ].join(" ")}
               >
-                {/* Left accent strip */}
                 {tone && (
                   <span
                     className={`absolute inset-y-0 left-0 w-1.5 ${tone.bar}`}
@@ -616,7 +617,6 @@ function Overview({
                     </div>
                   </div>
 
-                  {/* Icon tile — the tone's identity mark */}
                   {tone && (
                     <span
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`}
@@ -627,7 +627,6 @@ function Overview({
                   )}
                 </div>
 
-                {/* Bottom hint row, tone-colored */}
                 {tone && (
                   <div
                     className={`mt-4 inline-flex items-center gap-1 text-xs font-medium ${tone.text} opacity-70 transition group-hover:opacity-100`}
@@ -637,9 +636,9 @@ function Overview({
                   </div>
                 )}
               </button>
-            </FadeIn>
-          );
-        })}
+            );
+          })}
+        </Stagger>
       </div>
     </div>
   );
@@ -714,9 +713,10 @@ function DestinationsModule({
       list={
         <div className="space-y-3">
           {loading && destinations.length === 0 && <LoadingSkeletons />}
-          {destinations.map((d, i) => (
-            <FadeIn key={d.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {destinations.map((d) => (
               <RowCard
+                key={d.id}
                 active={editingId === d.id}
                 title={d.name}
                 subtitle={d.county + " County"}
@@ -727,8 +727,8 @@ function DestinationsModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -883,9 +883,10 @@ function ExperiencesModule({
       list={
         <div className="space-y-3">
           {loading && experiences.length === 0 && <LoadingSkeletons />}
-          {experiences.map((e, i) => (
-            <FadeIn key={e.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {experiences.map((e) => (
               <RowCard
+                key={e.id}
                 active={editingId === e.id}
                 title={e.name}
                 subtitle={`${e.category} · ${e.destinationName}`}
@@ -895,8 +896,8 @@ function ExperiencesModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -1066,9 +1067,10 @@ function PackagesModule({
       list={
         <div className="space-y-3">
           {loading && packages.length === 0 && <LoadingSkeletons />}
-          {packages.map((p, i) => (
-            <FadeIn key={p.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {packages.map((p) => (
               <RowCard
+                key={p.id}
                 active={editingId === p.id}
                 title={p.title}
                 subtitle={`${p.destinationName} · ${p.durationDays} days · KES ${p.priceKes.toLocaleString()}`}
@@ -1079,8 +1081,8 @@ function PackagesModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -1245,9 +1247,10 @@ function StaysModule({
       list={
         <div className="space-y-3">
           {loading && stays.length === 0 && <LoadingSkeletons />}
-          {stays.map((s, i) => (
-            <FadeIn key={s.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {stays.map((s) => (
               <RowCard
+                key={s.id}
                 active={editingId === s.id}
                 title={s.name}
                 subtitle={`${s.type} · ${s.location}`}
@@ -1258,8 +1261,8 @@ function StaysModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -1420,9 +1423,10 @@ function EventsModule({
       list={
         <div className="space-y-3">
           {loading && events.length === 0 && <LoadingSkeletons />}
-          {events.map((e, i) => (
-            <FadeIn key={e.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {events.map((e) => (
               <RowCard
+                key={e.id}
                 active={editingId === e.id}
                 title={e.name}
                 subtitle={`${e.startDate}${e.endDate ? " – " + e.endDate : ""} · ${e.location}`}
@@ -1433,8 +1437,8 @@ function EventsModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -1582,9 +1586,10 @@ function PostsModule({
       list={
         <div className="space-y-3">
           {loading && posts.length === 0 && <LoadingSkeletons />}
-          {posts.map((p, i) => (
-            <FadeIn key={p.id} delay={Math.min(i * 0.04, 0.4)}>
+          <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
+            {posts.map((p) => (
               <RowCard
+                key={p.id}
                 active={editingId === p.id}
                 title={p.title}
                 subtitle={`${p.publishedAt ?? "unpublished"} · ${p.tags.join(", ")}`}
@@ -1595,8 +1600,8 @@ function PostsModule({
                 disabled={pending}
                 tone={tone}
               />
-            </FadeIn>
-          ))}
+            ))}
+          </Stagger>
         </div>
       }
       editor={
@@ -1964,14 +1969,14 @@ function EmptyEditorState({
 
 function LoadingSkeletons() {
   return (
-    <>
+    <Stagger delayStart={0.05} delayStep={0.06} maxDelay={0.25}>
       {[0, 1, 2].map((i) => (
         <div
           key={i}
           className="h-28 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
         />
       ))}
-    </>
+    </Stagger>
   );
 }
 
@@ -1984,7 +1989,7 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ICONS — inline SVG line icons                                              */
+/* ICONS                                                                      */
 /* -------------------------------------------------------------------------- */
 
 const iconBase = {
