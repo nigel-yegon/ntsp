@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@wrksz/themes/next";
+import { ThemeProvider } from "next-themes";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 import { PageTransition } from "./components/page-transition";
@@ -29,6 +29,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          scriptProps={{ type: "application/json" }}
         >
           <Navbar />
           <main className="flex-1">
