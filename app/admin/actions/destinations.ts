@@ -11,8 +11,6 @@ export type DestinationRow = {
   description: string;
   imageUrl: string | null;
   featured: boolean;
-  order: number;
-  published: boolean;
 };
 
 export async function listDestinations(): Promise<DestinationRow[]> {
