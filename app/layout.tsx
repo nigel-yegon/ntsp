@@ -2,9 +2,10 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@wrksz/themes";
+import { ThemeProvider } from "@wrksz/themes/next";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
+import { PageTransition } from "./components/page-transition";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -20,16 +21,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`} suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
+        suppressHydrationWarning
       >
-       <ThemeProvider
+        <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <Navbar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
         </ThemeProvider>
         <Analytics />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import FadeIn from "@/app/components/fade-in";
 
 type Post = {
   id: number;
@@ -45,9 +46,7 @@ export function BlogGrid({ posts, tags }: Props) {
 
   return (
     <>
-      {/* ─── Controls ─────────────────────────────────────── */}
       <div className="mb-10 space-y-4">
-        {/* Search */}
         <div className="relative">
           <label htmlFor="blog-search" className="sr-only">
             Search posts
@@ -78,7 +77,6 @@ export function BlogGrid({ posts, tags }: Props) {
           )}
         </div>
 
-        {/* Tag pills */}
         <div className="flex flex-wrap gap-2">
           <Pill
             label={`All (${posts.length})`}
@@ -98,7 +96,6 @@ export function BlogGrid({ posts, tags }: Props) {
           })}
         </div>
 
-        {/* Result count + reset */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-deep-500 dark:text-cream-500">
             {hasFilters
@@ -117,7 +114,6 @@ export function BlogGrid({ posts, tags }: Props) {
         </div>
       </div>
 
-      {/* ─── Results ───────────────────────────────────────── */}
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-deep-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
           <p className="text-sm text-deep-600 dark:text-cream-400">
@@ -133,49 +129,51 @@ export function BlogGrid({ posts, tags }: Props) {
         </div>
       ) : (
         <div className="space-y-6">
-          {filtered.map((post) => (
-            <article key={post.id}>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="group relative block overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-              >
-                <span
-                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                  aria-hidden
-                />
+          {filtered.map((post, i) => (
+            <FadeIn key={post.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
+              <article>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group relative block overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                >
+                  <span
+                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                    aria-hidden
+                  />
 
-                <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                  {post.publishedAt?.toLocaleDateString("en-KE", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-                <h2 className="mt-2 text-xl font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                  {post.title}
-                </h2>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                  {post.excerpt}
-                </p>
+                  <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
+                    {post.publishedAt?.toLocaleDateString("en-KE", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                    {post.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                    {post.excerpt}
+                  </p>
 
-                {post.tags.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                  {post.tags.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                  Read article →
-                </span>
-              </Link>
-            </article>
+                  <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                    Read article →
+                  </span>
+                </Link>
+              </article>
+            </FadeIn>
           ))}
         </div>
       )}
@@ -183,7 +181,6 @@ export function BlogGrid({ posts, tags }: Props) {
   );
 }
 
-/* ─── Pill ──────────────────────────────────────────────────── */
 function Pill({
   label,
   active,

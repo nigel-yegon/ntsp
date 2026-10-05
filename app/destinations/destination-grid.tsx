@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import FadeIn from "@/app/components/fade-in";
 
 type Destination = {
   id: number;
@@ -70,7 +71,6 @@ export function DestinationsGrid({
         </p>
       </div>
 
-      {/* Results */}
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-deep-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
           <p className="text-sm text-deep-600 dark:text-cream-400">
@@ -90,41 +90,41 @@ export function DestinationsGrid({
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((d) => (
-            <Link
-              key={d.id}
-              href={`/destinations/${d.slug}`}
-              className="group relative flex flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-            >
-              {/* Gold accent strip on hover */}
-              <span
-                className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                aria-hidden
-              />
+          {filtered.map((d, i) => (
+            <FadeIn key={d.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
+              <Link
+                href={`/destinations/${d.slug}`}
+                className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+              >
+                <span
+                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                  aria-hidden
+                />
 
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                  {d.name}
-                </h2>
-                {d.featured && (
-                  <span className="shrink-0 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-                    Featured
-                  </span>
-                )}
-              </div>
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                    {d.name}
+                  </h2>
+                  {d.featured && (
+                    <span className="shrink-0 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                      Featured
+                    </span>
+                  )}
+                </div>
 
-              <p className="mt-1 text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                {d.county} County
-              </p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
+                  {d.county} County
+                </p>
 
-              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                {d.description}
-              </p>
+                <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                  {d.description}
+                </p>
 
-              <span className="mt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                Explore →
-              </span>
-            </Link>
+                <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                  Explore →
+                </span>
+              </Link>
+            </FadeIn>
           ))}
         </div>
       )}

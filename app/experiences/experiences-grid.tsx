@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import FadeIn from "@/app/components/fade-in";
 
 type Attraction = {
   id: number;
@@ -37,7 +38,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
     });
   }, [query, activeCategory, attractions]);
 
-  // Group filtered results by category, preserving category order
   const grouped = useMemo(() => {
     return categories
       .map((cat) => ({
@@ -56,9 +56,8 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
 
   return (
     <>
-      {/* ─── Controls ─────────────────────────────────────── */}
+      {/* Controls */}
       <div className="mb-10 space-y-4">
-        {/* Search */}
         <div>
           <label htmlFor="experience-search" className="sr-only">
             Search experiences
@@ -91,7 +90,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
           </div>
         </div>
 
-        {/* Category pills */}
         <div className="flex flex-wrap gap-2">
           <CategoryPill
             label="All"
@@ -115,7 +113,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
           })}
         </div>
 
-        {/* Result count + reset */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-deep-500 dark:text-cream-500">
             {hasFilters
@@ -134,7 +131,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
         </div>
       </div>
 
-      {/* ─── Results ───────────────────────────────────────── */}
       {grouped.length === 0 ? (
         <div className="rounded-lg border border-dashed border-deep-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
           <p className="text-sm text-deep-600 dark:text-cream-400">
@@ -151,40 +147,40 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
       ) : (
         <div className="space-y-12">
           {grouped.map((g) => (
-            <section key={g.category}>
-              <h2 className="mb-4 text-xl font-semibold text-deep-800 dark:text-cream-100">
-                {g.category}
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {g.items.map((a) => (
-                  <Link
-                    key={a.id}
-                    href={`/experiences/${a.slug}`}
-                    className="group relative flex flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-                  >
-                    {/* Gold accent strip on hover */}
-                    <span
-                      className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                      aria-hidden
-                    />
-
-                    <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                      {a.destination.name}
-                    </span>
-                    <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                      {a.name}
-                    </h3>
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                      {a.description}
-                    </p>
-
-                    <span className="mt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                      Explore →
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </section>
+            <FadeIn key={g.category} whenVisible>
+              <section>
+                <h2 className="mb-4 text-xl font-semibold text-deep-800 dark:text-cream-100">
+                  {g.category}
+                </h2>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {g.items.map((a, i) => (
+                    <FadeIn key={a.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
+                      <Link
+                        href={`/experiences/${a.slug}`}
+                        className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                      >
+                        <span
+                          className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                          aria-hidden
+                        />
+                        <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                          {a.destination.name}
+                        </span>
+                        <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                          {a.name}
+                        </h3>
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                          {a.description}
+                        </p>
+                        <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                          Explore →
+                        </span>
+                      </Link>
+                    </FadeIn>
+                  ))}
+                </div>
+              </section>
+            </FadeIn>
           ))}
         </div>
       )}
