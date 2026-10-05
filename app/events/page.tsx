@@ -1,82 +1,104 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-type Params = Promise<{ slug: string }>;
+export const metadata = {
+  title: "Events — NTSP",
+  description: "Festivals, expos, and seasonal highlights across Kenya.",
+};
 
-export async function generateMetadata({ params }: { params: Params }) {
-  const { slug } = await params;
-  const event = await prisma.event.findUnique({ where: { slug } });
-  return { title: event ? `${event.name} — NTSP` : "Event not found — NTSP" };
-}
+export const revalidate = 300;
 
-export default async function EventPage({ params }: { params: Params }) {
-  const { slug } = await params;
+export default async function EventsPage() {
+  const events = await prisma.event.findMany({
+    orderBy: [{ featured: "desc" }, { startDate: "asc" }],
+  });
 
-  const event = await prisma.event.findUnique({ where: { slug } });
-  if (!event) notFound();
-
-  const isPast = (event.endDate ?? event.startDate) < new Date();
+  const now = new Date();
+  const upcoming = events.filter((e) => (e.endDate ?? e.startDate) >= now);
+  const past = events.filter((e) => (e.endDate ?? e.startDate) < now);
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
-      <Link
-        href="/events"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
-      >
-        ← All events
-      </Link>
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold">Events</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Festivals, travel expos, and seasonal wildlife spectacles across Kenya.
+        </p>
+      </header>
 
-      <header className="mt-6 mb-8">
+      <section className="mb-12">
+        <h2 className="mb-4 text-xl font-semibold">Upcoming</h2>
+
+        {upcoming.length === 0 ? (
+          <p className="text-gray-500">No upcoming events scheduled.</p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {upcoming.map((e) => (
+              <EventCard key={e.id} event={e} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {past.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-gray-500">Past Events</h2>
+          <div className="grid gap-6 opacity-60 sm:grid-cols-2 lg:grid-cols-3">
+            {past.map((e) => (
+              <EventCard key={e.id} event={e} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+type EventCardProps = {
+  event: {
+    slug: string;
+    name: string;
+    description: string;
+    location: string;
+    startDate: Date;
+    endDate: Date | null;
+    featured: boolean;
+  };
+};
+
+function EventCard({ event }: EventCardProps) {
+  return (
+    <Link
+      href={`/events/${event.slug}`}
+      className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+          {event.name}
+        </h3>
         {event.featured && (
-          <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+          <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
             Featured
           </span>
         )}
-        <h1 className="mt-3 text-3xl font-bold">{event.name}</h1>
-
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-gray-500">Dates</dt>
-            <dd className="mt-0.5 font-medium">
-              {formatDateRange(event.startDate, event.endDate)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-gray-500">Location</dt>
-            <dd className="mt-0.5 font-medium">{event.location}</dd>
-          </div>
-        </dl>
-
-        {isPast && (
-          <p className="mt-4 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
-            This event has already taken place.
-          </p>
-        )}
-      </header>
-
-      <div className="prose prose-gray max-w-none dark:prose-invert">
-        <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-          {event.description}
-        </p>
       </div>
 
-      <div className="mt-10 border-t border-gray-200 pt-6 dark:border-gray-800">
-        <Link
-          href="/events"
-          className="text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
-        >
-          Browse more events →
-        </Link>
-      </div>
-    </article>
+      <p className="mt-2 text-xs uppercase tracking-wide text-gray-500">
+        {formatDateRange(event.startDate, event.endDate)}
+      </p>
+      <p className="mt-1 text-xs text-gray-500">📍 {event.location}</p>
+
+      <p className="mt-3 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
+        {event.description}
+      </p>
+    </Link>
   );
 }
 
 function formatDateRange(start: Date, end: Date | null) {
   const opts: Intl.DateTimeFormatOptions = {
     day: "numeric",
-    month: "long",
+    month: "short",
     year: "numeric",
   };
   const s = start.toLocaleDateString("en-KE", opts);
