@@ -53,28 +53,20 @@ export function Navbar() {
         }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          {/* ─── Logo + stacked title ─────────────────────── */}
+          {/* ─── Logo ─────────────────────────────────────── */}
           <Link
             href="/"
-            className="flex items-center gap-3"
+            className="flex shrink-0 items-center"
             aria-label="National Tourism Service Portal home"
           >
             <Image
-              src="/logo.png"
-              alt=""
+              src="/logo-2.png"
+              alt="National Tourism Service Portal"
               width={140}
               height={48}
               priority
-              className="h-[55px] w-auto shrink-0"
+              className="h-[55px] w-auto"
             />
-            <span className="hidden flex-col items-start justify-end leading-[0.95] sm:flex">
-              <span className="text-lg font-medium tracking-tight text-deep-800 lg:text-xl dark:text-cream-100">
-                National Tourism
-              </span>
-              <span className="text-lg font-medium tracking-tight text-brand-600 lg:text-xl dark:text-brand-400">
-                Service Portal
-              </span>
-            </span>
           </Link>
 
           {/* ─── Desktop nav ─────────────────────────────── */}
@@ -135,24 +127,16 @@ export function Navbar() {
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2"
+                className="flex items-center"
                 aria-label="National Tourism Service Portal home"
               >
                 <Image
-                  src="/logo.png"
-                  alt=""
-                  width={80}
-                  height={28}
+                  src="/logo-2.png"
+                  alt="National Tourism Service Portal"
+                  width={120}
+                  height={40}
                   className="h-9 w-auto"
                 />
-                <span className="flex flex-col items-start justify-end leading-[0.95]">
-                  <span className="text-sm font-medium tracking-tight text-deep-800 dark:text-cream-100">
-                    National Tourism
-                  </span>
-                  <span className="text-sm font-medium tracking-tight text-brand-600 dark:text-brand-400">
-                    Service Portal
-                  </span>
-                </span>
               </Link>
               <button
                 onClick={() => setOpen(false)}
