@@ -28,10 +28,12 @@ export type AggregateEvent = {
 
 export type EventAvgAggregateOutputType = {
   id: number | null
+  order: number | null
 }
 
 export type EventSumAggregateOutputType = {
   id: number | null
+  order: number | null
 }
 
 export type EventMinAggregateOutputType = {
@@ -44,6 +46,8 @@ export type EventMinAggregateOutputType = {
   location: string | null
   imageUrl: string | null
   featured: boolean | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +62,8 @@ export type EventMaxAggregateOutputType = {
   location: string | null
   imageUrl: string | null
   featured: boolean | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,6 +78,8 @@ export type EventCountAggregateOutputType = {
   location: number
   imageUrl: number
   featured: number
+  order: number
+  published: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -80,10 +88,12 @@ export type EventCountAggregateOutputType = {
 
 export type EventAvgAggregateInputType = {
   id?: true
+  order?: true
 }
 
 export type EventSumAggregateInputType = {
   id?: true
+  order?: true
 }
 
 export type EventMinAggregateInputType = {
@@ -96,6 +106,8 @@ export type EventMinAggregateInputType = {
   location?: true
   imageUrl?: true
   featured?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -110,6 +122,8 @@ export type EventMaxAggregateInputType = {
   location?: true
   imageUrl?: true
   featured?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +138,8 @@ export type EventCountAggregateInputType = {
   location?: true
   imageUrl?: true
   featured?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -225,6 +241,8 @@ export type EventGroupByOutputType = {
   location: string
   imageUrl: string | null
   featured: boolean
+  order: number
+  published: boolean
   createdAt: Date
   updatedAt: Date
   _count: EventCountAggregateOutputType | null
@@ -262,6 +280,8 @@ export type EventWhereInput = {
   location?: Prisma.StringFilter<"Event"> | string
   imageUrl?: Prisma.StringNullableFilter<"Event"> | string | null
   featured?: Prisma.BoolFilter<"Event"> | boolean
+  order?: Prisma.IntFilter<"Event"> | number
+  published?: Prisma.BoolFilter<"Event"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
 }
@@ -276,6 +296,8 @@ export type EventOrderByWithRelationInput = {
   location?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   featured?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -293,6 +315,8 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.StringFilter<"Event"> | string
   imageUrl?: Prisma.StringNullableFilter<"Event"> | string | null
   featured?: Prisma.BoolFilter<"Event"> | boolean
+  order?: Prisma.IntFilter<"Event"> | number
+  published?: Prisma.BoolFilter<"Event"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Event"> | Date | string
 }, "id" | "slug">
@@ -307,6 +331,8 @@ export type EventOrderByWithAggregationInput = {
   location?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   featured?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.EventCountOrderByAggregateInput
@@ -329,6 +355,8 @@ export type EventScalarWhereWithAggregatesInput = {
   location?: Prisma.StringWithAggregatesFilter<"Event"> | string
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Event"> | string | null
   featured?: Prisma.BoolWithAggregatesFilter<"Event"> | boolean
+  order?: Prisma.IntWithAggregatesFilter<"Event"> | number
+  published?: Prisma.BoolWithAggregatesFilter<"Event"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Event"> | Date | string
 }
@@ -342,6 +370,8 @@ export type EventCreateInput = {
   location: string
   imageUrl?: string | null
   featured?: boolean
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -356,6 +386,8 @@ export type EventUncheckedCreateInput = {
   location: string
   imageUrl?: string | null
   featured?: boolean
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -369,6 +401,8 @@ export type EventUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -383,6 +417,8 @@ export type EventUncheckedUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -397,6 +433,8 @@ export type EventCreateManyInput = {
   location: string
   imageUrl?: string | null
   featured?: boolean
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -410,6 +448,8 @@ export type EventUpdateManyMutationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,6 +464,8 @@ export type EventUncheckedUpdateManyInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,12 +480,15 @@ export type EventCountOrderByAggregateInput = {
   location?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   featured?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type EventAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type EventMaxOrderByAggregateInput = {
@@ -456,6 +501,8 @@ export type EventMaxOrderByAggregateInput = {
   location?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   featured?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -470,12 +517,15 @@ export type EventMinOrderByAggregateInput = {
   location?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   featured?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type EventSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 
@@ -490,6 +540,8 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   location?: boolean
   imageUrl?: boolean
   featured?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["event"]>
@@ -504,6 +556,8 @@ export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   location?: boolean
   imageUrl?: boolean
   featured?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["event"]>
@@ -518,6 +572,8 @@ export type EventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   location?: boolean
   imageUrl?: boolean
   featured?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["event"]>
@@ -532,11 +588,13 @@ export type EventSelectScalar = {
   location?: boolean
   imageUrl?: boolean
   featured?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "featured" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "startDate" | "endDate" | "location" | "imageUrl" | "featured" | "order" | "published" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
 
 export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Event"
@@ -551,6 +609,8 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     location: string
     imageUrl: string | null
     featured: boolean
+    order: number
+    published: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["event"]>
@@ -985,6 +1045,8 @@ export interface EventFieldRefs {
   readonly location: Prisma.FieldRef<"Event", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Event", 'String'>
   readonly featured: Prisma.FieldRef<"Event", 'Boolean'>
+  readonly order: Prisma.FieldRef<"Event", 'Int'>
+  readonly published: Prisma.FieldRef<"Event", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Event", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Event", 'DateTime'>
 }

@@ -44,6 +44,8 @@ model Destination {
   description String
   imageUrl    String?
   featured    Boolean         @default(false)
+  order       Int      @default(0)      
+  published   Boolean  @default(true)    
   attractions Attraction[]
   packages    TourPackage[]
   stays       Accommodation[]
@@ -61,6 +63,8 @@ model Attraction {
   imageUrl      String?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  order       Int      @default(0)      
+  published   Boolean  @default(true)  
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -79,6 +83,8 @@ model TourPackage {
   imageUrl      String?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id])
+  order       Int      @default(0)      
+  published   Boolean  @default(true)  
   featured      Boolean     @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -98,6 +104,8 @@ model Accommodation {
   imageUrl      String?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id])
+  order       Int      @default(0)      
+  published   Boolean  @default(true)  
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -115,6 +123,8 @@ model Event {
   location    String
   imageUrl    String?
   featured    Boolean   @default(false)
+  order       Int      @default(0)      
+  published   Boolean  @default(true)  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

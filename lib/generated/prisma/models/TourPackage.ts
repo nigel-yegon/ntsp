@@ -31,6 +31,7 @@ export type TourPackageAvgAggregateOutputType = {
   priceKes: number | null
   durationDays: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type TourPackageSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type TourPackageSumAggregateOutputType = {
   priceKes: number | null
   durationDays: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type TourPackageMinAggregateOutputType = {
@@ -50,6 +52,8 @@ export type TourPackageMinAggregateOutputType = {
   durationDays: number | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   featured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +69,8 @@ export type TourPackageMaxAggregateOutputType = {
   durationDays: number | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   featured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,6 +86,8 @@ export type TourPackageCountAggregateOutputType = {
   durationDays: number
   imageUrl: number
   destinationId: number
+  order: number
+  published: number
   featured: number
   createdAt: number
   updatedAt: number
@@ -92,6 +100,7 @@ export type TourPackageAvgAggregateInputType = {
   priceKes?: true
   durationDays?: true
   destinationId?: true
+  order?: true
 }
 
 export type TourPackageSumAggregateInputType = {
@@ -99,6 +108,7 @@ export type TourPackageSumAggregateInputType = {
   priceKes?: true
   durationDays?: true
   destinationId?: true
+  order?: true
 }
 
 export type TourPackageMinAggregateInputType = {
@@ -111,6 +121,8 @@ export type TourPackageMinAggregateInputType = {
   durationDays?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   featured?: true
   createdAt?: true
   updatedAt?: true
@@ -126,6 +138,8 @@ export type TourPackageMaxAggregateInputType = {
   durationDays?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   featured?: true
   createdAt?: true
   updatedAt?: true
@@ -141,6 +155,8 @@ export type TourPackageCountAggregateInputType = {
   durationDays?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   featured?: true
   createdAt?: true
   updatedAt?: true
@@ -243,6 +259,8 @@ export type TourPackageGroupByOutputType = {
   durationDays: number
   imageUrl: string | null
   destinationId: number
+  order: number
+  published: boolean
   featured: boolean
   createdAt: Date
   updatedAt: Date
@@ -281,6 +299,8 @@ export type TourPackageWhereInput = {
   durationDays?: Prisma.IntFilter<"TourPackage"> | number
   imageUrl?: Prisma.StringNullableFilter<"TourPackage"> | string | null
   destinationId?: Prisma.IntFilter<"TourPackage"> | number
+  order?: Prisma.IntFilter<"TourPackage"> | number
+  published?: Prisma.BoolFilter<"TourPackage"> | boolean
   featured?: Prisma.BoolFilter<"TourPackage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
@@ -297,6 +317,8 @@ export type TourPackageOrderByWithRelationInput = {
   durationDays?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -316,6 +338,8 @@ export type TourPackageWhereUniqueInput = Prisma.AtLeast<{
   durationDays?: Prisma.IntFilter<"TourPackage"> | number
   imageUrl?: Prisma.StringNullableFilter<"TourPackage"> | string | null
   destinationId?: Prisma.IntFilter<"TourPackage"> | number
+  order?: Prisma.IntFilter<"TourPackage"> | number
+  published?: Prisma.BoolFilter<"TourPackage"> | boolean
   featured?: Prisma.BoolFilter<"TourPackage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
@@ -332,6 +356,8 @@ export type TourPackageOrderByWithAggregationInput = {
   durationDays?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -355,6 +381,8 @@ export type TourPackageScalarWhereWithAggregatesInput = {
   durationDays?: Prisma.IntWithAggregatesFilter<"TourPackage"> | number
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"TourPackage"> | string | null
   destinationId?: Prisma.IntWithAggregatesFilter<"TourPackage"> | number
+  order?: Prisma.IntWithAggregatesFilter<"TourPackage"> | number
+  published?: Prisma.BoolWithAggregatesFilter<"TourPackage"> | boolean
   featured?: Prisma.BoolWithAggregatesFilter<"TourPackage"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TourPackage"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TourPackage"> | Date | string
@@ -368,6 +396,8 @@ export type TourPackageCreateInput = {
   priceKes: number
   durationDays: number
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -384,6 +414,8 @@ export type TourPackageUncheckedCreateInput = {
   durationDays: number
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -397,6 +429,8 @@ export type TourPackageUpdateInput = {
   priceKes?: Prisma.IntFieldUpdateOperationsInput | number
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,6 +447,8 @@ export type TourPackageUncheckedUpdateInput = {
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,6 +464,8 @@ export type TourPackageCreateManyInput = {
   durationDays: number
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -441,6 +479,8 @@ export type TourPackageUpdateManyMutationInput = {
   priceKes?: Prisma.IntFieldUpdateOperationsInput | number
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -456,6 +496,8 @@ export type TourPackageUncheckedUpdateManyInput = {
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,6 +523,8 @@ export type TourPackageCountOrderByAggregateInput = {
   durationDays?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -491,6 +535,7 @@ export type TourPackageAvgOrderByAggregateInput = {
   priceKes?: Prisma.SortOrder
   durationDays?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type TourPackageMaxOrderByAggregateInput = {
@@ -503,6 +548,8 @@ export type TourPackageMaxOrderByAggregateInput = {
   durationDays?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -518,6 +565,8 @@ export type TourPackageMinOrderByAggregateInput = {
   durationDays?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -528,6 +577,7 @@ export type TourPackageSumOrderByAggregateInput = {
   priceKes?: Prisma.SortOrder
   durationDays?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type TourPackageCreateNestedManyWithoutDestinationInput = {
@@ -580,6 +630,8 @@ export type TourPackageCreateWithoutDestinationInput = {
   priceKes: number
   durationDays: number
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -594,6 +646,8 @@ export type TourPackageUncheckedCreateWithoutDestinationInput = {
   priceKes: number
   durationDays: number
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -638,6 +692,8 @@ export type TourPackageScalarWhereInput = {
   durationDays?: Prisma.IntFilter<"TourPackage"> | number
   imageUrl?: Prisma.StringNullableFilter<"TourPackage"> | string | null
   destinationId?: Prisma.IntFilter<"TourPackage"> | number
+  order?: Prisma.IntFilter<"TourPackage"> | number
+  published?: Prisma.BoolFilter<"TourPackage"> | boolean
   featured?: Prisma.BoolFilter<"TourPackage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TourPackage"> | Date | string
@@ -652,6 +708,8 @@ export type TourPackageCreateManyDestinationInput = {
   priceKes: number
   durationDays: number
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -665,6 +723,8 @@ export type TourPackageUpdateWithoutDestinationInput = {
   priceKes?: Prisma.IntFieldUpdateOperationsInput | number
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -679,6 +739,8 @@ export type TourPackageUncheckedUpdateWithoutDestinationInput = {
   priceKes?: Prisma.IntFieldUpdateOperationsInput | number
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -693,6 +755,8 @@ export type TourPackageUncheckedUpdateManyWithoutDestinationInput = {
   priceKes?: Prisma.IntFieldUpdateOperationsInput | number
   durationDays?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -710,6 +774,8 @@ export type TourPackageSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   durationDays?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -726,6 +792,8 @@ export type TourPackageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   durationDays?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -742,6 +810,8 @@ export type TourPackageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   durationDays?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -758,12 +828,14 @@ export type TourPackageSelectScalar = {
   durationDays?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TourPackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "summary" | "description" | "priceKes" | "durationDays" | "imageUrl" | "destinationId" | "featured" | "createdAt" | "updatedAt", ExtArgs["result"]["tourPackage"]>
+export type TourPackageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "summary" | "description" | "priceKes" | "durationDays" | "imageUrl" | "destinationId" | "order" | "published" | "featured" | "createdAt" | "updatedAt", ExtArgs["result"]["tourPackage"]>
 export type TourPackageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
 }
@@ -789,6 +861,8 @@ export type $TourPackagePayload<ExtArgs extends runtime.Types.Extensions.Interna
     durationDays: number
     imageUrl: string | null
     destinationId: number
+    order: number
+    published: boolean
     featured: boolean
     createdAt: Date
     updatedAt: Date
@@ -1225,6 +1299,8 @@ export interface TourPackageFieldRefs {
   readonly durationDays: Prisma.FieldRef<"TourPackage", 'Int'>
   readonly imageUrl: Prisma.FieldRef<"TourPackage", 'String'>
   readonly destinationId: Prisma.FieldRef<"TourPackage", 'Int'>
+  readonly order: Prisma.FieldRef<"TourPackage", 'Int'>
+  readonly published: Prisma.FieldRef<"TourPackage", 'Boolean'>
   readonly featured: Prisma.FieldRef<"TourPackage", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"TourPackage", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TourPackage", 'DateTime'>

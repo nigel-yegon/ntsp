@@ -29,11 +29,13 @@ export type AggregateAttraction = {
 export type AttractionAvgAggregateOutputType = {
   id: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type AttractionSumAggregateOutputType = {
   id: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type AttractionMinAggregateOutputType = {
@@ -44,6 +46,8 @@ export type AttractionMinAggregateOutputType = {
   category: string | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +60,8 @@ export type AttractionMaxAggregateOutputType = {
   category: string | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +74,8 @@ export type AttractionCountAggregateOutputType = {
   category: number
   imageUrl: number
   destinationId: number
+  order: number
+  published: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,11 +85,13 @@ export type AttractionCountAggregateOutputType = {
 export type AttractionAvgAggregateInputType = {
   id?: true
   destinationId?: true
+  order?: true
 }
 
 export type AttractionSumAggregateInputType = {
   id?: true
   destinationId?: true
+  order?: true
 }
 
 export type AttractionMinAggregateInputType = {
@@ -92,6 +102,8 @@ export type AttractionMinAggregateInputType = {
   category?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,6 +116,8 @@ export type AttractionMaxAggregateInputType = {
   category?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -116,6 +130,8 @@ export type AttractionCountAggregateInputType = {
   category?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -215,6 +231,8 @@ export type AttractionGroupByOutputType = {
   category: string
   imageUrl: string | null
   destinationId: number
+  order: number
+  published: boolean
   createdAt: Date
   updatedAt: Date
   _count: AttractionCountAggregateOutputType | null
@@ -250,6 +268,8 @@ export type AttractionWhereInput = {
   category?: Prisma.StringFilter<"Attraction"> | string
   imageUrl?: Prisma.StringNullableFilter<"Attraction"> | string | null
   destinationId?: Prisma.IntFilter<"Attraction"> | number
+  order?: Prisma.IntFilter<"Attraction"> | number
+  published?: Prisma.BoolFilter<"Attraction"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
@@ -263,6 +283,8 @@ export type AttractionOrderByWithRelationInput = {
   category?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   destination?: Prisma.DestinationOrderByWithRelationInput
@@ -279,6 +301,8 @@ export type AttractionWhereUniqueInput = Prisma.AtLeast<{
   category?: Prisma.StringFilter<"Attraction"> | string
   imageUrl?: Prisma.StringNullableFilter<"Attraction"> | string | null
   destinationId?: Prisma.IntFilter<"Attraction"> | number
+  order?: Prisma.IntFilter<"Attraction"> | number
+  published?: Prisma.BoolFilter<"Attraction"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
@@ -292,6 +316,8 @@ export type AttractionOrderByWithAggregationInput = {
   category?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AttractionCountOrderByAggregateInput
@@ -312,6 +338,8 @@ export type AttractionScalarWhereWithAggregatesInput = {
   category?: Prisma.StringWithAggregatesFilter<"Attraction"> | string
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Attraction"> | string | null
   destinationId?: Prisma.IntWithAggregatesFilter<"Attraction"> | number
+  order?: Prisma.IntWithAggregatesFilter<"Attraction"> | number
+  published?: Prisma.BoolWithAggregatesFilter<"Attraction"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attraction"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Attraction"> | Date | string
 }
@@ -322,6 +350,8 @@ export type AttractionCreateInput = {
   description: string
   category: string
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   destination: Prisma.DestinationCreateNestedOneWithoutAttractionsInput
@@ -335,6 +365,8 @@ export type AttractionUncheckedCreateInput = {
   category: string
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -345,6 +377,8 @@ export type AttractionUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   destination?: Prisma.DestinationUpdateOneRequiredWithoutAttractionsNestedInput
@@ -358,6 +392,8 @@ export type AttractionUncheckedUpdateInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -370,6 +406,8 @@ export type AttractionCreateManyInput = {
   category: string
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -380,6 +418,8 @@ export type AttractionUpdateManyMutationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,6 +432,8 @@ export type AttractionUncheckedUpdateManyInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -414,6 +456,8 @@ export type AttractionCountOrderByAggregateInput = {
   category?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -421,6 +465,7 @@ export type AttractionCountOrderByAggregateInput = {
 export type AttractionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type AttractionMaxOrderByAggregateInput = {
@@ -431,6 +476,8 @@ export type AttractionMaxOrderByAggregateInput = {
   category?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -443,6 +490,8 @@ export type AttractionMinOrderByAggregateInput = {
   category?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -450,6 +499,7 @@ export type AttractionMinOrderByAggregateInput = {
 export type AttractionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type AttractionCreateNestedManyWithoutDestinationInput = {
@@ -500,6 +550,8 @@ export type AttractionCreateWithoutDestinationInput = {
   description: string
   category: string
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -511,6 +563,8 @@ export type AttractionUncheckedCreateWithoutDestinationInput = {
   description: string
   category: string
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -552,6 +606,8 @@ export type AttractionScalarWhereInput = {
   category?: Prisma.StringFilter<"Attraction"> | string
   imageUrl?: Prisma.StringNullableFilter<"Attraction"> | string | null
   destinationId?: Prisma.IntFilter<"Attraction"> | number
+  order?: Prisma.IntFilter<"Attraction"> | number
+  published?: Prisma.BoolFilter<"Attraction"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Attraction"> | Date | string
 }
@@ -563,6 +619,8 @@ export type AttractionCreateManyDestinationInput = {
   description: string
   category: string
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -573,6 +631,8 @@ export type AttractionUpdateWithoutDestinationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -584,6 +644,8 @@ export type AttractionUncheckedUpdateWithoutDestinationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -595,6 +657,8 @@ export type AttractionUncheckedUpdateManyWithoutDestinationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -609,6 +673,8 @@ export type AttractionSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   category?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -622,6 +688,8 @@ export type AttractionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   category?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -635,6 +703,8 @@ export type AttractionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   category?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -648,11 +718,13 @@ export type AttractionSelectScalar = {
   category?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AttractionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "category" | "imageUrl" | "destinationId" | "createdAt" | "updatedAt", ExtArgs["result"]["attraction"]>
+export type AttractionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "category" | "imageUrl" | "destinationId" | "order" | "published" | "createdAt" | "updatedAt", ExtArgs["result"]["attraction"]>
 export type AttractionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
 }
@@ -676,6 +748,8 @@ export type $AttractionPayload<ExtArgs extends runtime.Types.Extensions.Internal
     category: string
     imageUrl: string | null
     destinationId: number
+    order: number
+    published: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["attraction"]>
@@ -1109,6 +1183,8 @@ export interface AttractionFieldRefs {
   readonly category: Prisma.FieldRef<"Attraction", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Attraction", 'String'>
   readonly destinationId: Prisma.FieldRef<"Attraction", 'Int'>
+  readonly order: Prisma.FieldRef<"Attraction", 'Int'>
+  readonly published: Prisma.FieldRef<"Attraction", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Attraction", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Attraction", 'DateTime'>
 }

@@ -29,11 +29,13 @@ export type AggregateAccommodation = {
 export type AccommodationAvgAggregateOutputType = {
   id: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type AccommodationSumAggregateOutputType = {
   id: number | null
   destinationId: number | null
+  order: number | null
 }
 
 export type AccommodationMinAggregateOutputType = {
@@ -46,6 +48,8 @@ export type AccommodationMinAggregateOutputType = {
   priceRange: string | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +64,8 @@ export type AccommodationMaxAggregateOutputType = {
   priceRange: string | null
   imageUrl: string | null
   destinationId: number | null
+  order: number | null
+  published: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -74,6 +80,8 @@ export type AccommodationCountAggregateOutputType = {
   priceRange: number
   imageUrl: number
   destinationId: number
+  order: number
+  published: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -83,11 +91,13 @@ export type AccommodationCountAggregateOutputType = {
 export type AccommodationAvgAggregateInputType = {
   id?: true
   destinationId?: true
+  order?: true
 }
 
 export type AccommodationSumAggregateInputType = {
   id?: true
   destinationId?: true
+  order?: true
 }
 
 export type AccommodationMinAggregateInputType = {
@@ -100,6 +110,8 @@ export type AccommodationMinAggregateInputType = {
   priceRange?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -114,6 +126,8 @@ export type AccommodationMaxAggregateInputType = {
   priceRange?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -128,6 +142,8 @@ export type AccommodationCountAggregateInputType = {
   priceRange?: true
   imageUrl?: true
   destinationId?: true
+  order?: true
+  published?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -229,6 +245,8 @@ export type AccommodationGroupByOutputType = {
   priceRange: string | null
   imageUrl: string | null
   destinationId: number
+  order: number
+  published: boolean
   createdAt: Date
   updatedAt: Date
   _count: AccommodationCountAggregateOutputType | null
@@ -266,6 +284,8 @@ export type AccommodationWhereInput = {
   priceRange?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   destinationId?: Prisma.IntFilter<"Accommodation"> | number
+  order?: Prisma.IntFilter<"Accommodation"> | number
+  published?: Prisma.BoolFilter<"Accommodation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
@@ -281,6 +301,8 @@ export type AccommodationOrderByWithRelationInput = {
   priceRange?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   destination?: Prisma.DestinationOrderByWithRelationInput
@@ -299,6 +321,8 @@ export type AccommodationWhereUniqueInput = Prisma.AtLeast<{
   priceRange?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   destinationId?: Prisma.IntFilter<"Accommodation"> | number
+  order?: Prisma.IntFilter<"Accommodation"> | number
+  published?: Prisma.BoolFilter<"Accommodation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
@@ -314,6 +338,8 @@ export type AccommodationOrderByWithAggregationInput = {
   priceRange?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AccommodationCountOrderByAggregateInput
@@ -336,6 +362,8 @@ export type AccommodationScalarWhereWithAggregatesInput = {
   priceRange?: Prisma.StringNullableWithAggregatesFilter<"Accommodation"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Accommodation"> | string | null
   destinationId?: Prisma.IntWithAggregatesFilter<"Accommodation"> | number
+  order?: Prisma.IntWithAggregatesFilter<"Accommodation"> | number
+  published?: Prisma.BoolWithAggregatesFilter<"Accommodation"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
 }
@@ -348,6 +376,8 @@ export type AccommodationCreateInput = {
   location: string
   priceRange?: string | null
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   destination: Prisma.DestinationCreateNestedOneWithoutStaysInput
@@ -363,6 +393,8 @@ export type AccommodationUncheckedCreateInput = {
   priceRange?: string | null
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -375,6 +407,8 @@ export type AccommodationUpdateInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   destination?: Prisma.DestinationUpdateOneRequiredWithoutStaysNestedInput
@@ -390,6 +424,8 @@ export type AccommodationUncheckedUpdateInput = {
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -404,6 +440,8 @@ export type AccommodationCreateManyInput = {
   priceRange?: string | null
   imageUrl?: string | null
   destinationId: number
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -416,6 +454,8 @@ export type AccommodationUpdateManyMutationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -430,6 +470,8 @@ export type AccommodationUncheckedUpdateManyInput = {
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -454,6 +496,8 @@ export type AccommodationCountOrderByAggregateInput = {
   priceRange?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,6 +505,7 @@ export type AccommodationCountOrderByAggregateInput = {
 export type AccommodationAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type AccommodationMaxOrderByAggregateInput = {
@@ -473,6 +518,8 @@ export type AccommodationMaxOrderByAggregateInput = {
   priceRange?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -487,6 +534,8 @@ export type AccommodationMinOrderByAggregateInput = {
   priceRange?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -494,6 +543,7 @@ export type AccommodationMinOrderByAggregateInput = {
 export type AccommodationSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
+  order?: Prisma.SortOrder
 }
 
 export type AccommodationCreateNestedManyWithoutDestinationInput = {
@@ -546,6 +596,8 @@ export type AccommodationCreateWithoutDestinationInput = {
   location: string
   priceRange?: string | null
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -559,6 +611,8 @@ export type AccommodationUncheckedCreateWithoutDestinationInput = {
   location: string
   priceRange?: string | null
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -602,6 +656,8 @@ export type AccommodationScalarWhereInput = {
   priceRange?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   destinationId?: Prisma.IntFilter<"Accommodation"> | number
+  order?: Prisma.IntFilter<"Accommodation"> | number
+  published?: Prisma.BoolFilter<"Accommodation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
 }
@@ -615,6 +671,8 @@ export type AccommodationCreateManyDestinationInput = {
   location: string
   priceRange?: string | null
   imageUrl?: string | null
+  order?: number
+  published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -627,6 +685,8 @@ export type AccommodationUpdateWithoutDestinationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -640,6 +700,8 @@ export type AccommodationUncheckedUpdateWithoutDestinationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -653,6 +715,8 @@ export type AccommodationUncheckedUpdateManyWithoutDestinationInput = {
   location?: Prisma.StringFieldUpdateOperationsInput | string
   priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -669,6 +733,8 @@ export type AccommodationSelect<ExtArgs extends runtime.Types.Extensions.Interna
   priceRange?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -684,6 +750,8 @@ export type AccommodationSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   priceRange?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -699,6 +767,8 @@ export type AccommodationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   priceRange?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
@@ -714,11 +784,13 @@ export type AccommodationSelectScalar = {
   priceRange?: boolean
   imageUrl?: boolean
   destinationId?: boolean
+  order?: boolean
+  published?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AccommodationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "type" | "description" | "location" | "priceRange" | "imageUrl" | "destinationId" | "createdAt" | "updatedAt", ExtArgs["result"]["accommodation"]>
+export type AccommodationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "type" | "description" | "location" | "priceRange" | "imageUrl" | "destinationId" | "order" | "published" | "createdAt" | "updatedAt", ExtArgs["result"]["accommodation"]>
 export type AccommodationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
 }
@@ -744,6 +816,8 @@ export type $AccommodationPayload<ExtArgs extends runtime.Types.Extensions.Inter
     priceRange: string | null
     imageUrl: string | null
     destinationId: number
+    order: number
+    published: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["accommodation"]>
@@ -1179,6 +1253,8 @@ export interface AccommodationFieldRefs {
   readonly priceRange: Prisma.FieldRef<"Accommodation", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Accommodation", 'String'>
   readonly destinationId: Prisma.FieldRef<"Accommodation", 'Int'>
+  readonly order: Prisma.FieldRef<"Accommodation", 'Int'>
+  readonly published: Prisma.FieldRef<"Accommodation", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Accommodation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Accommodation", 'DateTime'>
 }

@@ -1018,6 +1018,8 @@ export const DestinationScalarFieldEnum = {
   description: 'description',
   imageUrl: 'imageUrl',
   featured: 'featured',
+  order: 'order',
+  published: 'published',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1033,6 +1035,8 @@ export const AttractionScalarFieldEnum = {
   category: 'category',
   imageUrl: 'imageUrl',
   destinationId: 'destinationId',
+  order: 'order',
+  published: 'published',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1050,6 +1054,8 @@ export const TourPackageScalarFieldEnum = {
   durationDays: 'durationDays',
   imageUrl: 'imageUrl',
   destinationId: 'destinationId',
+  order: 'order',
+  published: 'published',
   featured: 'featured',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1068,6 +1074,8 @@ export const AccommodationScalarFieldEnum = {
   priceRange: 'priceRange',
   imageUrl: 'imageUrl',
   destinationId: 'destinationId',
+  order: 'order',
+  published: 'published',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1085,6 +1093,8 @@ export const EventScalarFieldEnum = {
   location: 'location',
   imageUrl: 'imageUrl',
   featured: 'featured',
+  order: 'order',
+  published: 'published',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
