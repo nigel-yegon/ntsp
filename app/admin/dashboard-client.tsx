@@ -392,98 +392,99 @@ function DashboardSidebar({
   ];
 
   return (
-    <aside className="hidden w-72 shrink-0 border-r border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900 lg:block">
-      <div className="sticky top-0 flex h-screen flex-col">
-        <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
-          <Link href="/" className="block">
-            <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-deep-800 dark:text-cream-100">
-              <span>🇰🇪</span>
-              <span>
-                NTSP<span className="text-brand-600 dark:text-brand-400">.</span>
-              </span>
-            </div>
-            <div className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-              Content Dashboard
-            </div>
-          </Link>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-4 py-6">
-          <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-            Content
+    <aside className="hidden w-72 shrink-0 lg:block">
+      <div className="sticky top-0 h-screen">
+        <div className="flex h-full flex-col border-r border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900">
+          <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
+            <Link href="/" className="block">
+              <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-deep-800 dark:text-cream-100">
+                <span>🇰🇪</span>
+                <span>
+                  NTSP<span className="text-brand-600 dark:text-brand-400">.</span>
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                Content Dashboard
+              </div>
+            </Link>
           </div>
-          {/* Sidebar items stagger in on mount */}
-          <Stagger delayStart={0.05} delayStep={0.04} maxDelay={0.4}>
-            {modules.map((m) => {
-              const active = activeModule === m.key;
-              const tone = m.tone;
-              return (
-                <button
-                  key={m.key}
-                  type="button"
-                  onClick={() => onNavigate(m.key)}
-                  className={[
-                    "group relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left transition",
-                    active && tone
-                      ? `${tone.bgActive} ${tone.text}`
-                      : active
-                        ? "bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300"
-                        : "text-deep-600 hover:bg-cream-200 hover:text-deep-900 dark:text-cream-400 dark:hover:bg-deep-800 dark:hover:text-cream-100",
-                  ].join(" ")}
-                >
-                  {active && tone && (
-                    <span
-                      aria-hidden
-                      className={`absolute inset-y-1 left-0 w-1 rounded-full ${tone.bar}`}
-                    />
-                  )}
 
-                  <span
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
+            <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+              Content
+            </div>
+            <Stagger delayStart={0.05} delayStep={0.04} maxDelay={0.4}>
+              {modules.map((m) => {
+                const active = activeModule === m.key;
+                const tone = m.tone;
+                return (
+                  <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => onNavigate(m.key)}
                     className={[
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition",
+                      "group relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left transition",
                       active && tone
-                        ? tone.bgSoft
-                        : "bg-cream-200 text-deep-500 group-hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-500 dark:group-hover:bg-deep-700",
+                        ? `${tone.bgActive} ${tone.text}`
+                        : active
+                          ? "bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300"
+                          : "text-deep-600 hover:bg-cream-200 hover:text-deep-900 dark:text-cream-400 dark:hover:bg-deep-800 dark:hover:text-cream-100",
                     ].join(" ")}
                   >
-                    <span
-                      className={
-                        active && tone
-                          ? tone.text
-                          : "text-deep-500 dark:text-cream-500"
-                      }
-                    >
-                      {m.icon}
-                    </span>
-                  </span>
+                    {active && tone && (
+                      <span
+                        aria-hidden
+                        className={`absolute inset-y-1 left-0 w-1 rounded-full ${tone.bar}`}
+                      />
+                    )}
 
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold">{m.label}</span>
                     <span
                       className={[
-                        "block truncate text-xs",
-                        active
-                          ? "text-current opacity-70"
-                          : "text-deep-500 dark:text-cream-500",
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition",
+                        active && tone
+                          ? tone.bgSoft
+                          : "bg-cream-200 text-deep-500 group-hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-500 dark:group-hover:bg-deep-700",
                       ].join(" ")}
                     >
-                      {m.description}
+                      <span
+                        className={
+                          active && tone
+                            ? tone.text
+                            : "text-deep-500 dark:text-cream-500"
+                        }
+                      >
+                        {m.icon}
+                      </span>
                     </span>
-                  </span>
-                </button>
-              );
-            })}
-          </Stagger>
-        </div>
 
-        <div className="border-t border-deep-200 p-4 dark:border-deep-800">
-          <Link
-            href="/"
-            className="flex items-center gap-2 rounded-xl bg-cream-200 px-4 py-3 text-xs text-deep-600 transition hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-400 dark:hover:bg-deep-700"
-          >
-            <ArrowLeftIcon />
-            <span>View public site</span>
-          </Link>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold">{m.label}</span>
+                      <span
+                        className={[
+                          "block truncate text-xs",
+                          active
+                            ? "text-current opacity-70"
+                            : "text-deep-500 dark:text-cream-500",
+                        ].join(" ")}
+                      >
+                        {m.description}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </Stagger>
+          </div>
+
+          <div className="border-t border-deep-200 p-4 dark:border-deep-800">
+            <Link
+              href="/"
+              className="flex items-center gap-2 rounded-xl bg-cream-200 px-4 py-3 text-xs text-deep-600 transition hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-400 dark:hover:bg-deep-700"
+            >
+              <ArrowLeftIcon />
+              <span>View public site</span>
+            </Link>
+          </div>
         </div>
       </div>
     </aside>
@@ -518,10 +519,8 @@ function DashboardHeader({
   const searchable = activeModule !== "overview" && activeModule !== "destinations";
 
   return (
-    <header className="border-b border-deep-200 bg-cream-100/85 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/85">
+    <header className="sticky top-0 z-40 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        {/* Header text fades in on module change; keying on the module
-            replays the animation each time the user switches. */}
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
@@ -582,7 +581,6 @@ function Overview({
         </div>
       </FadeIn>
 
-      {/* Stagger the six stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <Stagger delayStart={0.08} delayStep={0.06} maxDelay={0.5}>
           {stats.map((stat) => {

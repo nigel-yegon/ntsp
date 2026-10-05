@@ -20,6 +20,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const isAdmin = pathname.startsWith("/admin");
+
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -46,14 +48,15 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b transition-colors ${
+        className={`z-50 border-b transition-colors ${
+          isAdmin ? "" : "sticky top-0"
+        } ${
           scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
             : "border-transparent bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
         }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          {/* ─── Logo ─────────────────────────────────────── */}
           <Link
             href="/"
             className="flex shrink-0 items-center"
@@ -65,11 +68,10 @@ export function Navbar() {
               width={140}
               height={48}
               priority
-              className="h-[55px] w-auto"
+              className="h-13.75 w-auto"
             />
           </Link>
 
-          {/* ─── Desktop nav ─────────────────────────────── */}
           <ul className="hidden items-center gap-1 xl:flex">
             {links.map((l) => {
               const active = isActive(l.href);
@@ -93,7 +95,6 @@ export function Navbar() {
             })}
           </ul>
 
-          {/* ─── Right cluster ───────────────────────────── */}
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
             <Link
@@ -114,7 +115,7 @@ export function Navbar() {
         </nav>
       </header>
 
-      {/* ─── Mobile drawer ───────────────────────────────── */}
+      {/* Mobile drawer — unchanged */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
