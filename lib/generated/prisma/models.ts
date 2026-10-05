@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/ContactSubmission'
 export type * from './models/Post'
 export type * from './models/Destination'
 export type * from './models/Attraction'
