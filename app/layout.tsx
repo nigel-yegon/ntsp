@@ -1,17 +1,17 @@
-
-// src/app/layout.tsx
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
+import { Navbar } from "./components/navbar";
+import { Footer } from "./components/footer";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NTSP",
-  description: "Next.js app with Prisma and themes",
+  title: "NTSP — Magical Kenya",
+  description: "Discover Kenya's wildlife, beaches, culture, and beyond.",
 };
 
 export default function RootLayout({
@@ -19,18 +19,21 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
         </ThemeProvider>
-        </body>
         <Analytics />
-      
+      </body>
     </html>
   );
 }
