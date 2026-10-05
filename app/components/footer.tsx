@@ -2,16 +2,17 @@ import Link from "next/link";
 
 const explore = [
   { href: "/destinations", label: "Destinations" },
-  { href: "/experiences",  label: "Experiences"  },
-  { href: "/packages",     label: "Packages"     },
-  { href: "/events",       label: "Events"       },
+  { href: "/experiences", label: "Experiences" },
+  { href: "/packages", label: "Packages" },
+  { href: "/events", label: "Events" },
 ];
 
 const plan = [
-  { href: "/plan/tips",           label: "Travel Tips"    },
-  { href: "/plan/visa",           label: "Visa & Entry"   },
+  { href: "/plan/tips", label: "Travel Tips" },
+  { href: "/plan/visa", label: "Visa & Entry" },
   { href: "/plan/getting-around", label: "Getting Around" },
-  { href: "/contact",             label: "Contact Us"     },
+
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Footer() {

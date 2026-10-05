@@ -13,6 +13,7 @@ const links = [
   { href: "/stay",         label: "Stay"         },
   { href: "/events",       label: "Events"       },
   { href: "/blog",         label: "Blog"         },
+  { href: "/about",        label: "About"        },
 ];
 
 export function Navbar() {
