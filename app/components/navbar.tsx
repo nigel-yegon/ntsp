@@ -10,6 +10,7 @@ const links = [
   { href: "/packages",     label: "Packages"     },
   { href: "/stay",         label: "Stay"         },
   { href: "/events",       label: "Events"       },
+  {href: "/blog",         label: "Blog" },
 ];
 
 export function Navbar() {
