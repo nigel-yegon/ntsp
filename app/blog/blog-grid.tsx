@@ -45,7 +45,7 @@ export function BlogGrid({ posts, tags }: Props) {
 
   return (
     <>
-      {/* ─── Controls ──────────────────────────────────────── */}
+      {/* ─── Controls ─────────────────────────────────────── */}
       <div className="mb-10 space-y-4">
         {/* Search */}
         <div className="relative">
@@ -54,7 +54,7 @@ export function BlogGrid({ posts, tags }: Props) {
           </label>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400"
+            className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500"
           >
             🔍
           </span>
@@ -64,14 +64,14 @@ export function BlogGrid({ posts, tags }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by title, tag, or keyword…"
-            className="w-full rounded-md border border-gray-300 bg-white py-2.5 pl-10 pr-10 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-500"
+            className="w-full rounded-md border border-deep-200 bg-cream-50 py-2.5 pl-10 pr-10 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-brand-500 focus:bg-cream-100 focus:ring-2 focus:ring-brand-500/20 dark:border-deep-800 dark:bg-deep-900 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:border-brand-500 dark:focus:bg-deep-900"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              className="absolute inset-y-0 right-3 flex items-center text-deep-400 transition hover:text-deep-700 dark:text-cream-500 dark:hover:text-cream-200"
             >
               ✕
             </button>
@@ -92,9 +92,7 @@ export function BlogGrid({ posts, tags }: Props) {
                 key={tag}
                 label={`${tag} (${count})`}
                 active={activeTag === tag}
-                onClick={() =>
-                  setActiveTag(activeTag === tag ? null : tag)
-                }
+                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
               />
             );
           })}
@@ -102,7 +100,7 @@ export function BlogGrid({ posts, tags }: Props) {
 
         {/* Result count + reset */}
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-deep-500 dark:text-cream-500">
             {hasFilters
               ? `${filtered.length} of ${posts.length} posts`
               : `${posts.length} posts`}
@@ -111,7 +109,7 @@ export function BlogGrid({ posts, tags }: Props) {
             <button
               type="button"
               onClick={reset}
-              className="text-xs font-medium text-brand-600 hover:underline dark:text-brand-400"
+              className="text-xs font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
             >
               Reset filters
             </button>
@@ -121,14 +119,14 @@ export function BlogGrid({ posts, tags }: Props) {
 
       {/* ─── Results ───────────────────────────────────────── */}
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-10 text-center dark:border-gray-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="rounded-lg border border-dashed border-deep-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
+          <p className="text-sm text-deep-600 dark:text-cream-400">
             No posts match your filters.
           </p>
           <button
             type="button"
             onClick={reset}
-            className="mt-3 text-sm font-medium text-brand-600 hover:underline dark:text-brand-400"
+            className="mt-3 text-sm font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
             Reset filters
           </button>
@@ -139,29 +137,33 @@ export function BlogGrid({ posts, tags }: Props) {
             <article key={post.id}>
               <Link
                 href={`/blog/${post.slug}`}
-                className="group block rounded-lg border border-gray-200 p-6 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
+                className="group relative block overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
               >
-                <p className="text-xs uppercase tracking-wide text-gray-500">
+                <span
+                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                  aria-hidden
+                />
+
+                <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
                   {post.publishedAt?.toLocaleDateString("en-KE", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </p>
-                <h2 className="mt-2 text-xl font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
+                <h2 className="mt-2 text-xl font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
                   {post.title}
                 </h2>
-                <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
                   {post.excerpt}
                 </p>
 
-                {/* Tags row */}
                 {post.tags.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                        className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
                       >
                         {tag}
                       </span>
@@ -169,7 +171,7 @@ export function BlogGrid({ posts, tags }: Props) {
                   </div>
                 )}
 
-                <span className="mt-4 inline-block text-sm font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
                   Read article →
                 </span>
               </Link>
@@ -181,14 +183,16 @@ export function BlogGrid({ posts, tags }: Props) {
   );
 }
 
-// ─── Pill ────────────────────────────────────────────────────
-type PillProps = {
+/* ─── Pill ──────────────────────────────────────────────────── */
+function Pill({
+  label,
+  active,
+  onClick,
+}: {
   label: string;
   active: boolean;
   onClick: () => void;
-};
-
-function Pill({ label, active, onClick }: PillProps) {
+}) {
   return (
     <button
       type="button"
@@ -196,7 +200,7 @@ function Pill({ label, active, onClick }: PillProps) {
       className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
         active
           ? "border-brand-500 bg-brand-500 text-white"
-          : "border-gray-300 bg-white text-gray-700 hover:border-brand-500 hover:text-brand-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-brand-500 dark:hover:text-brand-400"
+          : "border-deep-300 bg-cream-50 text-deep-700 hover:border-brand-400 hover:text-brand-600 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-300 dark:hover:border-brand-500 dark:hover:text-brand-400"
       }`}
     >
       {label}

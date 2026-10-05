@@ -30,67 +30,90 @@ export default async function PostPage({ params }: { params: Params }) {
   });
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
-      <Link
-        href="/blog"
-        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
-      >
-        ← All posts
-      </Link>
+    <div>
+      {/* ─── HERO BAND ─────────────────────────────────────── */}
+      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
+        <div className="mx-auto max-w-3xl px-4 py-14 md:py-16">
+          <Link
+            href="/blog"
+            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+          >
+            ← All posts
+          </Link>
 
-      <header className="mt-6 mb-8">
-        <p className="text-xs uppercase tracking-wide text-gray-500">
-          {post.publishedAt?.toLocaleDateString("en-KE", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
-        <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
-          {post.title}
-        </h1>
-        <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
-          {post.excerpt}
-        </p>
-      </header>
-
-      {/* Rendered as paragraphs — swap for MDX/markdown later if you want rich content */}
-      <div className="space-y-4 text-gray-800 dark:text-gray-200">
-        {post.content.split("\n\n").map((para, i) => (
-          <p key={i} className="leading-relaxed">
-            {para}
+          <p className="mt-6 text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+            {post.publishedAt?.toLocaleDateString("en-KE", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </p>
-        ))}
-      </div>
+          <h1 className="mt-3 text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
+            {post.title}
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-deep-600 dark:text-cream-400">
+            {post.excerpt}
+          </p>
 
-      {related.length > 0 && (
-        <section className="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
-          <h2 className="mb-4 text-xl font-semibold">More from the blog</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {related.map((r) => (
-              <Link
-                key={r.id}
-                href={`/blog/${r.slug}`}
-                className="group rounded-lg border border-gray-200 p-4 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
-              >
-                <p className="text-xs uppercase tracking-wide text-gray-500">
-                  {r.publishedAt?.toLocaleDateString("en-KE", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-                <h3 className="mt-1 text-sm font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
-                  {r.title}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
-                  {r.excerpt}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-    </article>
+          {post.tags.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full bg-brand-100 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── CONTENT ───────────────────────────────────────── */}
+      <article className="mx-auto max-w-3xl px-4 py-12">
+        <div className="space-y-5 text-lg leading-relaxed text-deep-700 dark:text-cream-300">
+          {post.content.split("\n\n").map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
+
+        {related.length > 0 && (
+          <section className="mt-16 border-t border-deep-200 pt-8 dark:border-deep-800">
+            <h2 className="mb-6 text-xl font-semibold text-deep-800 dark:text-cream-100">
+              More from the blog
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {related.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/blog/${r.slug}`}
+                  className="group relative overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                >
+                  <span
+                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                    aria-hidden
+                  />
+
+                  <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
+                    {r.publishedAt?.toLocaleDateString("en-KE", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <h3 className="mt-1 text-sm font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                    {r.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-deep-600 dark:text-cream-400">
+                    {r.excerpt}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+    </div>
   );
 }

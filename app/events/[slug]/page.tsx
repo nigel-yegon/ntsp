@@ -19,58 +19,83 @@ export default async function EventPage({ params }: { params: Params }) {
   const isPast = (event.endDate ?? event.startDate) < new Date();
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
-      <Link
-        href="/events"
-        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
-      >
-        ← All events
-      </Link>
+    <div>
+      {/* ─── HERO BAND ─────────────────────────────────────── */}
+      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
+        <div className="mx-auto max-w-4xl px-4 py-14 md:py-16">
+          <Link
+            href="/events"
+            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+          >
+            ← All events
+          </Link>
 
-      <header className="mt-6 mb-8">
-        {event.featured && (
-          <span className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
-            Featured
-          </span>
-        )}
-        <h1 className="mt-3 text-3xl font-bold">{event.name}</h1>
-
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-gray-500">Dates</dt>
-            <dd className="mt-0.5 font-medium">
-              {formatDateRange(event.startDate, event.endDate)}
-            </dd>
+          <div className="mt-6 flex items-center gap-3">
+            {event.featured && (
+              <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                Featured
+              </span>
+            )}
+            {isPast && (
+              <span className="rounded-full bg-deep-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-deep-700 dark:bg-deep-800 dark:text-cream-300">
+                Past event
+              </span>
+            )}
           </div>
-          <div>
-            <dt className="text-xs uppercase tracking-wide text-gray-500">Location</dt>
-            <dd className="mt-0.5 font-medium">{event.location}</dd>
-          </div>
-        </dl>
 
+          <h1 className="mt-3 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
+            {event.name}
+          </h1>
+
+          <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div>
+              <dt className="text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+                Dates
+              </dt>
+              <dd className="mt-1 font-medium text-deep-800 dark:text-cream-100">
+                {formatDateRange(event.startDate, event.endDate)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+                Location
+              </dt>
+              <dd className="mt-1 font-medium text-deep-800 dark:text-cream-100">
+                {event.location}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {/* ─── CONTENT ───────────────────────────────────────── */}
+      <article className="mx-auto max-w-4xl px-4 py-12">
         {isPast && (
-          <p className="mt-4 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
+          <div className="mb-8 rounded-lg border border-deep-200 bg-cream-100 p-4 text-sm text-deep-600 dark:border-deep-800 dark:bg-deep-900 dark:text-cream-400">
             This event has already taken place.
-          </p>
+          </div>
         )}
-      </header>
 
-      <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-        {event.description}
-      </p>
+        <div className="prose prose-lg max-w-none">
+          <p className="text-lg leading-relaxed text-deep-700 dark:text-cream-300">
+            {event.description}
+          </p>
+        </div>
 
-      <div className="mt-10 border-t border-gray-200 pt-6 dark:border-gray-800">
-        <Link
-          href="/events"
-          className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
-        >
-          Browse more events →
-        </Link>
-      </div>
-    </article>
+        <div className="mt-12 border-t border-deep-200 pt-6 dark:border-deep-800">
+          <Link
+            href="/events"
+            className="text-sm font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+          >
+            Browse more events →
+          </Link>
+        </div>
+      </article>
+    </div>
   );
 }
 
+/* ─── Date helper ───────────────────────────────────────────── */
 function formatDateRange(start: Date, end: Date | null) {
   const opts: Intl.DateTimeFormatOptions = {
     day: "numeric",

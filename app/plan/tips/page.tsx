@@ -49,45 +49,57 @@ const tips = [
 
 export default function TipsPage() {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
-      <Link
-        href="/plan"
-        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
-      >
-        ← Back to Plan Your Trip
-      </Link>
-
-      <h1 className="mt-6 text-3xl font-bold">Travel Tips</h1>
-      <p className="mt-3 text-lg text-gray-700 dark:text-gray-300">
-        The small things that make a trip smooth — money, health, safety, and
-        culture.
-      </p>
-
-      <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        {tips.map((t) => (
-          <div
-            key={t.title}
-            className="rounded-lg border border-gray-200 p-5 dark:border-gray-800"
-          >
-            <h2 className="font-semibold">{t.title}</h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {t.body}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-10 border-t border-gray-200 pt-6 dark:border-gray-800">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          More questions?{" "}
+    <div>
+      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
+        <div className="mx-auto max-w-4xl px-4 py-14 md:py-16">
           <Link
-            href="/contact"
-            className="font-medium text-brand-600 hover:underline dark:text-brand-400"
+            href="/plan"
+            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
           >
-            Contact our team →
+            ← Back to Plan Your Trip
           </Link>
-        </p>
+          <span className="mt-6 block text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+            Plan · Practicalities
+          </span>
+          <h1 className="mt-2 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
+            Travel Tips
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg text-deep-600 dark:text-cream-400">
+            The small things that make a trip smooth — money, health, safety, and
+            culture.
+          </p>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-4xl px-4 py-12">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {tips.map((t) => (
+            <div
+              key={t.title}
+              className="rounded-lg border border-deep-200 bg-cream-50 p-5 dark:border-deep-800 dark:bg-deep-900"
+            >
+              <h2 className="font-semibold text-deep-800 dark:text-cream-100">
+                {t.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                {t.body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 border-t border-deep-200 pt-6 dark:border-deep-800">
+          <p className="text-sm text-deep-600 dark:text-cream-400">
+            More questions?{" "}
+            <Link
+              href="/contact"
+              className="font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+            >
+              Contact our team →
+            </Link>
+          </p>
+        </div>
       </div>
-    </article>
+    </div>
   );
 }

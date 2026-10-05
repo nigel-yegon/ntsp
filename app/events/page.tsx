@@ -14,19 +14,32 @@ export default async function EventsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">Events</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Festivals, travel expos, and seasonal wildlife spectacles across Kenya.
-        </p>
-      </header>
+    <div>
+      {/* ─── HERO BAND ─────────────────────────────────────── */}
+      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+            What&apos;s on
+          </span>
+          <h1 className="mt-2 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
+            Events
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg text-deep-600 dark:text-cream-400">
+            Festivals, travel expos, and seasonal wildlife spectacles across Kenya.
+          </p>
+        </div>
+      </section>
 
-      {events.length === 0 ? (
-        <p className="text-gray-500">No events yet. Run the seed script.</p>
-      ) : (
-        <EventsGrid events={events} />
-      )}
+      {/* ─── CONTENT ───────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        {events.length === 0 ? (
+          <p className="text-deep-500 dark:text-cream-500">
+            No events yet. Run the seed script.
+          </p>
+        ) : (
+          <EventsGrid events={events} />
+        )}
+      </div>
     </div>
   );
 }
