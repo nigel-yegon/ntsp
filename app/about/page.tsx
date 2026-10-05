@@ -72,19 +72,19 @@ const functions = [
 export default function AboutPage() {
   return (
     <div>
-      {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-gray-200 bg-linear-to-br from-brand-50 via-white to-amber-50 dark:border-ink-800 dark:from-ink-900 dark:via-ink-950 dark:to-ink-900">
-        <div className="mx-auto flex max-w-4xl flex-col items-center px-4 py-20 text-center md:py-24">
+      {/* ─── HERO BAND ─────────────────────────────────────── */}
+      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
+        <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-20 text-center md:py-24">
           <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-800 dark:bg-brand-950 dark:text-brand-200">
             About NTSP
           </span>
-          <h1 className="mt-6 max-w-2xl text-4xl font-bold leading-tight md:text-5xl">
+          <h1 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
             Kenya&apos;s tourism, in one place
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-gray-700 dark:text-gray-300">
-            The National Tourism Service Portal is a single window to the destinations,
-            experiences, and travel opportunities that make Kenya one of the world&apos;s
-            most compelling destinations.
+          <p className="mt-6 max-w-2xl text-lg text-deep-600 dark:text-cream-400">
+            The National Tourism Service Portal is a single window to the
+            destinations, experiences, and travel opportunities that make Kenya
+            one of the world&apos;s most compelling destinations.
           </p>
         </div>
       </section>
@@ -92,15 +92,17 @@ export default function AboutPage() {
       <div className="mx-auto max-w-4xl space-y-16 px-4 py-16">
         {/* ─── MANDATE ───────────────────────────────────────── */}
         <section>
-          <h2 className="text-2xl font-bold">Our mandate</h2>
-          <div className="mt-4 space-y-4 text-gray-700 dark:text-gray-300">
+          <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+            Our mandate
+          </h2>
+          <div className="mt-4 space-y-4 text-deep-700 dark:text-cream-300">
             <p className="leading-relaxed">
-              The State Department of Tourism is mandated with providing strategic policy
-              direction and leadership in tourism development and management in Kenya.
-              This mandate — set out under Executive Order No. 2 of 2013 — places the
-              Ministry at the centre of coordinating and overseeing:
+              The State Department of Tourism is mandated with providing strategic
+              policy direction and leadership in tourism development and management
+              in Kenya. This mandate — set out under Executive Order No. 2 of 2013
+              — places the Ministry at the centre of coordinating and overseeing:
             </p>
-            <ul className="ml-6 list-disc space-y-2 leading-relaxed">
+            <ul className="ml-6 list-disc space-y-2 leading-relaxed marker:text-brand-500">
               <li>Policy direction and planning</li>
               <li>Product diversification and experience development</li>
               <li>Tourism marketing and promotion</li>
@@ -109,58 +111,65 @@ export default function AboutPage() {
               <li>Monitoring and evaluation of tourism programs and activities</li>
             </ul>
             <p className="leading-relaxed">
-              The NTSP exists to make that mandate tangible for visitors — turning policy
-              and strategy into a working window on the country&apos;s destinations,
-              experiences, and travel options.
+              The NTSP exists to make that mandate tangible for visitors — turning
+              policy and strategy into a working window on the country&apos;s
+              destinations, experiences, and travel options.
             </p>
           </div>
         </section>
 
         {/* ─── HOW TOURISM WORKS ─────────────────────────────── */}
         <section>
-          <h2 className="text-2xl font-bold">How tourism works in Kenya</h2>
-          <div className="mt-4 space-y-4 text-gray-700 dark:text-gray-300">
+          <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+            How tourism works in Kenya
+          </h2>
+          <div className="mt-4 space-y-4 text-deep-700 dark:text-cream-300">
             <p className="leading-relaxed">
-              Tourism is unique among sectors. It draws its existence and growth from
-              others — transport, accommodation, food and beverage, recreation,
-              entertainment — and its products and services cut across providers and
-              geographies.
+              Tourism is unique among sectors. It draws its existence and growth
+              from others — transport, accommodation, food and beverage,
+              recreation, entertainment — and its products and services cut
+              across providers and geographies.
             </p>
             <p className="leading-relaxed">
-              A single trip might start at an international airport, continue by road
-              through several counties, and end at a leisure destination far from where
-              the visitor first arrived. Each leg is a different provider, a different
-              county, a different part of what a visitor ultimately experiences.
+              A single trip might start at an international airport, continue by
+              road through several counties, and end at a leisure destination far
+              from where the visitor first arrived. Each leg is a different
+              provider, a different county, a different part of what a visitor
+              ultimately experiences.
             </p>
             <p className="leading-relaxed">
               Tourism packages are typically circuit-based: major attractions and
-              ecosystems are shared across counties and regions. That makes coordination
-              not just helpful, but essential.
+              ecosystems are shared across counties and regions. That makes
+              coordination not just helpful, but essential.
             </p>
           </div>
         </section>
 
         {/* ─── FUNCTIONS ─────────────────────────────────────── */}
         <section>
-          <h2 className="text-2xl font-bold">What the Directorate does</h2>
-          <p className="mt-3 max-w-2xl text-gray-700 dark:text-gray-300">
-            The Directorate of Tourism carries out the day-to-day work of the mandate.
-            Its functions shape how tourism is planned, promoted, and protected across
-            the country.
+          <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+            What the Directorate does
+          </h2>
+          <p className="mt-3 max-w-2xl text-deep-700 dark:text-cream-300">
+            The Directorate of Tourism carries out the day-to-day work of the
+            mandate. Its functions shape how tourism is planned, promoted, and
+            protected across the country.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {functions.map((f, i) => (
               <div
                 key={f.title}
-                className="rounded-lg border border-gray-200 p-5 dark:border-ink-800"
+                className="rounded-lg border border-deep-200 bg-cream-50 p-5 dark:border-deep-800 dark:bg-deep-900"
               >
                 <div className="flex items-start gap-3">
-                  <span className="mt-0.5 text-xs font-mono text-brand-600 dark:text-brand-400">
+                  <span className="mt-0.5 font-mono text-xs text-brand-600 dark:text-brand-400">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <h3 className="font-semibold">{f.title}</h3>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <h3 className="font-semibold text-deep-800 dark:text-cream-100">
+                      {f.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
                       {f.description}
                     </p>
                   </div>
@@ -171,47 +180,52 @@ export default function AboutPage() {
         </section>
 
         {/* ─── COORDINATION ──────────────────────────────────── */}
-        <section className="rounded-2xl border border-gray-200 bg-gray-50 p-8 dark:border-ink-800 dark:bg-ink-900">
-          <h2 className="text-2xl font-bold">Coordinating across government</h2>
-          <div className="mt-4 space-y-4 text-gray-700 dark:text-gray-300">
+        <section className="rounded-2xl border border-deep-200 bg-cream-100 p-8 dark:border-deep-800 dark:bg-deep-900">
+          <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+            Coordinating across government
+          </h2>
+          <div className="mt-4 space-y-4 text-deep-700 dark:text-cream-300">
             <p className="leading-relaxed">
-              The nature of tourism — shared attractions, cross-county circuits, and
-              multiple service providers — calls for a considerable degree of
-              coordination and cooperation between the different levels of government
-              and stakeholders.
+              The nature of tourism — shared attractions, cross-county circuits,
+              and multiple service providers — calls for a considerable degree
+              of coordination and cooperation between the different levels of
+              government and stakeholders.
             </p>
             <p className="leading-relaxed">
-              This coordination is provided for under Article 189 of the Constitution,
-              which sets out the framework for cooperation between national and county
-              governments. It ensures that tourism development across the country is
-              harmonised and sustainable — that what one county does supports, rather
-              than competes with, what its neighbours are building.
+              This coordination is provided for under Article 189 of the
+              Constitution, which sets out the framework for cooperation between
+              national and county governments. It ensures that tourism
+              development across the country is harmonised and sustainable — that
+              what one county does supports, rather than competes with, what its
+              neighbours are building.
             </p>
             <p className="leading-relaxed">
-              The NTSP is one small expression of that coordination: a shared platform
-              that treats the country&apos;s tourism offering as a single, connected
-              experience.
+              The NTSP is one small expression of that coordination: a shared
+              platform that treats the country&apos;s tourism offering as a
+              single, connected experience.
             </p>
           </div>
         </section>
 
         {/* ─── CTA ───────────────────────────────────────────── */}
-        <section className="rounded-2xl border border-brand-200 bg-brand-50 p-8 text-center dark:border-brand-900 dark:bg-brand-950">
-          <h2 className="text-2xl font-bold">Start exploring</h2>
-          <p className="mx-auto mt-3 max-w-lg text-gray-700 dark:text-gray-300">
-            From the Maasai Mara to Diani Beach, from Nairobi&apos;s cultural scene to
-            the shores of Lake Nakuru — see what Kenya has to offer.
+        <section className="rounded-2xl border border-brand-300 bg-brand-50 p-8 text-center dark:border-brand-800 dark:bg-brand-950/50">
+          <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+            Start exploring
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-deep-700 dark:text-cream-300">
+            From the Maasai Mara to Diani Beach, from Nairobi&apos;s cultural
+            scene to the shores of Lake Nakuru — see what Kenya has to offer.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               href="/destinations"
-              className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
+              className="rounded-md bg-deep-800 px-5 py-2.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
             >
               Explore destinations
             </Link>
             <Link
               href="/packages"
-              className="rounded-md border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium hover:bg-gray-100 dark:border-ink-700 dark:bg-ink-900 dark:hover:bg-ink-800"
+              className="rounded-md border border-deep-300 bg-cream-50 px-5 py-2.5 text-sm font-medium text-deep-800 transition hover:bg-cream-100 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-100 dark:hover:bg-deep-800"
             >
               Browse packages
             </Link>
