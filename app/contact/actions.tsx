@@ -14,7 +14,7 @@ export async function submitContact(formData: FormData) {
     throw new Error("Name, email, and message are required.");
   }
 
-  await prisma["contactSubmission"].create({
+  await prisma.contactSubmission.create({
     data: { name, email, phone, subject, message },
   });
 

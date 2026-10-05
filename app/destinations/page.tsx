@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { DestinationsGrid } from "./destination-grid";
 
 export const metadata = {
   title: "Destinations — NTSP",
@@ -13,7 +13,7 @@ export default async function DestinationsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <header className="mb-10">
+      <header className="mb-8">
         <h1 className="text-3xl font-bold">Destinations</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           From the Maasai Mara to Diani Beach — discover where to go in Kenya.
@@ -23,32 +23,7 @@ export default async function DestinationsPage() {
       {destinations.length === 0 ? (
         <p className="text-gray-500">No destinations yet. Run the seed script.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {destinations.map((d) => (
-            <Link
-              key={d.id}
-              href={`/destinations/${d.slug}`}
-              className="group rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
-            >
-              <div className="flex items-start justify-between">
-                <h2 className="text-lg font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
-                  {d.name}
-                </h2>
-                {d.featured && (
-                  <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
-                    Featured
-                  </span>
-                )}
-              </div>
-              <p className="mt-1 text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500">
-                {d.county} County
-              </p>
-              <p className="mt-3 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
-                {d.description}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <DestinationsGrid destinations={destinations} />
       )}
     </div>
   );

@@ -50,7 +50,7 @@ export default async function Home() {
           <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
             Discover Kenya
             <span className="block text-brand-600 dark:text-brand-400">
-              from safari to sea
+              The Origin of Wonder
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-gray-700 dark:text-gray-300">

@@ -1000,6 +1000,7 @@ export const PostScalarFieldEnum = {
   excerpt: 'excerpt',
   content: 'content',
   coverImage: 'coverImage',
+  tags: 'tags',
   published: 'published',
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',

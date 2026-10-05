@@ -341,27 +341,28 @@ async function main() {
 
   // ─── Blog Posts ────────────────────────────────────────────────
   const posts = [
-    {
-      title: "The Best Time to Visit the Maasai Mara",
-      slug: "best-time-to-visit-maasai-mara",
-      excerpt:
-        "Migration season vs. green season — what each offers, and when to book for the best rates.",
-      content: `The Maasai Mara is spectacular year-round, but the experience varies dramatically by season.
+  {
+    title: "The Best Time to Visit the Maasai Mara",
+    slug: "best-time-to-visit-maasai-mara",
+    excerpt:
+      "Migration season vs. green season — what each offers, and when to book for the best rates.",
+    content: `The Maasai Mara is spectacular year-round, but the experience varies dramatically by season.
 
 Peak season runs from July to October, coinciding with the Great Wildebeest Migration. This is when over 1.5 million wildebeest and zebras cross the Mara River from the Serengeti. Expect premium rates, packed lodges, and spectacular river crossings — but also the best wildlife viewing of the year.
 
 The green season (November to May) is quieter and much cheaper. Rates can drop 40–60% compared to peak. The landscape is lush after the short rains, birdlife is abundant, and you often have sightings almost to yourself. The trade-off is that some camps close, and roads can be muddy.
 
 If you want to see the migration without the crowds, consider late June or early November — shoulder seasons with reasonable rates and good viewing.`,
-      published: true,
-      publishedAt: new Date("2026-09-12"),
-    },
-    {
-      title: "A First-Timer's Guide to Diani Beach",
-      slug: "diani-beach-guide",
-      excerpt:
-        "Where to stay, what to eat, and how to get the most out of Kenya's award-winning coastline.",
-      content: `Diani Beach stretches for 17 kilometres along the Indian Ocean, south of Mombasa in Kwale County. It's consistently ranked among Africa's best beaches, and for good reason — powder-white sand, warm turquoise water, and a coral reef that shelters the shoreline.
+    tags: ["Safari", "Wildlife", "Planning"],
+    published: true,
+    publishedAt: new Date("2026-09-12"),
+  },
+  {
+    title: "A First-Timer's Guide to Diani Beach",
+    slug: "diani-beach-guide",
+    excerpt:
+      "Where to stay, what to eat, and how to get the most out of Kenya's award-winning coastline.",
+    content: `Diani Beach stretches for 17 kilometres along the Indian Ocean, south of Mombasa in Kwale County. It's consistently ranked among Africa's best beaches, and for good reason — powder-white sand, warm turquoise water, and a coral reef that shelters the shoreline.
 
 Getting there is straightforward. Fly into Moi International Airport (MBA) in Mombasa, then take a 45-minute taxi or the Likoni Ferry. Alternatively, fly directly into Ukunda airstrip (UKA), which sits right next to Diani.
 
@@ -370,15 +371,16 @@ Where to stay depends on what you want. The northern end near the Kongo River is
 Don't miss: snorkeling or diving at Kisite-Mpunguti Marine Park, a sunset dhow cruise, and a day trip to the Shimba Hills for the rare sable antelope. For food, try the fresh seafood at one of the beachfront restaurants — the crab and prawns are exceptional.
 
 Best time to visit is December to March (dry, sunny) or July to October (cooler, fewer crowds). Avoid April and May, when the long rains hit.`,
-      published: true,
-      publishedAt: new Date("2026-08-28"),
-    },
-    {
-      title: "Kenya Visa & Entry Guide for 2026",
-      slug: "kenya-visa-guide-2026",
-      excerpt:
-        "Everything you need to know about the eTA, vaccinations, and what to have ready at the border.",
-      content: `Kenya introduced the Electronic Travel Authorisation (eTA) in early 2024, replacing traditional visas for most visitors. Here's what you need to know for a smooth arrival.
+    tags: ["Beach", "Coast", "Planning"],
+    published: true,
+    publishedAt: new Date("2026-08-28"),
+  },
+  {
+    title: "Kenya Visa & Entry Guide for 2026",
+    slug: "kenya-visa-guide-2026",
+    excerpt:
+      "Everything you need to know about the eTA, vaccinations, and what to have ready at the border.",
+    content: `Kenya introduced the Electronic Travel Authorisation (eTA) in early 2024, replacing traditional visas for most visitors. Here's what you need to know for a smooth arrival.
 
 Apply online at etakenya.go.ke before you travel. Processing typically takes three working days, but apply at least a week ahead in case of delays. The fee is USD 30 for most nationalities, and the eTA is valid for 90 days from approval.
 
@@ -389,10 +391,11 @@ Yellow fever vaccination is required if you're arriving from a yellow-fever-ende
 At the border, you may be asked for proof of onward travel and sufficient funds. Have your return ticket and a bank statement or credit card ready.
 
 Citizens of most East African Community countries and a handful of others are exempt from the eTA. Check the official portal for the current exemption list.`,
-      published: true,
-      publishedAt: new Date("2026-08-05"),
-    },
-  ];
+    tags: ["Planning", "Visa"],
+    published: true,
+    publishedAt: new Date("2026-08-05"),
+  },
+];
 
   for (const p of posts) {
     await prisma.post.upsert({

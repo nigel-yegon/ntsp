@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,12 +20,10 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Close mobile drawer on route change
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
-  // Track scroll for backdrop opacity
   useEffect(() => {
     function onScroll() {
       setScrolled(window.scrollY > 8);
@@ -34,7 +33,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -59,9 +57,16 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 font-bold tracking-tight"
+            aria-label="NTSP home"
           >
-            <span className="text-xl">🇰🇪</span>
-            <span>NTSP</span>
+            <Image
+              src="/logo-2.png"
+              alt="NTSP"
+              width={140}
+              height={40}
+              priority
+              className="h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -112,20 +117,28 @@ export function Navbar() {
       {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
-          {/* Overlay */}
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
             aria-hidden
           />
 
-          {/* Drawer panel */}
           <div className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-white shadow-2xl dark:bg-gray-950">
             <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-800">
-              <span className="flex items-center gap-2 font-bold">
-                <span className="text-xl">🇰🇪</span>
-                <span>NTSP</span>
-              </span>
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center font-bold"
+                aria-label="NTSP home"
+              >
+                <Image
+                  src="/logo-2.png"
+                  alt="NTSP"
+                  width={120}
+                  height={34}
+                  className="h-8 w-auto"
+                />
+              </Link>
               <button
                 onClick={() => setOpen(false)}
                 className="rounded-md border border-gray-300 p-1.5 text-sm dark:border-gray-700"
