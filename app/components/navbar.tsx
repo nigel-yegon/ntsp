@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
+   { href: "/about",        label: "About"        },
   { href: "/destinations", label: "Destinations" },
   { href: "/experiences",  label: "Experiences"  },
   { href: "/packages",     label: "Packages"     },
   { href: "/stay",         label: "Stay"         },
   { href: "/events",       label: "Events"       },
   { href: "/blog",         label: "Blog"         },
-  { href: "/about",        label: "About"        },
+ 
 ];
 
 export function Navbar() {
