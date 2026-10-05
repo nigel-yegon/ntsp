@@ -35,13 +35,13 @@ export default async function ExperiencePage({ params }: { params: Params }) {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/experiences"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← All experiences
       </Link>
 
       <header className="mt-6 mb-8">
-        <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+        <span className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
           {attraction.category}
         </span>
         <h1 className="mt-3 text-3xl font-bold">{attraction.name}</h1>
@@ -49,7 +49,7 @@ export default async function ExperiencePage({ params }: { params: Params }) {
           📍{" "}
           <Link
             href={`/destinations/${attraction.destination.slug}`}
-            className="hover:text-emerald-600 dark:hover:text-emerald-400"
+            className="hover:text-brand-600 dark:hover:text-brand-400"
           >
             {attraction.destination.name}
           </Link>
@@ -72,9 +72,9 @@ export default async function ExperiencePage({ params }: { params: Params }) {
               <Link
                 key={n.id}
                 href={`/experiences/${n.slug}`}
-                className="group rounded-lg border border-gray-200 p-4 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-4 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
-                <h3 className="text-sm font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="text-sm font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {n.name}
                 </h3>
                 <p className="mt-1 line-clamp-2 text-xs text-gray-500">
@@ -89,7 +89,7 @@ export default async function ExperiencePage({ params }: { params: Params }) {
       <div className="mt-10">
         <Link
           href={`/destinations/${attraction.destination.slug}`}
-          className="text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+          className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
         >
           See everything at {attraction.destination.name} →
         </Link>

@@ -37,13 +37,13 @@ export default async function StayDetailPage({ params }: { params: Params }) {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/stay"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← All stays
       </Link>
 
       <header className="mt-6 mb-8">
-        <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+        <span className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
           {stay.type}
         </span>
         <h1 className="mt-3 text-3xl font-bold">{stay.name}</h1>
@@ -52,7 +52,7 @@ export default async function StayDetailPage({ params }: { params: Params }) {
           {" · "}
           <Link
             href={`/destinations/${stay.destination.slug}`}
-            className="hover:text-emerald-600 dark:hover:text-emerald-400"
+            className="hover:text-brand-600 dark:hover:text-brand-400"
           >
             {stay.destination.name}
           </Link>
@@ -80,7 +80,7 @@ export default async function StayDetailPage({ params }: { params: Params }) {
       <div className="mt-8 flex gap-3">
         <Link
           href="/contact"
-          className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+          className="rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           Check availability
         </Link>
@@ -106,7 +106,7 @@ export default async function StayDetailPage({ params }: { params: Params }) {
                 <div>
                   <Link
                     href={`/packages/${p.slug}`}
-                    className="font-semibold hover:text-emerald-600 dark:hover:text-emerald-400"
+                    className="font-semibold hover:text-brand-600 dark:hover:text-brand-400"
                   >
                     {p.title}
                   </Link>
@@ -131,7 +131,7 @@ export default async function StayDetailPage({ params }: { params: Params }) {
               <li key={a.id}>
                 <Link
                   href={`/experiences/${a.slug}`}
-                  className="text-sm text-gray-700 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400"
+                  className="text-sm text-gray-700 hover:text-brand-600 dark:text-gray-300 dark:hover:text-brand-400"
                 >
                   → {a.name}
                 </Link>
@@ -151,12 +151,12 @@ export default async function StayDetailPage({ params }: { params: Params }) {
               <Link
                 key={n.id}
                 href={`/stay/${n.slug}`}
-                className="group rounded-lg border border-gray-200 p-4 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-4 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
                 <span className="text-xs uppercase tracking-wide text-gray-500">
                   {n.type}
                 </span>
-                <h3 className="mt-1 text-sm font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="mt-1 text-sm font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {n.name}
                 </h3>
                 {n.priceRange && (

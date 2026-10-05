@@ -1,10 +1,24 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));   /* 👈 enables class-based dark mode in Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  /* Page background / text */
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand — derived from rgb(191, 144, 0) */
+  --brand-50:  #fdf8e8;
+  --brand-100: #f8ecc4;
+  --brand-200: #f2d98a;
+  --brand-300: #ebc454;
+  --brand-400: #dcac1c;
+  --brand-500: #bf9000;   /* 👈 rgb(191, 144, 0) */
+  --brand-600: #a17a00;
+  --brand-700: #826200;
+  --brand-800: #634a00;
+  --brand-900: #433200;
+  --brand-950: #2a1f00;
 }
 
 .dark {
@@ -17,10 +31,37 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Expose brand tokens as utilities: bg-brand-500, text-brand-600, etc. */
+  --color-brand-50:  var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+
+::selection {
+  background-color: var(--brand-200);
+  color: var(--brand-900);
+}
+
+.dark ::selection {
+  background-color: var(--brand-800);
+  color: var(--brand-50);
 }

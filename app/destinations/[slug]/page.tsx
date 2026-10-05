@@ -28,7 +28,7 @@ export default async function DestinationPage({ params }: { params: Params }) {
     <article className="mx-auto max-w-4xl px-4 py-12">
       <Link
         href="/destinations"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← All destinations
       </Link>
@@ -77,7 +77,7 @@ export default async function DestinationPage({ params }: { params: Params }) {
                 <div>
                   <Link
                     href={`/packages/${p.slug}`}
-                    className="font-semibold hover:text-emerald-600 dark:hover:text-emerald-400"
+                    className="font-semibold hover:text-brand-600 dark:hover:text-brand-400"
                   >
                     {p.title}
                   </Link>

@@ -22,14 +22,14 @@ export default async function EventPage({ params }: { params: Params }) {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/events"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← All events
       </Link>
 
       <header className="mt-6 mb-8">
         {event.featured && (
-          <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+          <span className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
             Featured
           </span>
         )}
@@ -62,7 +62,7 @@ export default async function EventPage({ params }: { params: Params }) {
       <div className="mt-10 border-t border-gray-200 pt-6 dark:border-gray-800">
         <Link
           href="/events"
-          className="text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+          className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
         >
           Browse more events →
         </Link>

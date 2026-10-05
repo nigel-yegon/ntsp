@@ -93,7 +93,7 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="rounded-md bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700"
+              className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
             >
               Send message
             </button>
@@ -121,7 +121,7 @@ export default function ContactPage() {
                 <p className="mt-2 text-sm">
                   <a
                     href={`tel:${o.phone.replace(/\s/g, "")}`}
-                    className="text-emerald-600 hover:underline dark:text-emerald-400"
+                    className="text-brand-600 hover:underline dark:text-brand-400"
                   >
                     {o.phone}
                   </a>
@@ -129,7 +129,7 @@ export default function ContactPage() {
                 <p className="text-sm">
                   <a
                     href={`mailto:${o.email}`}
-                    className="text-emerald-600 hover:underline dark:text-emerald-400"
+                    className="text-brand-600 hover:underline dark:text-brand-400"
                   >
                     {o.email}
                   </a>
@@ -157,7 +157,7 @@ export default function ContactPage() {
           Looking for travel tips?{" "}
           <Link
             href="/plan"
-            className="font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+            className="font-medium text-brand-600 hover:underline dark:text-brand-400"
           >
             Visit our Plan Your Trip hub →
           </Link>

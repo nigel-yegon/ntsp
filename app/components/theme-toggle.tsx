@@ -63,7 +63,7 @@ export function ThemeToggle() {
               }}
               className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition hover:bg-gray-100 dark:hover:bg-gray-800 ${
                 current.value === o.value
-                  ? "font-medium text-emerald-600 dark:text-emerald-400"
+                  ? "font-medium text-brand-600 dark:text-brand-400"
                   : "text-gray-700 dark:text-gray-300"
               }`}
             >

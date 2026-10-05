@@ -74,13 +74,13 @@ export function Navbar() {
                     href={l.href}
                     className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                       active
-                        ? "text-emerald-600 dark:text-emerald-400"
+                        ? "text-brand-600 dark:text-brand-400"
                         : "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                     }`}
                   >
                     {l.label}
                     {active && (
-                      <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                      <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand-600 dark:bg-brand-400" />
                     )}
                   </Link>
                 </li>
@@ -93,7 +93,7 @@ export function Navbar() {
             <ThemeToggle />
             <Link
               href="/plan"
-              className="hidden rounded-md bg-emerald-600 px-3.5 py-1.5 text-sm font-medium text-white transition hover:bg-emerald-700 md:inline-block"
+              className="hidden rounded-md bg-brand-600 px-3.5 py-1.5 text-sm font-medium text-white transition hover:bg-brand-700 md:inline-block"
             >
               Plan Your Trip
             </Link>
@@ -145,7 +145,7 @@ export function Navbar() {
                       onClick={() => setOpen(false)}
                       className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${
                         active
-                          ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300"
                           : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                       }`}
                     >
@@ -160,7 +160,7 @@ export function Navbar() {
               <Link
                 href="/plan"
                 onClick={() => setOpen(false)}
-                className="block rounded-md bg-emerald-600 px-3 py-2.5 text-center text-sm font-medium text-white"
+                className="block rounded-md bg-brand-600 px-3 py-2.5 text-center text-sm font-medium text-white"
               >
                 Plan Your Trip
               </Link>

@@ -37,13 +37,13 @@ export default async function PackagePage({ params }: { params: Params }) {
     <article className="mx-auto max-w-4xl px-4 py-12">
       <Link
         href="/packages"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← All packages
       </Link>
 
       <header className="mt-6 mb-8">
-        <p className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+        <p className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
           <Link
             href={`/destinations/${pkg.destination.slug}`}
             className="hover:underline"
@@ -77,7 +77,7 @@ export default async function PackagePage({ params }: { params: Params }) {
           </div>
           <Link
             href="/contact"
-            className="ml-auto rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+            className="ml-auto rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
           >
             Enquire
           </Link>
@@ -99,7 +99,7 @@ export default async function PackagePage({ params }: { params: Params }) {
               <li key={a.id}>
                 <Link
                   href={`/experiences/${a.slug}`}
-                  className="text-sm text-gray-700 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-emerald-400"
+                  className="text-sm text-gray-700 hover:text-brand-600 dark:text-gray-300 dark:hover:text-brand-400"
                 >
                   → {a.name}
                 </Link>
@@ -142,9 +142,9 @@ export default async function PackagePage({ params }: { params: Params }) {
               <Link
                 key={r.id}
                 href={`/packages/${r.slug}`}
-                className="group rounded-lg border border-gray-200 p-4 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-4 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
-                <h3 className="text-sm font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="text-sm font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {r.title}
                 </h3>
                 <p className="mt-1 line-clamp-2 text-xs text-gray-500">

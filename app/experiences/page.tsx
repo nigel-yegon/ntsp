@@ -46,12 +46,12 @@ export default async function ExperiencesPage() {
                   <Link
                     key={a.id}
                     href={`/experiences/${a.slug}`}
-                    className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+                    className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
                   >
-                    <span className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                    <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                       {a.destination.name}
                     </span>
-                    <h3 className="mt-1 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                    <h3 className="mt-1 font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                       {a.name}
                     </h3>
                     <p className="mt-2 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">

@@ -55,16 +55,16 @@ export default function PlanPage() {
             <Link
               key={t.href}
               href={t.href}
-              className="group rounded-lg border border-gray-200 p-6 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+              className="group rounded-lg border border-gray-200 p-6 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
             >
               <div className="text-3xl">{t.icon}</div>
-              <h2 className="mt-3 text-lg font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+              <h2 className="mt-3 text-lg font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                 {t.title}
               </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 {t.description}
               </p>
-              <span className="mt-4 inline-block text-sm font-medium text-emerald-600 group-hover:underline dark:text-emerald-400">
+              <span className="mt-4 inline-block text-sm font-medium text-brand-600 group-hover:underline dark:text-brand-400">
                 Learn more →
               </span>
             </Link>
@@ -121,7 +121,7 @@ export default function PlanPage() {
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             href="/packages"
-            className="rounded-md bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700"
+            className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
             Browse packages
           </Link>
@@ -158,16 +158,16 @@ function ItineraryCard({ title, days, path, href }: ItineraryCardProps) {
   return (
     <Link
       href={href}
-      className="group rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+      className="group rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
     >
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+        <h3 className="font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
           {title}
         </h3>
         <span className="text-xs text-gray-500">{days}</span>
       </div>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{path}</p>
-      <span className="mt-4 inline-block text-xs font-medium text-emerald-600 group-hover:underline dark:text-emerald-400">
+      <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
         See a matching package →
       </span>
     </Link>

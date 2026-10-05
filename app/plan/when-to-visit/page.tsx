@@ -36,7 +36,7 @@ export default function WhenToVisitPage() {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/plan"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← Back to Plan Your Trip
       </Link>
@@ -64,7 +64,7 @@ export default function WhenToVisitPage() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-lg border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950">
+      <div className="mt-10 rounded-lg border border-brand-200 bg-brand-50 p-5 dark:border-brand-900 dark:bg-brand-950">
         <p className="text-sm font-medium">Pro tip</p>
         <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
           If you want the migration without peak-season crowds, aim for late June

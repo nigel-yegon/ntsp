@@ -28,14 +28,14 @@ export default async function DestinationsPage() {
             <Link
               key={d.id}
               href={`/destinations/${d.slug}`}
-              className="group rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+              className="group rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
             >
               <div className="flex items-start justify-between">
-                <h2 className="text-lg font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h2 className="text-lg font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {d.name}
                 </h2>
                 {d.featured && (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                  <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
                     Featured
                   </span>
                 )}

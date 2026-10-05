@@ -52,7 +52,7 @@ export default function TipsPage() {
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/plan"
-        className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400"
+        className="text-sm text-gray-500 hover:text-brand-600 dark:hover:text-brand-400"
       >
         ← Back to Plan Your Trip
       </Link>
@@ -82,7 +82,7 @@ export default function TipsPage() {
           More questions?{" "}
           <Link
             href="/contact"
-            className="font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+            className="font-medium text-brand-600 hover:underline dark:text-brand-400"
           >
             Contact our team →
           </Link>

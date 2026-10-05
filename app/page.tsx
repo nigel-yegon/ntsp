@@ -42,14 +42,14 @@ export default async function Home() {
   return (
     <div>
       {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-gray-200 bg-linear-to-br from-emerald-50 via-white to-amber-50 dark:border-gray-800 dark:from-emerald-950 dark:via-gray-950 dark:to-amber-950">
+      <section className="relative overflow-hidden border-b border-gray-200 bg-linear-to-br from-brand-50 via-white to-amber-50 dark:border-gray-800 dark:from-brand-950 dark:via-gray-950 dark:to-amber-950">
         <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-20 text-center md:py-28">
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+          <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
             Magical Kenya, curated
           </span>
           <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
             Discover Kenya
-            <span className="block text-emerald-600 dark:text-emerald-400">
+            <span className="block text-brand-600 dark:text-brand-400">
               from safari to sea
             </span>
           </h1>
@@ -60,7 +60,7 @@ export default async function Home() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/destinations"
-              className="rounded-md bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700"
+              className="rounded-md bg-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
             >
               Explore destinations
             </Link>
@@ -87,12 +87,12 @@ export default async function Home() {
               <Link
                 key={a.id}
                 href={`/experiences/${a.slug}`}
-                className="group rounded-lg border border-gray-200 p-4 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-4 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
-                <span className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                   {a.category}
                 </span>
-                <h3 className="mt-1 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="mt-1 font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {a.name}
                 </h3>
                 <p className="mt-1 text-xs text-gray-500">{a.destination.name}</p>
@@ -116,13 +116,13 @@ export default async function Home() {
               <Link
                 key={d.id}
                 href={`/destinations/${d.slug}`}
-                className="group rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
                 <div className="flex items-start justify-between">
-                  <h3 className="text-lg font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                  <h3 className="text-lg font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                     {d.name}
                   </h3>
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                  <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-900 dark:text-brand-200">
                     Featured
                   </span>
                 </div>
@@ -149,10 +149,10 @@ export default async function Home() {
               <Link
                 key={e.id}
                 href={`/events/${e.slug}`}
-                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500 sm:flex-row sm:items-center sm:justify-between"
+                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <h3 className="font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                  <h3 className="font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                     {e.name}
                   </h3>
                   <p className="mt-1 text-xs uppercase tracking-wide text-gray-500">
@@ -176,12 +176,12 @@ export default async function Home() {
               <Link
                 key={p.id}
                 href={`/packages/${p.slug}`}
-                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
-                <span className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                   {p.destination.name}
                 </span>
-                <h3 className="mt-1 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="mt-1 font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {p.title}
                 </h3>
                 <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
@@ -212,12 +212,12 @@ export default async function Home() {
               <Link
                 key={s.id}
                 href={`/stay/${s.slug}`}
-                className="group rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
-                <span className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                   {s.type}
                 </span>
-                <h3 className="mt-1 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="mt-1 font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {s.name}
                 </h3>
                 <p className="mt-1 text-xs text-gray-500">📍 {s.location}</p>
@@ -244,7 +244,7 @@ export default async function Home() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-emerald-500 dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group flex flex-col rounded-lg border border-gray-200 p-5 transition hover:border-brand-500 dark:border-gray-800 dark:hover:border-brand-500"
               >
                 <p className="text-xs uppercase tracking-wide text-gray-500">
                   {post.publishedAt?.toLocaleDateString("en-KE", {
@@ -253,13 +253,13 @@ export default async function Home() {
                     year: "numeric",
                   })}
                 </p>
-                <h3 className="mt-2 font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h3 className="mt-2 font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {post.title}
                 </h3>
                 <p className="mt-2 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
                   {post.excerpt}
                 </p>
-                <span className="mt-4 text-xs font-medium text-emerald-600 group-hover:underline dark:text-emerald-400">
+                <span className="mt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
                   Read →
                 </span>
               </Link>
@@ -294,7 +294,7 @@ function Section({ title, subtitle, href, linkLabel, children }: SectionProps) {
         </div>
         <Link
           href={href}
-          className="shrink-0 text-sm font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+          className="shrink-0 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
         >
           {linkLabel} →
         </Link>

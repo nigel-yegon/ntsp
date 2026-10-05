@@ -37,7 +37,7 @@ export function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="text-sm text-gray-600 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
+                  className="text-sm text-gray-600 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400"
                 >
                   {l.label}
                 </Link>
@@ -55,7 +55,7 @@ export function Footer() {
               <li key={l.href}>
                 <Link
                   href={l.href}
-                  className="text-sm text-gray-600 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
+                  className="text-sm text-gray-600 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400"
                 >
                   {l.label}
                 </Link>
@@ -77,7 +77,7 @@ export function Footer() {
               placeholder="you@example.com"
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-950"
             />
-            <button className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
+            <button className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700">
               Join
             </button>
           </form>
@@ -88,10 +88,10 @@ export function Footer() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-gray-500 md:flex-row dark:text-gray-500">
           <p>© {new Date().getFullYear()} NTSP. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <Link href="/privacy" className="hover:text-brand-600 dark:hover:text-brand-400">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-emerald-600 dark:hover:text-emerald-400">
+            <Link href="/terms" className="hover:text-brand-600 dark:hover:text-brand-400">
               Terms
             </Link>
           </div>

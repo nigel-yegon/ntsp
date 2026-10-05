@@ -33,7 +33,7 @@ export default async function BlogPage() {
             <article key={post.id}>
               <Link
                 href={`/blog/${post.slug}`}
-                className="group block rounded-lg border border-gray-200 p-6 transition hover:border-emerald-500 hover:shadow-md dark:border-gray-800 dark:hover:border-emerald-500"
+                className="group block rounded-lg border border-gray-200 p-6 transition hover:border-brand-500 hover:shadow-md dark:border-gray-800 dark:hover:border-brand-500"
               >
                 <p className="text-xs uppercase tracking-wide text-gray-500">
                   {post.publishedAt?.toLocaleDateString("en-KE", {
@@ -42,13 +42,13 @@ export default async function BlogPage() {
                     year: "numeric",
                   })}
                 </p>
-                <h2 className="mt-2 text-xl font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                <h2 className="mt-2 text-xl font-semibold group-hover:text-brand-600 dark:group-hover:text-brand-400">
                   {post.title}
                 </h2>
                 <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
                   {post.excerpt}
                 </p>
-                <span className="mt-4 inline-block text-sm font-medium text-emerald-600 group-hover:underline dark:text-emerald-400">
+                <span className="mt-4 inline-block text-sm font-medium text-brand-600 group-hover:underline dark:text-brand-400">
                   Read article →
                 </span>
               </Link>
