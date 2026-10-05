@@ -197,7 +197,7 @@ export default async function Home() {
                     <p className="mt-2 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
                       {p.summary}
                     </p>
-                    <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-3 pt-3 dark:border-deep-800">
+                    <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-3 dark:border-deep-800">
                       <span className="text-xs text-deep-500 dark:text-cream-500">
                         {p.durationDays} day{p.durationDays > 1 ? "s" : ""}
                       </span>
