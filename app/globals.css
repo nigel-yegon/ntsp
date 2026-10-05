@@ -3,42 +3,53 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Page background / text */
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ─── Base page ─── */
+  --background: #edebd7;       /* cream */
+  --foreground: #423e37;       /* deep */
 
-  /* Brand — derived from rgb(191, 144, 0) */
-  --brand-50:  #fdf8e8;
-  --brand-100: #f8ecc4;
-  --brand-200: #f2d98a;
-  --brand-300: #ebc454;
-  --brand-400: #dcac1c;
-  --brand-500: #bf9000;   /* rgb(191, 144, 0) */
-  --brand-600: #a17a00;
-  --brand-700: #826200;
-  --brand-800: #634a00;
-  --brand-900: #433200;
-  --brand-950: #2a1f00;
+  /* ─── Brand (gold/ochre) ─── */
+  --brand-50:  #fbf5e2;
+  --brand-100: #f5e7b8;
+  --brand-200: #efd68a;
+  --brand-300: #e9c45e;
+  --brand-400: #e3b23c;   /* primary accent */
+  --brand-500: #d19f2c;
+  --brand-600: #a67c1e;
+  --brand-700: #7a5a15;
+  --brand-800: #4f3a0d;
+  --brand-900: #271d06;
+  --brand-950: #141005;
 
-  /* Ink — warm-neutral dark scale used by the admin dashboard (and anywhere
-     else that wants layered dark surfaces). Tuned to sit comfortably beside
-     the gold brand color rather than feeling cold or pure-black. */
-  --ink-50:  #f8f8f7;
-  --ink-100: #eeeeec;
-  --ink-200: #d9d8d4;
-  --ink-300: #b8b6b0;
-  --ink-400: #8f8d86;
-  --ink-500: #6b6960;
-  --ink-600: #4f4d46;
-  --ink-700: #38362f;
-  --ink-800: #24231d;
-  --ink-900: #16150f;   /* sidebar / card surfaces in dark mode */
-  --ink-950: #0a0906;   /* page background in dark mode */
+  /* ─── Deep (charcoal-brown base) ─── */
+  --deep-50:  #f4f3f1;
+  --deep-100: #e2e0dc;
+  --deep-200: #c4c0b9;
+  --deep-300: #a39594;   /* sand */
+  --deep-400: #857c73;
+  --deep-500: #6e675f;   /* stone */
+  --deep-600: #5a544c;
+  --deep-700: #4d4840;
+  --deep-800: #423e37;   /* base dark */
+  --deep-900: #2e2b26;
+  --deep-950: #1c1a16;
+
+  /* ─── Cream (light surface) ─── */
+  --cream-50:  #faf8ee;
+  --cream-100: #f4f1e2;
+  --cream-200: #edebd7;   /* base light */
+  --cream-300: #ddd8bd;
+  --cream-400: #c5bda1;
+  --cream-500: #a89f80;
+  --cream-600: #877e62;
+  --cream-700: #645d49;
+  --cream-800: #464034;
+  --cream-900: #2f2a22;
+  --cream-950: #1b1813;
 }
 
 .dark {
-  --background: #0a0906;   /* match ink-950 */
-  --foreground: #ededed;
+  --background: #1c1a16;       /* deep-950 */
+  --foreground: #edebd7;       /* cream-200 */
 }
 
 @theme inline {
@@ -47,7 +58,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Brand tokens */
+  /* Brand scale */
   --color-brand-50:  var(--brand-50);
   --color-brand-100: var(--brand-100);
   --color-brand-200: var(--brand-200);
@@ -60,18 +71,44 @@
   --color-brand-900: var(--brand-900);
   --color-brand-950: var(--brand-950);
 
-  /* Ink tokens — exposed as bg-ink-900, text-ink-300, border-ink-800, etc. */
-  --color-ink-50:  var(--ink-50);
-  --color-ink-100: var(--ink-100);
-  --color-ink-200: var(--ink-200);
-  --color-ink-300: var(--ink-300);
-  --color-ink-400: var(--ink-400);
-  --color-ink-500: var(--ink-500);
-  --color-ink-600: var(--ink-600);
-  --color-ink-700: var(--ink-700);
-  --color-ink-800: var(--ink-800);
-  --color-ink-900: var(--ink-900);
-  --color-ink-950: var(--ink-950);
+  /* Deep scale */
+  --color-deep-50:  var(--deep-50);
+  --color-deep-100: var(--deep-100);
+  --color-deep-200: var(--deep-200);
+  --color-deep-300: var(--deep-300);
+  --color-deep-400: var(--deep-400);
+  --color-deep-500: var(--deep-500);
+  --color-deep-600: var(--deep-600);
+  --color-deep-700: var(--deep-700);
+  --color-deep-800: var(--deep-800);
+  --color-deep-900: var(--deep-900);
+  --color-deep-950: var(--deep-950);
+
+  /* Cream scale */
+  --color-cream-50:  var(--cream-50);
+  --color-cream-100: var(--cream-100);
+  --color-cream-200: var(--cream-200);
+  --color-cream-300: var(--cream-300);
+  --color-cream-400: var(--cream-400);
+  --color-cream-500: var(--cream-500);
+  --color-cream-600: var(--cream-600);
+  --color-cream-700: var(--cream-700);
+  --color-cream-800: var(--cream-800);
+  --color-cream-900: var(--cream-900);
+  --color-cream-950: var(--cream-950);
+
+  /* Keep ink for the admin dashboard (unchanged) */
+  --color-ink-50:  var(--cream-50);
+  --color-ink-100: var(--cream-100);
+  --color-ink-200: var(--cream-200);
+  --color-ink-300: var(--cream-300);
+  --color-ink-400: var(--cream-400);
+  --color-ink-500: var(--cream-500);
+  --color-ink-600: var(--cream-600);
+  --color-ink-700: var(--cream-700);
+  --color-ink-800: var(--cream-800);
+  --color-ink-900: var(--cream-900);
+  --color-ink-950: var(--cream-950);
 }
 
 body {
@@ -81,16 +118,102 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand-500);
+  outline: 2px solid var(--brand-400);
   outline-offset: 2px;
 }
 
 ::selection {
   background-color: var(--brand-200);
-  color: var(--brand-900);
+  color: var(--deep-800);
 }
 
 .dark ::selection {
   background-color: var(--brand-800);
   color: var(--brand-50);
+}
+
+/* Subtle paper texture: faint diagonal weave, warms the cream surface */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(66, 62, 55, 0.015) 0px,
+      rgba(66, 62, 55, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(227, 178, 60, 0.02) 0px,
+      rgba(227, 178, 60, 0.02) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+}
+
+.dark body::before {
+  opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(237, 235, 215, 0.015) 0px,
+      rgba(237, 235, 215, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(227, 178, 60, 0.025) 0px,
+      rgba(227, 178, 60, 0.025) 1px,
+      transparent 1px,
+      transparent 6px
+    );
+}
+
+/* Page hero band — recurring element across public pages */
+.hero-band {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(227, 178, 60, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(163, 149, 148, 0.15),
+      transparent 55%
+    ),
+    linear-gradient(135deg, var(--cream-100), var(--cream-200));
+}
+
+.dark .hero-band {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(227, 178, 60, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(66, 62, 55, 0.5),
+      transparent 55%
+    ),
+    linear-gradient(135deg, var(--deep-950), var(--deep-900));
+}
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--brand-400) 30%,
+    var(--brand-400) 70%,
+    transparent
+  );
+  opacity: 0.35;
 }
