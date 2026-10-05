@@ -57,98 +57,129 @@ type ModuleKey =
   | "events"
   | "blog";
 
+/**
+ * A module tone bundles every color token a module needs.
+ *
+ * The palette is built from the site's public-facing colors:
+ *   - brand (gold/ochre) — the primary accent
+ *   - deep  (warm charcoal-brown) — the base dark surface
+ *   - cream (warm off-white) — the base light surface
+ *   - plus a small set of warm-tuned hues for variety
+ *
+ * Every module uses one tone so the sidebar, header, list cards,
+ * and editor are all visually distinct but still siblings.
+ */
 type ModuleTone = {
+  /** Focus/hover ring, tinted */
   ring: string;
+  /** Default border */
   border: string;
+  /** Hover border */
   borderHover: string;
+  /** Very light background (light-mode tint) */
   bgSoft: string;
+  /** Sidebar active background + heavier tints */
   bgActive: string;
+  /** Headline/label text */
   text: string;
+  /** Button background */
   button: string;
+  /** Button hover background */
   buttonHover: string;
+  /** Vertical/horizontal accent strip */
   bar: string;
+  /** Badge background */
   pillBg: string;
+  /** Badge text */
   pillText: string;
+  /** Small icon */
+  icon: React.ReactNode;
 };
 
-const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
+export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
   destinations: {
-    ring: "ring-brand-500/15",
-    border: "border-brand-300 dark:border-brand-700",
-    borderHover: "hover:border-brand-400 dark:hover:border-brand-500",
+    ring: "ring-brand-500/20",
+    border: "border-brand-300 dark:border-brand-800",
+    borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
     bgSoft: "bg-brand-50 dark:bg-brand-950/40",
-    bgActive: "bg-brand-100 dark:bg-brand-950/60",
+    bgActive: "bg-brand-100 dark:bg-brand-950/70",
     text: "text-brand-700 dark:text-brand-300",
     button: "bg-brand-600",
     buttonHover: "hover:bg-brand-700",
     bar: "bg-brand-500",
     pillBg: "bg-brand-100 dark:bg-brand-950",
     pillText: "text-brand-800 dark:text-brand-200",
+    icon: <CompassMarkIcon />,
   },
   experiences: {
-    ring: "ring-emerald-500/15",
+    ring: "ring-emerald-500/20",
     border: "border-emerald-300 dark:border-emerald-800",
-    borderHover: "hover:border-emerald-400 dark:hover:border-emerald-600",
+    borderHover: "hover:border-emerald-500 dark:hover:border-emerald-500",
     bgSoft: "bg-emerald-50 dark:bg-emerald-950/40",
-    bgActive: "bg-emerald-100 dark:bg-emerald-950/60",
+    bgActive: "bg-emerald-100 dark:bg-emerald-950/70",
     text: "text-emerald-700 dark:text-emerald-300",
     button: "bg-emerald-700",
     buttonHover: "hover:bg-emerald-800",
     bar: "bg-emerald-600",
     pillBg: "bg-emerald-100 dark:bg-emerald-950",
     pillText: "text-emerald-800 dark:text-emerald-200",
+    icon: <PawIcon />,
   },
   packages: {
-    ring: "ring-indigo-500/15",
+    ring: "ring-indigo-500/20",
     border: "border-indigo-300 dark:border-indigo-800",
-    borderHover: "hover:border-indigo-400 dark:hover:border-indigo-600",
+    borderHover: "hover:border-indigo-500 dark:hover:border-indigo-500",
     bgSoft: "bg-indigo-50 dark:bg-indigo-950/40",
-    bgActive: "bg-indigo-100 dark:bg-indigo-950/60",
+    bgActive: "bg-indigo-100 dark:bg-indigo-950/70",
     text: "text-indigo-700 dark:text-indigo-300",
     button: "bg-indigo-700",
     buttonHover: "hover:bg-indigo-800",
     bar: "bg-indigo-600",
     pillBg: "bg-indigo-100 dark:bg-indigo-950",
     pillText: "text-indigo-800 dark:text-indigo-200",
+    icon: <RouteIcon />,
   },
   stay: {
-    ring: "ring-rose-500/15",
+    ring: "ring-rose-500/20",
     border: "border-rose-300 dark:border-rose-800",
-    borderHover: "hover:border-rose-400 dark:hover:border-rose-600",
+    borderHover: "hover:border-rose-500 dark:hover:border-rose-500",
     bgSoft: "bg-rose-50 dark:bg-rose-950/40",
-    bgActive: "bg-rose-100 dark:bg-rose-950/60",
+    bgActive: "bg-rose-100 dark:bg-rose-950/70",
     text: "text-rose-700 dark:text-rose-300",
     button: "bg-rose-700",
     buttonHover: "hover:bg-rose-800",
     bar: "bg-rose-600",
     pillBg: "bg-rose-100 dark:bg-rose-950",
     pillText: "text-rose-800 dark:text-rose-200",
+    icon: <BedIcon />,
   },
   events: {
-    ring: "ring-violet-500/15",
+    ring: "ring-violet-500/20",
     border: "border-violet-300 dark:border-violet-800",
-    borderHover: "hover:border-violet-400 dark:hover:border-violet-600",
+    borderHover: "hover:border-violet-500 dark:hover:border-violet-500",
     bgSoft: "bg-violet-50 dark:bg-violet-950/40",
-    bgActive: "bg-violet-100 dark:bg-violet-950/60",
+    bgActive: "bg-violet-100 dark:bg-violet-950/70",
     text: "text-violet-700 dark:text-violet-300",
     button: "bg-violet-700",
     buttonHover: "hover:bg-violet-800",
     bar: "bg-violet-600",
     pillBg: "bg-violet-100 dark:bg-violet-950",
     pillText: "text-violet-800 dark:text-violet-200",
+    icon: <CalendarIcon />,
   },
   blog: {
-    ring: "ring-sky-500/15",
+    ring: "ring-sky-500/20",
     border: "border-sky-300 dark:border-sky-800",
-    borderHover: "hover:border-sky-400 dark:hover:border-sky-600",
+    borderHover: "hover:border-sky-500 dark:hover:border-sky-500",
     bgSoft: "bg-sky-50 dark:bg-sky-950/40",
-    bgActive: "bg-sky-100 dark:bg-sky-950/60",
+    bgActive: "bg-sky-100 dark:bg-sky-950/70",
     text: "text-sky-700 dark:text-sky-300",
     button: "bg-sky-700",
     buttonHover: "hover:bg-sky-800",
     bar: "bg-sky-600",
     pillBg: "bg-sky-100 dark:bg-sky-950",
     pillText: "text-sky-800 dark:text-sky-200",
+    icon: <PenIcon />,
   },
 };
 
@@ -173,14 +204,7 @@ export function DashboardClient() {
       try {
         setLoading(true);
         setError(null);
-        const [
-          destRows,
-          expRows,
-          pkgRows,
-          stayRows,
-          eventRows,
-          postRows,
-        ] = await Promise.all([
+        const [d, e, p, s, ev, po] = await Promise.all([
           listDestinations(),
           listExperiences(),
           listPackages(),
@@ -188,14 +212,13 @@ export function DashboardClient() {
           listEvents(),
           listPosts(),
         ]);
-
         if (cancelled) return;
-        setDestinations(destRows);
-        setExperiences(expRows);
-        setPackages(pkgRows);
-        setStays(stayRows);
-        setEvents(eventRows);
-        setPosts(postRows);
+        setDestinations(d);
+        setExperiences(e);
+        setPackages(p);
+        setStays(s);
+        setEvents(ev);
+        setPosts(po);
       } catch (err) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : "Failed to load data");
@@ -363,16 +386,16 @@ function DashboardSidebar({
     key: ModuleKey;
     label: string;
     description: string;
-    icon: React.ReactNode;
     tone?: ModuleTone;
+    icon: React.ReactNode;
   }[] = [
-    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />     },
-    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: <MapPinIcon />   , tone: TONES.destinations },
-    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: <PawIcon />      , tone: TONES.experiences },
-    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: <CompassIcon />  , tone: TONES.packages },
-    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: <BedIcon />      , tone: TONES.stay },
-    { key: "events",       label: "Events",       description: "Manage events",        icon: <CalendarIcon /> , tone: TONES.events },
-    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: <PenIcon />      , tone: TONES.blog },
+    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />    },
+    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: TONES.destinations.icon, tone: TONES.destinations },
+    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: TONES.experiences.icon,  tone: TONES.experiences },
+    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: TONES.packages.icon,     tone: TONES.packages },
+    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: TONES.stay.icon,         tone: TONES.stay },
+    { key: "events",       label: "Events",       description: "Manage events",        icon: TONES.events.icon,       tone: TONES.events },
+    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: TONES.blog.icon,         tone: TONES.blog },
   ];
 
   return (
@@ -406,7 +429,7 @@ function DashboardSidebar({
                   type="button"
                   onClick={() => onNavigate(m.key)}
                   className={[
-                    "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition",
+                    "group relative flex w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left transition",
                     active && tone
                       ? `${tone.bgActive} ${tone.text}`
                       : active
@@ -414,12 +437,43 @@ function DashboardSidebar({
                         : "text-deep-600 hover:bg-cream-200 hover:text-deep-900 dark:text-cream-400 dark:hover:bg-deep-800 dark:hover:text-cream-100",
                   ].join(" ")}
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center">
-                    {m.icon}
+                  {/* Left accent strip when active */}
+                  {active && tone && (
+                    <span
+                      aria-hidden
+                      className={`absolute inset-y-1 left-0 w-1 rounded-full ${tone.bar}`}
+                    />
+                  )}
+
+                  <span
+                    className={[
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition",
+                      active && tone
+                        ? tone.bgSoft
+                        : "bg-cream-200 text-deep-500 group-hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-500 dark:group-hover:bg-deep-700",
+                    ].join(" ")}
+                  >
+                    <span
+                      className={
+                        active && tone
+                          ? tone.text
+                          : "text-deep-500 dark:text-cream-500"
+                      }
+                    >
+                      {m.icon}
+                    </span>
                   </span>
-                  <span className="min-w-0">
+
+                  <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold">{m.label}</span>
-                    <span className="block truncate text-xs text-deep-500 dark:text-cream-500">
+                    <span
+                      className={[
+                        "block truncate text-xs",
+                        active
+                          ? "text-current opacity-70"
+                          : "text-deep-500 dark:text-cream-500",
+                      ].join(" ")}
+                    >
                       {m.description}
                     </span>
                   </span>
@@ -471,7 +525,7 @@ function DashboardHeader({
   const searchable = activeModule !== "overview" && activeModule !== "destinations";
 
   return (
-    <header className="border-b border-deep-200 bg-cream-100/80 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/80">
+    <header className="border-b border-deep-200 bg-cream-100/85 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/85">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div>
           <div
@@ -538,24 +592,50 @@ function Overview({
                 type="button"
                 onClick={() => onNavigate(stat.module)}
                 className={[
-                  "relative w-full overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
+                  "group relative w-full overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
                   tone
                     ? `${tone.border} ${tone.borderHover}`
                     : "border-deep-200 hover:border-brand-400 dark:border-deep-800 dark:hover:border-brand-500",
                 ].join(" ")}
               >
+                {/* Left accent strip */}
                 {tone && (
                   <span
-                    className={`absolute inset-y-0 left-0 w-1 ${tone.bar}`}
+                    className={`absolute inset-y-0 left-0 w-1.5 ${tone.bar}`}
                     aria-hidden
                   />
                 )}
-                <div className="text-sm font-medium text-deep-500 dark:text-cream-500">
-                  {stat.label}
+
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-deep-500 dark:text-cream-500">
+                      {stat.label}
+                    </div>
+                    <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
+                      {stat.value}
+                    </div>
+                  </div>
+
+                  {/* Icon tile — the tone's identity mark */}
+                  {tone && (
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`}
+                      aria-hidden
+                    >
+                      {tone.icon}
+                    </span>
+                  )}
                 </div>
-                <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
-                  {stat.value}
-                </div>
+
+                {/* Bottom hint row, tone-colored */}
+                {tone && (
+                  <div
+                    className={`mt-4 inline-flex items-center gap-1 text-xs font-medium ${tone.text} opacity-70 transition group-hover:opacity-100`}
+                  >
+                    <span>Open module</span>
+                    <span aria-hidden>→</span>
+                  </div>
+                )}
               </button>
             </FadeIn>
           );
@@ -729,15 +809,7 @@ function DestinationEditor({
       <Field label="Image URL">
         <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="/images/…" className={inputClass} />
       </Field>
-      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
-        <input
-          type="checkbox"
-          checked={featured}
-          onChange={(e) => setFeatured(e.target.checked)}
-          className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500"
-        />
-        <span className="text-deep-700 dark:text-cream-200">Featured on homepage</span>
-      </label>
+      <ToggleField label="Featured on homepage" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );
 }
@@ -1099,10 +1171,7 @@ function PackageEditor({
       <Field label="Summary"><textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
-        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-deep-700 dark:text-cream-200">Featured</span>
-      </label>
+      <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );
 }
@@ -1441,10 +1510,7 @@ function EventEditor({
       <Field label="Location"><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
-        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-deep-700 dark:text-cream-200">Featured</span>
-      </label>
+      <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );
 }
@@ -1610,10 +1676,7 @@ function PostEditor({
       <Field label="Published date">
         <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={inputClass} />
       </Field>
-      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
-        <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-deep-700 dark:text-cream-200">Published (visible on public site)</span>
-      </label>
+      <ToggleField label="Published (visible on public site)" checked={published} onChange={setPublished} tone={tone} />
     </EditorShell>
   );
 }
@@ -1641,11 +1704,19 @@ function ModuleLayout({
     <div className="mx-auto max-w-7xl">
       <FadeIn>
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2 className={`text-xl font-bold ${tone.text}`}>{title}</h2>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-              {description}
-            </p>
+          <div className="flex items-start gap-3">
+            <span
+              className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`}
+              aria-hidden
+            >
+              {tone.icon}
+            </span>
+            <div>
+              <h2 className={`text-xl font-bold ${tone.text}`}>{title}</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
+                {description}
+              </p>
+            </div>
           </div>
           {action}
         </div>
@@ -1836,6 +1907,33 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function ToggleField({
+  label,
+  checked,
+  onChange,
+  tone,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  tone: ModuleTone;
+}) {
+  return (
+    <label
+      className={`flex items-center gap-3 rounded-xl border ${tone.border} ${tone.bgSoft} px-3.5 py-3 text-sm`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="h-4 w-4 rounded border-deep-300 focus:ring-2 focus:ring-brand-500/30"
+        style={{ accentColor: "var(--brand-500)" }}
+      />
+      <span className="text-deep-700 dark:text-cream-200">{label}</span>
+    </label>
+  );
+}
+
 function EmptyEditorState({
   title,
   description,
@@ -1846,11 +1944,17 @@ function EmptyEditorState({
   tone: ModuleTone;
 }) {
   return (
-    <div className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}>
-      <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}>
+    <div
+      className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}
+    >
+      <div
+        className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}
+      >
         <PencilLineIcon />
       </div>
-      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
+      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">
+        {title}
+      </h3>
       <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
         {description}
       </p>
@@ -1880,10 +1984,10 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ICONS (inline SVG, no dependency)                                          */
+/* ICONS — inline SVG line icons                                              */
 /* -------------------------------------------------------------------------- */
 
-const iconProps = {
+const iconBase = {
   fill: "none",
   stroke: "currentColor",
   strokeWidth: 1.75,
@@ -1895,7 +1999,7 @@ const iconProps = {
 
 function GridIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconBase}>
       <rect x="3" y="3" width="7" height="7" rx="1.5" />
       <rect x="14" y="3" width="7" height="7" rx="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1.5" />
@@ -1904,18 +2008,18 @@ function GridIcon() {
   );
 }
 
-function MapPinIcon() {
+function CompassMarkIcon() {
   return (
-    <svg {...iconProps}>
-      <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" />
-      <circle cx="12" cy="10" r="2.5" />
+    <svg {...iconBase}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
     </svg>
   );
 }
 
 function PawIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconBase}>
       <circle cx="7" cy="9" r="2" />
       <circle cx="12" cy="6.5" r="2" />
       <circle cx="17" cy="9" r="2" />
@@ -1925,18 +2029,19 @@ function PawIcon() {
   );
 }
 
-function CompassIcon() {
+function RouteIcon() {
   return (
-    <svg {...iconProps}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+    <svg {...iconBase}>
+      <circle cx="6" cy="19" r="2" />
+      <circle cx="18" cy="5" r="2" />
+      <path d="M8 19h9a3 3 0 0 0 0-6H7a3 3 0 0 1 0-6h9" />
     </svg>
   );
 }
 
 function BedIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconBase}>
       <path d="M3 20V8m0 5h18v7M21 20v-4a3 3 0 0 0-3-3H9v7" />
       <path d="M6.5 11.5a1.5 1.5 0 1 0 0-.01" />
     </svg>
@@ -1945,7 +2050,7 @@ function BedIcon() {
 
 function CalendarIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconBase}>
       <rect x="3" y="5" width="18" height="16" rx="2" />
       <path d="M3 10h18M8 3v4M16 3v4" />
     </svg>
@@ -1954,7 +2059,7 @@ function CalendarIcon() {
 
 function PenIcon() {
   return (
-    <svg {...iconProps}>
+    <svg {...iconBase}>
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
@@ -1963,7 +2068,7 @@ function PenIcon() {
 
 function PlusIcon() {
   return (
-    <svg {...iconProps} className="h-4 w-4">
+    <svg {...iconBase} className="h-4 w-4">
       <path d="M12 5v14M5 12h14" />
     </svg>
   );
@@ -1971,7 +2076,7 @@ function PlusIcon() {
 
 function SearchIcon() {
   return (
-    <svg {...iconProps} className="h-4 w-4">
+    <svg {...iconBase} className="h-4 w-4">
       <circle cx="11" cy="11" r="7" />
       <path d="m20 20-4-4" />
     </svg>
@@ -1980,7 +2085,7 @@ function SearchIcon() {
 
 function XIcon() {
   return (
-    <svg {...iconProps} className="h-5 w-5">
+    <svg {...iconBase} className="h-5 w-5">
       <path d="M6 6l12 12M18 6 6 18" />
     </svg>
   );
@@ -1988,7 +2093,7 @@ function XIcon() {
 
 function ArrowLeftIcon() {
   return (
-    <svg {...iconProps} className="h-4 w-4">
+    <svg {...iconBase} className="h-4 w-4">
       <path d="M19 12H5M11 18l-6-6 6-6" />
     </svg>
   );
@@ -1996,7 +2101,7 @@ function ArrowLeftIcon() {
 
 function PencilLineIcon() {
   return (
-    <svg {...iconProps} className="h-5 w-5">
+    <svg {...iconBase} className="h-5 w-5">
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
