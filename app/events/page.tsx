@@ -22,7 +22,7 @@ export default async function EventsPage() {
       <header className="mb-10">
         <h1 className="text-3xl font-bold">Events</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Festivals, travel expos, and seasonal wildlife spectacles across Kenya.
+          View Festivals, travel expos, and seasonal wildlife spectacles across Kenya.
         </p>
       </header>
 
