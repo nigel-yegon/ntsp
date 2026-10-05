@@ -12,13 +12,10 @@ export default async function BlogPage() {
   const posts = await prisma.post.findMany({
     where: { published: true },
     orderBy: { publishedAt: "desc" },
-    include: { tags: true } as any,
   });
 
   // Collect unique tags across all posts, sorted alphabetically
-  const tags = Array.from(
-    new Set(posts.flatMap((p) => p.tags)),
-  ).sort();
+  const tags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
