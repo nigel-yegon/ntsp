@@ -73,81 +73,81 @@ type ModuleTone = {
 
 const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
   destinations: {
-    ring: "ring-amber-500/10",
-    border: "border-amber-200 dark:border-amber-500/30",
-    borderHover: "hover:border-amber-400 dark:hover:border-amber-500/50",
-    bgSoft: "bg-amber-50 dark:bg-amber-500/5",
-    bgActive: "bg-amber-100/70 dark:bg-amber-500/10",
-    text: "text-amber-700 dark:text-amber-300",
-    button: "bg-amber-600",
-    buttonHover: "hover:bg-amber-700",
-    bar: "bg-amber-500",
-    pillBg: "bg-amber-100 dark:bg-amber-500/15",
-    pillText: "text-amber-800 dark:text-amber-200",
+    ring: "ring-brand-500/15",
+    border: "border-brand-300 dark:border-brand-700",
+    borderHover: "hover:border-brand-400 dark:hover:border-brand-500",
+    bgSoft: "bg-brand-50 dark:bg-brand-950/40",
+    bgActive: "bg-brand-100 dark:bg-brand-950/60",
+    text: "text-brand-700 dark:text-brand-300",
+    button: "bg-brand-600",
+    buttonHover: "hover:bg-brand-700",
+    bar: "bg-brand-500",
+    pillBg: "bg-brand-100 dark:bg-brand-950",
+    pillText: "text-brand-800 dark:text-brand-200",
   },
   experiences: {
-    ring: "ring-emerald-500/10",
-    border: "border-emerald-200 dark:border-emerald-500/30",
-    borderHover: "hover:border-emerald-400 dark:hover:border-emerald-500/50",
-    bgSoft: "bg-emerald-50 dark:bg-emerald-500/5",
-    bgActive: "bg-emerald-100/70 dark:bg-emerald-500/10",
+    ring: "ring-emerald-500/15",
+    border: "border-emerald-300 dark:border-emerald-800",
+    borderHover: "hover:border-emerald-400 dark:hover:border-emerald-600",
+    bgSoft: "bg-emerald-50 dark:bg-emerald-950/40",
+    bgActive: "bg-emerald-100 dark:bg-emerald-950/60",
     text: "text-emerald-700 dark:text-emerald-300",
-    button: "bg-emerald-600",
-    buttonHover: "hover:bg-emerald-700",
-    bar: "bg-emerald-500",
-    pillBg: "bg-emerald-100 dark:bg-emerald-500/15",
+    button: "bg-emerald-700",
+    buttonHover: "hover:bg-emerald-800",
+    bar: "bg-emerald-600",
+    pillBg: "bg-emerald-100 dark:bg-emerald-950",
     pillText: "text-emerald-800 dark:text-emerald-200",
   },
   packages: {
-    ring: "ring-indigo-500/10",
-    border: "border-indigo-200 dark:border-indigo-500/30",
-    borderHover: "hover:border-indigo-400 dark:hover:border-indigo-500/50",
-    bgSoft: "bg-indigo-50 dark:bg-indigo-500/5",
-    bgActive: "bg-indigo-100/70 dark:bg-indigo-500/10",
+    ring: "ring-indigo-500/15",
+    border: "border-indigo-300 dark:border-indigo-800",
+    borderHover: "hover:border-indigo-400 dark:hover:border-indigo-600",
+    bgSoft: "bg-indigo-50 dark:bg-indigo-950/40",
+    bgActive: "bg-indigo-100 dark:bg-indigo-950/60",
     text: "text-indigo-700 dark:text-indigo-300",
-    button: "bg-indigo-600",
-    buttonHover: "hover:bg-indigo-700",
-    bar: "bg-indigo-500",
-    pillBg: "bg-indigo-100 dark:bg-indigo-500/15",
+    button: "bg-indigo-700",
+    buttonHover: "hover:bg-indigo-800",
+    bar: "bg-indigo-600",
+    pillBg: "bg-indigo-100 dark:bg-indigo-950",
     pillText: "text-indigo-800 dark:text-indigo-200",
   },
   stay: {
-    ring: "ring-rose-500/10",
-    border: "border-rose-200 dark:border-rose-500/30",
-    borderHover: "hover:border-rose-400 dark:hover:border-rose-500/50",
-    bgSoft: "bg-rose-50 dark:bg-rose-500/5",
-    bgActive: "bg-rose-100/70 dark:bg-rose-500/10",
+    ring: "ring-rose-500/15",
+    border: "border-rose-300 dark:border-rose-800",
+    borderHover: "hover:border-rose-400 dark:hover:border-rose-600",
+    bgSoft: "bg-rose-50 dark:bg-rose-950/40",
+    bgActive: "bg-rose-100 dark:bg-rose-950/60",
     text: "text-rose-700 dark:text-rose-300",
-    button: "bg-rose-600",
-    buttonHover: "hover:bg-rose-700",
-    bar: "bg-rose-500",
-    pillBg: "bg-rose-100 dark:bg-rose-500/15",
+    button: "bg-rose-700",
+    buttonHover: "hover:bg-rose-800",
+    bar: "bg-rose-600",
+    pillBg: "bg-rose-100 dark:bg-rose-950",
     pillText: "text-rose-800 dark:text-rose-200",
   },
   events: {
-    ring: "ring-violet-500/10",
-    border: "border-violet-200 dark:border-violet-500/30",
-    borderHover: "hover:border-violet-400 dark:hover:border-violet-500/50",
-    bgSoft: "bg-violet-50 dark:bg-violet-500/5",
-    bgActive: "bg-violet-100/70 dark:bg-violet-500/10",
+    ring: "ring-violet-500/15",
+    border: "border-violet-300 dark:border-violet-800",
+    borderHover: "hover:border-violet-400 dark:hover:border-violet-600",
+    bgSoft: "bg-violet-50 dark:bg-violet-950/40",
+    bgActive: "bg-violet-100 dark:bg-violet-950/60",
     text: "text-violet-700 dark:text-violet-300",
-    button: "bg-violet-600",
-    buttonHover: "hover:bg-violet-700",
-    bar: "bg-violet-500",
-    pillBg: "bg-violet-100 dark:bg-violet-500/15",
+    button: "bg-violet-700",
+    buttonHover: "hover:bg-violet-800",
+    bar: "bg-violet-600",
+    pillBg: "bg-violet-100 dark:bg-violet-950",
     pillText: "text-violet-800 dark:text-violet-200",
   },
   blog: {
-    ring: "ring-sky-500/10",
-    border: "border-sky-200 dark:border-sky-500/30",
-    borderHover: "hover:border-sky-400 dark:hover:border-sky-500/50",
-    bgSoft: "bg-sky-50 dark:bg-sky-500/5",
-    bgActive: "bg-sky-100/70 dark:bg-sky-500/10",
+    ring: "ring-sky-500/15",
+    border: "border-sky-300 dark:border-sky-800",
+    borderHover: "hover:border-sky-400 dark:hover:border-sky-600",
+    bgSoft: "bg-sky-50 dark:bg-sky-950/40",
+    bgActive: "bg-sky-100 dark:bg-sky-950/60",
     text: "text-sky-700 dark:text-sky-300",
-    button: "bg-sky-600",
-    buttonHover: "hover:bg-sky-700",
-    bar: "bg-sky-500",
-    pillBg: "bg-sky-100 dark:bg-sky-500/15",
+    button: "bg-sky-700",
+    buttonHover: "hover:bg-sky-800",
+    bar: "bg-sky-600",
+    pillBg: "bg-sky-100 dark:bg-sky-950",
     pillText: "text-sky-800 dark:text-sky-200",
   },
 };
@@ -156,7 +156,6 @@ export function DashboardClient() {
   const [activeModule, setActiveModule] = useState<ModuleKey>("overview");
   const [search, setSearch] = useState("");
 
-  /* ---- Data state ---- */
   const [destinations, setDestinations] = useState<DestinationRow[]>([]);
   const [experiences, setExperiences] = useState<ExperienceRow[]>([]);
   const [packages, setPackages] = useState<PackageRow[]>([]);
@@ -167,7 +166,6 @@ export function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /* ---- Initial load ---- */
   useEffect(() => {
     let cancelled = false;
 
@@ -212,7 +210,6 @@ export function DashboardClient() {
     };
   }, []);
 
-  /* ---- Filtered lists ---- */
   const filteredExperiences = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return experiences;
@@ -259,7 +256,6 @@ export function DashboardClient() {
     );
   }, [search, posts]);
 
-  /* ---- Dashboard stats ---- */
   const stats = [
     { label: "Destinations", value: destinations.length, module: "destinations" as ModuleKey },
     { label: "Experiences",  value: experiences.length,  module: "experiences"  as ModuleKey },
@@ -269,9 +265,8 @@ export function DashboardClient() {
     { label: "Blog posts",   value: posts.length,        module: "blog"         as ModuleKey },
   ];
 
-  /* ---- Render ---- */
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-ink-950">
+    <div className="min-h-screen bg-cream-200 dark:bg-deep-950">
       <div className="flex min-h-screen">
         <DashboardSidebar activeModule={activeModule} onNavigate={setActiveModule} />
 
@@ -368,34 +363,37 @@ function DashboardSidebar({
     key: ModuleKey;
     label: string;
     description: string;
-    icon: string;
+    icon: React.ReactNode;
     tone?: ModuleTone;
   }[] = [
-    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: "📊" },
-    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: "📍", tone: TONES.destinations },
-    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: "🦁", tone: TONES.experiences },
-    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: "🧭", tone: TONES.packages },
-    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: "🏨", tone: TONES.stay },
-    { key: "events",       label: "Events",       description: "Manage events",        icon: "📅", tone: TONES.events },
-    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: "📝", tone: TONES.blog },
+    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />     },
+    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: <MapPinIcon />   , tone: TONES.destinations },
+    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: <PawIcon />      , tone: TONES.experiences },
+    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: <CompassIcon />  , tone: TONES.packages },
+    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: <BedIcon />      , tone: TONES.stay },
+    { key: "events",       label: "Events",       description: "Manage events",        icon: <CalendarIcon /> , tone: TONES.events },
+    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: <PenIcon />      , tone: TONES.blog },
   ];
 
   return (
-    <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-white dark:border-white/10 dark:bg-ink-900 lg:block">
+    <aside className="hidden w-72 shrink-0 border-r border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900 lg:block">
       <div className="sticky top-0 flex h-screen flex-col">
-        <div className="border-b border-slate-200 px-6 py-5 dark:border-white/10">
+        <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
           <Link href="/" className="block">
-            <div className="text-lg font-bold tracking-tight text-slate-950 dark:text-white">
-              NTSP<span className="text-brand-600">.</span>
+            <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-deep-800 dark:text-cream-100">
+              <span>🇰🇪</span>
+              <span>
+                NTSP<span className="text-brand-600 dark:text-brand-400">.</span>
+              </span>
             </div>
-            <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-1 text-xs text-deep-500 dark:text-cream-500">
               Content Dashboard
             </div>
           </Link>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-6">
-          <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+          <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
             Content
           </div>
           <nav className="space-y-1">
@@ -412,14 +410,16 @@ function DashboardSidebar({
                     active && tone
                       ? `${tone.bgActive} ${tone.text}`
                       : active
-                        ? "bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white",
+                        ? "bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300"
+                        : "text-deep-600 hover:bg-cream-200 hover:text-deep-900 dark:text-cream-400 dark:hover:bg-deep-800 dark:hover:text-cream-100",
                   ].join(" ")}
                 >
-                  <span className="text-xl">{m.icon}</span>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center">
+                    {m.icon}
+                  </span>
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold">{m.label}</span>
-                    <span className="block truncate text-xs text-slate-400">
+                    <span className="block truncate text-xs text-deep-500 dark:text-cream-500">
                       {m.description}
                     </span>
                   </span>
@@ -429,12 +429,13 @@ function DashboardSidebar({
           </nav>
         </div>
 
-        <div className="border-t border-slate-200 p-4 dark:border-white/10">
+        <div className="border-t border-deep-200 p-4 dark:border-deep-800">
           <Link
             href="/"
-            className="block rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500 hover:bg-slate-100 dark:bg-white/5 dark:text-slate-400 dark:hover:bg-white/10"
+            className="flex items-center gap-2 rounded-xl bg-cream-200 px-4 py-3 text-xs text-deep-600 transition hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-400 dark:hover:bg-deep-700"
           >
-            ← View public site
+            <ArrowLeftIcon />
+            <span>View public site</span>
           </Link>
         </div>
       </div>
@@ -470,25 +471,32 @@ function DashboardHeader({
   const searchable = activeModule !== "overview" && activeModule !== "destinations";
 
   return (
-    <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-ink-900/80">
+    <header className="border-b border-deep-200 bg-cream-100/80 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/80">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div>
-          <div className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600"}`}>
+          <div
+            className={`text-xs font-medium uppercase tracking-[0.16em] ${
+              tone?.text ?? "text-brand-600 dark:text-brand-400"
+            }`}
+          >
             NTSP Content
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
             {titles[activeModule]}
           </h1>
         </div>
 
         {searchable && tone && (
           <div className="relative w-full lg:w-80">
+            <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500">
+              <SearchIcon />
+            </span>
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Search ${titles[activeModule].toLowerCase()}...`}
-              className={`w-full rounded-xl border ${tone.border} bg-slate-50 py-2.5 pl-4 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${tone.ring} dark:bg-white/5 dark:text-white dark:focus:bg-white/10`}
+              className={`w-full rounded-xl border ${tone.border} bg-cream-50 py-2.5 pl-10 pr-4 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:bg-cream-100 focus:ring-2 ${tone.ring} dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:bg-deep-950`}
             />
           </div>
         )}
@@ -512,8 +520,10 @@ function Overview({
     <div className="mx-auto max-w-7xl">
       <FadeIn>
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-slate-950 dark:text-white">Overview</h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+          <h2 className="text-xl font-bold text-deep-800 dark:text-cream-100">
+            Overview
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
             Manage all content that appears on the NTSP public site.
           </p>
         </div>
@@ -528,19 +538,22 @@ function Overview({
                 type="button"
                 onClick={() => onNavigate(stat.module)}
                 className={[
-                  "relative w-full overflow-hidden rounded-2xl border bg-white p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-ink-900",
+                  "relative w-full overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
                   tone
                     ? `${tone.border} ${tone.borderHover}`
-                    : "border-slate-200 hover:border-brand-200 dark:border-white/10 dark:hover:border-brand-500/30",
+                    : "border-deep-200 hover:border-brand-400 dark:border-deep-800 dark:hover:border-brand-500",
                 ].join(" ")}
               >
                 {tone && (
-                  <span className={`absolute inset-y-0 left-0 w-1 ${tone.bar}`} aria-hidden />
+                  <span
+                    className={`absolute inset-y-0 left-0 w-1 ${tone.bar}`}
+                    aria-hidden
+                  />
                 )}
-                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <div className="text-sm font-medium text-deep-500 dark:text-cream-500">
                   {stat.label}
                 </div>
-                <div className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
+                <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
                   {stat.value}
                 </div>
               </button>
@@ -716,14 +729,14 @@ function DestinationEditor({
       <Field label="Image URL">
         <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="/images/…" className={inputClass} />
       </Field>
-      <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm dark:border-white/10 dark:bg-white/5">
+      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
         <input
           type="checkbox"
           checked={featured}
           onChange={(e) => setFeatured(e.target.checked)}
-          className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+          className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500"
         />
-        <span className="text-slate-700 dark:text-slate-200">Featured on homepage</span>
+        <span className="text-deep-700 dark:text-cream-200">Featured on homepage</span>
       </label>
     </EditorShell>
   );
@@ -1086,9 +1099,9 @@ function PackageEditor({
       <Field label="Summary"><textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-      <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm dark:border-white/10 dark:bg-white/5">
-        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-slate-700 dark:text-slate-200">Featured</span>
+      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
+        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
+        <span className="text-deep-700 dark:text-cream-200">Featured</span>
       </label>
     </EditorShell>
   );
@@ -1428,9 +1441,9 @@ function EventEditor({
       <Field label="Location"><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-      <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm dark:border-white/10 dark:bg-white/5">
-        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-slate-700 dark:text-slate-200">Featured</span>
+      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
+        <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
+        <span className="text-deep-700 dark:text-cream-200">Featured</span>
       </label>
     </EditorShell>
   );
@@ -1597,9 +1610,9 @@ function PostEditor({
       <Field label="Published date">
         <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={inputClass} />
       </Field>
-      <label className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm dark:border-white/10 dark:bg-white/5">
-        <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
-        <span className="text-slate-700 dark:text-slate-200">Published (visible on public site)</span>
+      <label className="flex items-center gap-3 rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm dark:border-deep-800 dark:bg-deep-950">
+        <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4 rounded border-deep-300 text-brand-600 focus:ring-brand-500" />
+        <span className="text-deep-700 dark:text-cream-200">Published (visible on public site)</span>
       </label>
     </EditorShell>
   );
@@ -1630,7 +1643,7 @@ function ModuleLayout({
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className={`text-xl font-bold ${tone.text}`}>{title}</h2>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
               {description}
             </p>
           </div>
@@ -1672,10 +1685,10 @@ function RowCard({
   return (
     <div
       className={[
-        "relative overflow-hidden rounded-2xl border bg-white p-5 pl-6 transition dark:bg-ink-900",
+        "relative overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 transition dark:bg-deep-900",
         active
           ? `${tone.border} ring-2 ${tone.ring} ${tone.bgSoft}`
-          : `border-slate-200 ${tone.borderHover} dark:border-white/10`,
+          : `border-deep-200 ${tone.borderHover} dark:border-deep-800`,
       ].join(" ")}
     >
       <span
@@ -1688,15 +1701,15 @@ function RowCard({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-slate-950 dark:text-white">{title}</h3>
+            <h3 className="font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
             {badge && (
               <span className={`rounded-full ${tone.pillBg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tone.pillText}`}>
                 {badge}
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">{subtitle}</p>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-deep-600 dark:text-cream-400">
             {description || "No description yet."}
           </p>
         </div>
@@ -1712,7 +1725,7 @@ function RowCard({
             type="button"
             onClick={onDelete}
             disabled={disabled}
-            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
+            className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
           >
             Delete
           </button>
@@ -1740,7 +1753,8 @@ function AddButton({
       disabled={pending}
       className={`inline-flex items-center gap-2 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60`}
     >
-      + {pending ? "Adding…" : label}
+      <PlusIcon />
+      {pending ? "Adding…" : label}
     </button>
   );
 }
@@ -1763,23 +1777,23 @@ function EditorShell({
   tone: ModuleTone;
 }) {
   return (
-    <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-ink-900">
+    <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-hidden rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900">
       <span className={`block h-1 w-full ${tone.bar}`} aria-hidden />
 
-      <div className="flex items-start justify-between border-b border-slate-200 bg-white px-5 py-4 dark:border-white/10 dark:bg-ink-900">
+      <div className="flex items-start justify-between border-b border-deep-200 bg-cream-50 px-5 py-4 dark:border-deep-800 dark:bg-deep-900">
         <div>
           <div className={`text-xs font-semibold uppercase tracking-[0.14em] ${tone.text}`}>
             {eyebrow}
           </div>
-          <h3 className="mt-1 font-semibold text-slate-950 dark:text-white">{title}</h3>
+          <h3 className="mt-1 font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+          className="text-deep-400 transition hover:text-deep-700 dark:text-cream-500 dark:hover:text-cream-100"
           aria-label="Close editor"
         >
-          ✕
+          <XIcon />
         </button>
       </div>
 
@@ -1787,7 +1801,7 @@ function EditorShell({
         <div className="space-y-6">
           {children}
 
-          <div className="flex gap-2 border-t border-slate-200 pt-4 dark:border-white/10">
+          <div className="flex gap-2 border-t border-deep-200 pt-4 dark:border-deep-800">
             <button
               type="button"
               onClick={onSave}
@@ -1800,7 +1814,7 @@ function EditorShell({
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+              className="rounded-xl border border-deep-200 px-4 py-2.5 text-sm font-semibold text-deep-600 transition hover:bg-cream-100 dark:border-deep-800 dark:text-cream-300 dark:hover:bg-deep-800"
             >
               Cancel
             </button>
@@ -1814,7 +1828,7 @@ function EditorShell({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold text-slate-700 dark:text-slate-300">
+      <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
         {label}
       </span>
       {children}
@@ -1834,10 +1848,10 @@ function EmptyEditorState({
   return (
     <div className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}>
       <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}>
-        ✎
+        <PencilLineIcon />
       </div>
-      <h3 className="mt-4 text-sm font-semibold text-slate-950 dark:text-white">{title}</h3>
-      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-slate-600 dark:text-slate-400">
+      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
+      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
         {description}
       </p>
     </div>
@@ -1850,7 +1864,7 @@ function LoadingSkeletons() {
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="h-28 animate-pulse rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-ink-900"
+          className="h-28 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
         />
       ))}
     </>
@@ -1859,11 +1873,139 @@ function LoadingSkeletons() {
 
 function ErrorBanner({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
+    <div className="mt-6 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">
       {children}
     </div>
   );
 }
 
+/* -------------------------------------------------------------------------- */
+/* ICONS (inline SVG, no dependency)                                          */
+/* -------------------------------------------------------------------------- */
+
+const iconProps = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.75,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  viewBox: "0 0 24 24",
+  className: "h-5 w-5",
+};
+
+function GridIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+function MapPinIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  );
+}
+
+function PawIcon() {
+  return (
+    <svg {...iconProps}>
+      <circle cx="7" cy="9" r="2" />
+      <circle cx="12" cy="6.5" r="2" />
+      <circle cx="17" cy="9" r="2" />
+      <circle cx="5.5" cy="14" r="2" />
+      <path d="M9.5 20c1.5-2 4.5-2.5 6-1 1.5 1 3.5 1 5-1" />
+    </svg>
+  );
+}
+
+function CompassIcon() {
+  return (
+    <svg {...iconProps}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+    </svg>
+  );
+}
+
+function BedIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M3 20V8m0 5h18v7M21 20v-4a3 3 0 0 0-3-3H9v7" />
+      <path d="M6.5 11.5a1.5 1.5 0 1 0 0-.01" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg {...iconProps}>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  );
+}
+
+function PenIcon() {
+  return (
+    <svg {...iconProps}>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg {...iconProps} className="h-4 w-4">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg {...iconProps} className="h-4 w-4">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-4-4" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg {...iconProps} className="h-5 w-5">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg {...iconProps} className="h-4 w-4">
+      <path d="M19 12H5M11 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function PencilLineIcon() {
+  return (
+    <svg {...iconProps} className="h-5 w-5">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* STYLES                                                                     */
+/* -------------------------------------------------------------------------- */
+
 const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:bg-white/10";
+  "w-full rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-brand-500 focus:bg-cream-50 focus:ring-2 focus:ring-brand-500/15 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:border-brand-500 dark:focus:bg-deep-950";
