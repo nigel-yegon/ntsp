@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { HeroWaves } from "./hero-waves";
-import { CursorBubbles } from "./cursor-bubbles";
+import { HeroBackdrop } from "./hero-backdrop";
 
 export function HeroSection({
   eyebrow,
@@ -20,16 +19,11 @@ export function HeroSection({
   return (
     <section
       ref={ref}
-      className="hero-band relative overflow-hidden border-b border-deep-200 dark:border-deep-800"
+      className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800"
     >
-      {/* Animated waves */}
-      <HeroWaves />
+      <HeroBackdrop containerRef={ref} />
 
-      {/* Cursor bubbles */}
-      <CursorBubbles containerRef={ref} />
-
-      {/* Content */}
-      <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-20">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 md:py-28">
         {eyebrow && (
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
             {eyebrow}
