@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Destinations (counties / parks / cities) ─────────────────────
+model Destination {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique
+  slug        String          @unique
+  county      String
+  description String
+  imageUrl    String?
+  featured    Boolean         @default(false)
+  attractions Attraction[]
+  packages    TourPackage[]
+  stays       Accommodation[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+// ─── Attractions (things to see/do at a destination) ──────────────
+model Attraction {
+  id            Int         @id @default(autoincrement())
+  name          String
+  slug          String      @unique
+  description   String
+  category      String // e.g. "Wildlife", "Beach", "Cultural", "Adventure"
+  imageUrl      String?
+  destinationId Int
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([destinationId])
+}
+
+// ─── Tour Packages ─────────────────────────────────────────────────
+model TourPackage {
+  id            Int         @id @default(autoincrement())
+  title         String
+  slug          String      @unique
+  summary       String
+  description   String
+  priceKes      Int // price in Kenyan Shillings
+  durationDays  Int
+  imageUrl      String?
+  destinationId Int
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  featured      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([destinationId])
+}
+
+// ─── Accommodations (hotels, lodges, camps) ───────────────────────
+model Accommodation {
+  id            Int         @id @default(autoincrement())
+  name          String
+  slug          String      @unique
+  type          String // "Hotel", "Lodge", "Tented Camp", "Resort"
+  description   String
+  location      String
+  priceRange    String? // e.g. "KES 15,000 - 40,000"
+  imageUrl      String?
+  destinationId Int
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([destinationId])
+}
+
+// ─── Events (festivals, expos, cultural events) ───────────────────
+model Event {
+  id          Int       @id @default(autoincrement())
+  name        String
+  slug        String    @unique
+  description String
+  startDate   DateTime
+  endDate     DateTime?
+  location    String
+  imageUrl    String?
+  featured    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
