@@ -12,6 +12,46 @@ async function main() {
 
     console.log("🌱 Seeding NTSP database...");
 
+    //Blog Posts
+
+    const posts = [
+  {
+    title: "The Best Time to Visit the Maasai Mara",
+    slug: "best-time-to-visit-maasai-mara",
+    excerpt:
+      "Migration season vs. green season — what each offers, and when to book for the best rates.",
+    content: "Full article content goes here...",
+    published: true,
+    publishedAt: new Date("2026-09-12"),
+  },
+  {
+    title: "A First-Timer's Guide to Diani Beach",
+    slug: "diani-beach-guide",
+    excerpt:
+      "Where to stay, what to eat, and how to get the most out of Kenya's award-winning coastline.",
+    content: "Full article content goes here...",
+    published: true,
+    publishedAt: new Date("2026-08-28"),
+  },
+  {
+    title: "Kenya Visa & Entry Guide for 2026",
+    slug: "kenya-visa-guide-2026",
+    excerpt:
+      "Everything you need to know about the eTA, vaccinations, and what to have ready at the border.",
+    content: "Full article content goes here...",
+    published: true,
+    publishedAt: new Date("2026-08-05"),
+  },
+];
+
+for (const p of posts) {
+  await prisma.post.upsert({
+    where: { slug: p.slug },
+    update: {},
+    create: p,
+  });
+}
+
     // ─── Destinations ──────────────────────────────────────────────
     const maasaiMara = await prisma.destination.upsert({
         where: { slug: "maasai-mara" },
