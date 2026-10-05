@@ -20,10 +20,14 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
-    function onScroll() { setScrolled(window.scrollY > 8); }
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+    }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -31,7 +35,9 @@ export function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
   const isActive = (href: string) =>
@@ -46,19 +52,33 @@ export function Navbar() {
             : "border-transparent bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
         }`}
       >
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight" aria-label="NTSP home">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+          {/* ─── Logo + stacked title ─────────────────────── */}
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+            aria-label="National Tourism Service Portal home"
+          >
             <Image
-              src="/logo-2.png"
-              alt="NTSP"
+              src="/logo.png"
+              alt=""
               width={140}
-              height={40}
+              height={48}
               priority
-              className="h-13.75 w-auto"
+              className="h-[55px] w-auto shrink-0"
             />
+            <span className="hidden flex-col items-start justify-end leading-[0.95] sm:flex">
+              <span className="text-lg font-medium tracking-tight text-deep-800 lg:text-xl dark:text-cream-100">
+                National Tourism
+              </span>
+              <span className="text-lg font-medium tracking-tight text-brand-600 lg:text-xl dark:text-brand-400">
+                Service Portal
+              </span>
+            </span>
           </Link>
 
-          <ul className="hidden items-center gap-1 md:flex">
+          {/* ─── Desktop nav ─────────────────────────────── */}
+          <ul className="hidden items-center gap-1 xl:flex">
             {links.map((l) => {
               const active = isActive(l.href);
               return (
@@ -81,18 +101,19 @@ export function Navbar() {
             })}
           </ul>
 
-          <div className="flex items-center gap-2">
+          {/* ─── Right cluster ───────────────────────────── */}
+          <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
             <Link
               href="/plan"
-              className="hidden rounded-md bg-deep-800 px-3.5 py-1.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 md:inline-block dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
+              className="hidden rounded-md bg-deep-800 px-3.5 py-1.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 xl:inline-block dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
             >
               Plan Your Trip
             </Link>
 
             <button
               onClick={() => setOpen(true)}
-              className="rounded-md border border-deep-300 p-2 text-deep-700 md:hidden dark:border-deep-700 dark:text-cream-200"
+              className="rounded-md border border-deep-300 p-2 text-deep-700 xl:hidden dark:border-deep-700 dark:text-cream-200"
               aria-label="Open menu"
             >
               ☰
@@ -101,8 +122,9 @@ export function Navbar() {
         </nav>
       </header>
 
+      {/* ─── Mobile drawer ───────────────────────────────── */}
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <div
             className="absolute inset-0 bg-deep-950/50 backdrop-blur-sm"
             onClick={() => setOpen(false)}
@@ -110,14 +132,27 @@ export function Navbar() {
           />
           <div className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-cream-100 shadow-2xl dark:bg-deep-950">
             <div className="flex items-center justify-between border-b border-deep-200 px-4 py-3 dark:border-deep-800">
-              <Link href="/" onClick={() => setOpen(false)} aria-label="NTSP home">
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2"
+                aria-label="National Tourism Service Portal home"
+              >
                 <Image
-                  src="/logo-2.png"
-                  alt="NTSP"
-                  width={120}
-                  height={34}
-                  className="h-8 w-auto"
+                  src="/logo.png"
+                  alt=""
+                  width={80}
+                  height={28}
+                  className="h-9 w-auto"
                 />
+                <span className="flex flex-col items-start justify-end leading-[0.95]">
+                  <span className="text-sm font-medium tracking-tight text-deep-800 dark:text-cream-100">
+                    National Tourism
+                  </span>
+                  <span className="text-sm font-medium tracking-tight text-brand-600 dark:text-brand-400">
+                    Service Portal
+                  </span>
+                </span>
               </Link>
               <button
                 onClick={() => setOpen(false)}
@@ -153,7 +188,7 @@ export function Navbar() {
               <Link
                 href="/plan"
                 onClick={() => setOpen(false)}
-                className="block rounded-md bg-deep-800 px-3 py-2.5 text-center text-sm font-medium text-cream-100 dark:bg-brand-500 dark:text-deep-900"
+                className="block rounded-md bg-deep-800 px-3 py-2.5 text-center text-sm font-medium text-cream-100 dark:bg-brand-500 dark:text-brand-900"
               >
                 Plan Your Trip
               </Link>
