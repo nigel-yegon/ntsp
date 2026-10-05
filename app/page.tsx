@@ -1,6 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { HeroSection } from "./components/hero-section";
 
 export const revalidate = 300;
 
@@ -43,37 +44,33 @@ export default async function Home() {
   return (
     <div>
       {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="hero-band relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto flex max-w-6xl flex-col items-center px-4 py-20 text-center md:py-28">
-          <span className="rounded-full bg-brand-100 px-3 py-1 text-xs font-medium text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-            Magical Kenya, curated
-          </span>
-          <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-tight text-deep-800 md:text-6xl dark:text-cream-100">
+      <HeroSection
+        eyebrow="Magical Kenya, curated"
+        title={
+          <>
             Discover Kenya
             <span className="block text-brand-600 dark:text-brand-400">
               from safari to sea
             </span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-deep-600 dark:text-cream-300">
-            From the Great Migration in the Maasai Mara to the white sands of Diani —
-            browse destinations, book packages, and plan your trip.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/destinations"
-              className="rounded-md bg-deep-800 px-5 py-2.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
-            >
-              Explore destinations
-            </Link>
-            <Link
-              href="/packages"
-              className="rounded-md border border-deep-300 bg-cream-50 px-5 py-2.5 text-sm font-medium text-deep-800 transition hover:bg-cream-100 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-100 dark:hover:bg-deep-800"
-            >
-              Browse packages
-            </Link>
-          </div>
+          </>
+        }
+        subtitle="From the Great Migration in the Maasai Mara to the white sands of Diani — browse destinations, book packages, and plan your trip."
+      >
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/destinations"
+            className="rounded-md bg-deep-800 px-5 py-2.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
+          >
+            Explore destinations
+          </Link>
+          <Link
+            href="/packages"
+            className="rounded-md border border-deep-300 bg-cream-50 px-5 py-2.5 text-sm font-medium text-deep-800 transition hover:bg-cream-100 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-100 dark:hover:bg-deep-800"
+          >
+            Browse packages
+          </Link>
         </div>
-      </section>
+      </HeroSection>
 
       <div className="mx-auto max-w-6xl space-y-20 px-4 py-16">
         {/* ─── EXPERIENCES ───────────────────────────────────── */}

@@ -217,3 +217,53 @@ body::before {
   );
   opacity: 0.35;
 }
+/* ─── Animated waves ────────────────────────────────────────── */
+@keyframes wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-wave-slow {
+  animation: wave-drift 22s linear infinite;
+}
+.animate-wave-medium {
+  animation: wave-drift 16s linear infinite;
+}
+.animate-wave-fast {
+  animation: wave-drift 12s linear infinite;
+}
+
+/* ─── Cursor bubbles ────────────────────────────────────────── */
+@keyframes bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.5);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(calc(var(--drift) * 0.1), -6px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), -90px) scale(1.3);
+  }
+}
+
+.animate-bubble-rise {
+  animation: bubble-rise 1.4s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+/* Pause animation when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-wave-slow,
+  .animate-wave-medium,
+  .animate-wave-fast,
+  .animate-bubble-rise {
+    animation: none;
+  }
+}
