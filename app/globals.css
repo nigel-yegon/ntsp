@@ -13,16 +13,31 @@
   --brand-200: #f2d98a;
   --brand-300: #ebc454;
   --brand-400: #dcac1c;
-  --brand-500: #bf9000;   /* 👈 rgb(191, 144, 0) */
+  --brand-500: #bf9000;   /* rgb(191, 144, 0) */
   --brand-600: #a17a00;
   --brand-700: #826200;
   --brand-800: #634a00;
   --brand-900: #433200;
   --brand-950: #2a1f00;
+
+  /* Ink — warm-neutral dark scale used by the admin dashboard (and anywhere
+     else that wants layered dark surfaces). Tuned to sit comfortably beside
+     the gold brand color rather than feeling cold or pure-black. */
+  --ink-50:  #f8f8f7;
+  --ink-100: #eeeeec;
+  --ink-200: #d9d8d4;
+  --ink-300: #b8b6b0;
+  --ink-400: #8f8d86;
+  --ink-500: #6b6960;
+  --ink-600: #4f4d46;
+  --ink-700: #38362f;
+  --ink-800: #24231d;
+  --ink-900: #16150f;   /* sidebar / card surfaces in dark mode */
+  --ink-950: #0a0906;   /* page background in dark mode */
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #0a0906;   /* match ink-950 */
   --foreground: #ededed;
 }
 
@@ -32,7 +47,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Expose brand tokens as utilities: bg-brand-500, text-brand-600, etc. */
+  /* Brand tokens */
   --color-brand-50:  var(--brand-50);
   --color-brand-100: var(--brand-100);
   --color-brand-200: var(--brand-200);
@@ -44,6 +59,19 @@
   --color-brand-800: var(--brand-800);
   --color-brand-900: var(--brand-900);
   --color-brand-950: var(--brand-950);
+
+  /* Ink tokens — exposed as bg-ink-900, text-ink-300, border-ink-800, etc. */
+  --color-ink-50:  var(--ink-50);
+  --color-ink-100: var(--ink-100);
+  --color-ink-200: var(--ink-200);
+  --color-ink-300: var(--ink-300);
+  --color-ink-400: var(--ink-400);
+  --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600);
+  --color-ink-700: var(--ink-700);
+  --color-ink-800: var(--ink-800);
+  --color-ink-900: var(--ink-900);
+  --color-ink-950: var(--ink-950);
 }
 
 body {
@@ -51,6 +79,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
 :focus-visible {
   outline: 2px solid var(--brand-500);
   outline-offset: 2px;

@@ -57,6 +57,101 @@ type ModuleKey =
   | "events"
   | "blog";
 
+type ModuleTone = {
+  ring: string;
+  border: string;
+  borderHover: string;
+  bgSoft: string;
+  bgActive: string;
+  text: string;
+  button: string;
+  buttonHover: string;
+  bar: string;
+  pillBg: string;
+  pillText: string;
+};
+
+const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
+  destinations: {
+    ring: "ring-amber-500/10",
+    border: "border-amber-200 dark:border-amber-500/30",
+    borderHover: "hover:border-amber-400 dark:hover:border-amber-500/50",
+    bgSoft: "bg-amber-50 dark:bg-amber-500/5",
+    bgActive: "bg-amber-100/70 dark:bg-amber-500/10",
+    text: "text-amber-700 dark:text-amber-300",
+    button: "bg-amber-600",
+    buttonHover: "hover:bg-amber-700",
+    bar: "bg-amber-500",
+    pillBg: "bg-amber-100 dark:bg-amber-500/15",
+    pillText: "text-amber-800 dark:text-amber-200",
+  },
+  experiences: {
+    ring: "ring-emerald-500/10",
+    border: "border-emerald-200 dark:border-emerald-500/30",
+    borderHover: "hover:border-emerald-400 dark:hover:border-emerald-500/50",
+    bgSoft: "bg-emerald-50 dark:bg-emerald-500/5",
+    bgActive: "bg-emerald-100/70 dark:bg-emerald-500/10",
+    text: "text-emerald-700 dark:text-emerald-300",
+    button: "bg-emerald-600",
+    buttonHover: "hover:bg-emerald-700",
+    bar: "bg-emerald-500",
+    pillBg: "bg-emerald-100 dark:bg-emerald-500/15",
+    pillText: "text-emerald-800 dark:text-emerald-200",
+  },
+  packages: {
+    ring: "ring-indigo-500/10",
+    border: "border-indigo-200 dark:border-indigo-500/30",
+    borderHover: "hover:border-indigo-400 dark:hover:border-indigo-500/50",
+    bgSoft: "bg-indigo-50 dark:bg-indigo-500/5",
+    bgActive: "bg-indigo-100/70 dark:bg-indigo-500/10",
+    text: "text-indigo-700 dark:text-indigo-300",
+    button: "bg-indigo-600",
+    buttonHover: "hover:bg-indigo-700",
+    bar: "bg-indigo-500",
+    pillBg: "bg-indigo-100 dark:bg-indigo-500/15",
+    pillText: "text-indigo-800 dark:text-indigo-200",
+  },
+  stay: {
+    ring: "ring-rose-500/10",
+    border: "border-rose-200 dark:border-rose-500/30",
+    borderHover: "hover:border-rose-400 dark:hover:border-rose-500/50",
+    bgSoft: "bg-rose-50 dark:bg-rose-500/5",
+    bgActive: "bg-rose-100/70 dark:bg-rose-500/10",
+    text: "text-rose-700 dark:text-rose-300",
+    button: "bg-rose-600",
+    buttonHover: "hover:bg-rose-700",
+    bar: "bg-rose-500",
+    pillBg: "bg-rose-100 dark:bg-rose-500/15",
+    pillText: "text-rose-800 dark:text-rose-200",
+  },
+  events: {
+    ring: "ring-violet-500/10",
+    border: "border-violet-200 dark:border-violet-500/30",
+    borderHover: "hover:border-violet-400 dark:hover:border-violet-500/50",
+    bgSoft: "bg-violet-50 dark:bg-violet-500/5",
+    bgActive: "bg-violet-100/70 dark:bg-violet-500/10",
+    text: "text-violet-700 dark:text-violet-300",
+    button: "bg-violet-600",
+    buttonHover: "hover:bg-violet-700",
+    bar: "bg-violet-500",
+    pillBg: "bg-violet-100 dark:bg-violet-500/15",
+    pillText: "text-violet-800 dark:text-violet-200",
+  },
+  blog: {
+    ring: "ring-sky-500/10",
+    border: "border-sky-200 dark:border-sky-500/30",
+    borderHover: "hover:border-sky-400 dark:hover:border-sky-500/50",
+    bgSoft: "bg-sky-50 dark:bg-sky-500/5",
+    bgActive: "bg-sky-100/70 dark:bg-sky-500/10",
+    text: "text-sky-700 dark:text-sky-300",
+    button: "bg-sky-600",
+    buttonHover: "hover:bg-sky-700",
+    bar: "bg-sky-500",
+    pillBg: "bg-sky-100 dark:bg-sky-500/15",
+    pillText: "text-sky-800 dark:text-sky-200",
+  },
+};
+
 export function DashboardClient() {
   const [activeModule, setActiveModule] = useState<ModuleKey>("overview");
   const [search, setSearch] = useState("");
@@ -176,7 +271,7 @@ export function DashboardClient() {
 
   /* ---- Render ---- */
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-ink-950">
+    <div className="min-h-screen bg-slate-100 dark:bg-ink-950">
       <div className="flex min-h-screen">
         <DashboardSidebar activeModule={activeModule} onNavigate={setActiveModule} />
 
@@ -185,6 +280,7 @@ export function DashboardClient() {
             activeModule={activeModule}
             search={search}
             setSearch={setSearch}
+            tone={activeModule !== "overview" ? TONES[activeModule] : undefined}
           />
 
           <div className="p-6 lg:p-8">
@@ -199,6 +295,7 @@ export function DashboardClient() {
                 destinations={destinations}
                 setDestinations={setDestinations}
                 loading={loading}
+                tone={TONES.destinations}
               />
             )}
 
@@ -208,6 +305,7 @@ export function DashboardClient() {
                 setExperiences={setExperiences}
                 destinations={destinations}
                 loading={loading}
+                tone={TONES.experiences}
               />
             )}
 
@@ -217,6 +315,7 @@ export function DashboardClient() {
                 setPackages={setPackages}
                 destinations={destinations}
                 loading={loading}
+                tone={TONES.packages}
               />
             )}
 
@@ -226,6 +325,7 @@ export function DashboardClient() {
                 setStays={setStays}
                 destinations={destinations}
                 loading={loading}
+                tone={TONES.stay}
               />
             )}
 
@@ -234,6 +334,7 @@ export function DashboardClient() {
                 events={filteredEvents}
                 setEvents={setEvents}
                 loading={loading}
+                tone={TONES.events}
               />
             )}
 
@@ -242,6 +343,7 @@ export function DashboardClient() {
                 posts={filteredPosts}
                 setPosts={setPosts}
                 loading={loading}
+                tone={TONES.blog}
               />
             )}
           </div>
@@ -262,14 +364,20 @@ function DashboardSidebar({
   activeModule: ModuleKey;
   onNavigate: (m: ModuleKey) => void;
 }) {
-  const modules: { key: ModuleKey; label: string; description: string; icon: string }[] = [
-    { key: "overview",     label: "Overview",     description: "Dashboard summary", icon: "📊" },
-    { key: "destinations", label: "Destinations", description: "Manage destinations", icon: "📍" },
-    { key: "experiences",  label: "Experiences",  description: "Manage experiences", icon: "🦁" },
-    { key: "packages",     label: "Packages",     description: "Manage packages", icon: "🧭" },
-    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: "🏨" },
-    { key: "events",       label: "Events",       description: "Manage events", icon: "📅" },
-    { key: "blog",         label: "Blog",         description: "Manage blog posts", icon: "📝" },
+  const modules: {
+    key: ModuleKey;
+    label: string;
+    description: string;
+    icon: string;
+    tone?: ModuleTone;
+  }[] = [
+    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: "📊" },
+    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: "📍", tone: TONES.destinations },
+    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: "🦁", tone: TONES.experiences },
+    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: "🧭", tone: TONES.packages },
+    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: "🏨", tone: TONES.stay },
+    { key: "events",       label: "Events",       description: "Manage events",        icon: "📅", tone: TONES.events },
+    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: "📝", tone: TONES.blog },
   ];
 
   return (
@@ -293,6 +401,7 @@ function DashboardSidebar({
           <nav className="space-y-1">
             {modules.map((m) => {
               const active = activeModule === m.key;
+              const tone = m.tone;
               return (
                 <button
                   key={m.key}
@@ -300,9 +409,11 @@ function DashboardSidebar({
                   onClick={() => onNavigate(m.key)}
                   className={[
                     "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition",
-                    active
-                      ? "bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white",
+                    active && tone
+                      ? `${tone.bgActive} ${tone.text}`
+                      : active
+                        ? "bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white",
                   ].join(" ")}
                 >
                   <span className="text-xl">{m.icon}</span>
@@ -339,10 +450,12 @@ function DashboardHeader({
   activeModule,
   search,
   setSearch,
+  tone,
 }: {
   activeModule: ModuleKey;
   search: string;
   setSearch: (v: string) => void;
+  tone?: ModuleTone;
 }) {
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
@@ -357,10 +470,10 @@ function DashboardHeader({
   const searchable = activeModule !== "overview" && activeModule !== "destinations";
 
   return (
-    <header className="border-b border-slate-200 bg-white dark:border-white/10 dark:bg-ink-900">
+    <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-ink-900/80">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div>
-          <div className="text-xs font-medium uppercase tracking-[0.16em] text-brand-600">
+          <div className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600"}`}>
             NTSP Content
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white">
@@ -368,14 +481,14 @@ function DashboardHeader({
           </h1>
         </div>
 
-        {searchable && (
+        {searchable && tone && (
           <div className="relative w-full lg:w-80">
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={`Search ${titles[activeModule].toLowerCase()}...`}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-4 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:bg-white/10"
+              className={`w-full rounded-xl border ${tone.border} bg-slate-50 py-2.5 pl-4 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 ${tone.ring} dark:bg-white/5 dark:text-white dark:focus:bg-white/10`}
             />
           </div>
         )}
@@ -400,29 +513,40 @@ function Overview({
       <FadeIn>
         <div className="mb-8">
           <h2 className="text-xl font-bold text-slate-950 dark:text-white">Overview</h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
             Manage all content that appears on the NTSP public site.
           </p>
         </div>
       </FadeIn>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {stats.map((stat, i) => (
-          <FadeIn key={stat.label} delay={i * 0.05}>
-            <button
-              type="button"
-              onClick={() => onNavigate(stat.module)}
-              className="w-full rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-white/10 dark:bg-ink-900 dark:hover:border-brand-500/30"
-            >
-              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                {stat.label}
-              </div>
-              <div className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
-                {stat.value}
-              </div>
-            </button>
-          </FadeIn>
-        ))}
+        {stats.map((stat, i) => {
+          const tone = stat.module !== "overview" ? TONES[stat.module] : undefined;
+          return (
+            <FadeIn key={stat.label} delay={i * 0.05}>
+              <button
+                type="button"
+                onClick={() => onNavigate(stat.module)}
+                className={[
+                  "relative w-full overflow-hidden rounded-2xl border bg-white p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-ink-900",
+                  tone
+                    ? `${tone.border} ${tone.borderHover}`
+                    : "border-slate-200 hover:border-brand-200 dark:border-white/10 dark:hover:border-brand-500/30",
+                ].join(" ")}
+              >
+                {tone && (
+                  <span className={`absolute inset-y-0 left-0 w-1 ${tone.bar}`} aria-hidden />
+                )}
+                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                  {stat.label}
+                </div>
+                <div className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
+                  {stat.value}
+                </div>
+              </button>
+            </FadeIn>
+          );
+        })}
       </div>
     </div>
   );
@@ -436,10 +560,12 @@ function DestinationsModule({
   destinations,
   setDestinations,
   loading,
+  tone,
 }: {
   destinations: DestinationRow[];
   setDestinations: React.Dispatch<React.SetStateAction<DestinationRow[]>>;
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -488,8 +614,9 @@ function DestinationsModule({
     <ModuleLayout
       title="Destinations"
       description="Manage the destinations displayed on the public destinations page."
+      tone={tone}
       action={
-        <AddButton onClick={handleCreate} pending={pending} label="Add destination" />
+        <AddButton onClick={handleCreate} pending={pending} label="Add destination" tone={tone} />
       }
       list={
         <div className="space-y-3">
@@ -505,6 +632,7 @@ function DestinationsModule({
                 onEdit={() => setEditingId(d.id)}
                 onDelete={() => handleDelete(d.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -515,6 +643,7 @@ function DestinationsModule({
           <DestinationEditor
             key={editing.id}
             destination={editing}
+            tone={tone}
             onClose={() => setEditingId(null)}
             onSave={handleSave}
           />
@@ -522,6 +651,7 @@ function DestinationsModule({
           <EmptyEditorState
             title="Select a destination"
             description="Choose a destination to edit its content."
+            tone={tone}
           />
         )
       }
@@ -533,10 +663,12 @@ function DestinationEditor({
   destination,
   onClose,
   onSave,
+  tone,
 }: {
   destination: DestinationRow;
   onClose: () => void;
   onSave: (d: DestinationRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [name, setName] = useState(destination.name);
   const [slug, setSlug] = useState(destination.slug);
@@ -567,6 +699,7 @@ function DestinationEditor({
       onClose={onClose}
       saving={saving}
       onSave={handleSave}
+      tone={tone}
     >
       <Field label="Name">
         <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -605,11 +738,13 @@ function ExperiencesModule({
   setExperiences,
   destinations,
   loading,
+  tone,
 }: {
   experiences: ExperienceRow[];
   setExperiences: React.Dispatch<React.SetStateAction<ExperienceRow[]>>;
   destinations: DestinationRow[];
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -645,8 +780,9 @@ function ExperiencesModule({
     setExperiences((curr) => curr.filter((e) => e.id !== id));
     if (editingId === id) setEditingId(null);
     startTransition(async () => {
-      try { await deleteExperience(id); }
-      catch (err) {
+      try {
+        await deleteExperience(id);
+      } catch (err) {
         setExperiences(previous);
         alert(err instanceof Error ? err.message : "Failed to delete");
       }
@@ -657,7 +793,8 @@ function ExperiencesModule({
     <ModuleLayout
       title="Experiences"
       description="Manage attractions and experiences across all destinations."
-      action={<AddButton onClick={handleCreate} pending={pending} label="Add experience" />}
+      tone={tone}
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add experience" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && experiences.length === 0 && <LoadingSkeletons />}
@@ -671,6 +808,7 @@ function ExperiencesModule({
                 onEdit={() => setEditingId(e.id)}
                 onDelete={() => handleDelete(e.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -682,11 +820,16 @@ function ExperiencesModule({
             key={editing.id}
             experience={editing}
             destinations={destinations}
+            tone={tone}
             onClose={() => setEditingId(null)}
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState title="Select an experience" description="Choose an experience to edit." />
+          <EmptyEditorState
+            title="Select an experience"
+            description="Choose an experience to edit."
+            tone={tone}
+          />
         )
       }
     />
@@ -698,11 +841,13 @@ function ExperienceEditor({
   destinations,
   onClose,
   onSave,
+  tone,
 }: {
   experience: ExperienceRow;
   destinations: DestinationRow[];
   onClose: () => void;
   onSave: (e: ExperienceRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [name, setName] = useState(experience.name);
   const [slug, setSlug] = useState(experience.slug);
@@ -735,6 +880,7 @@ function ExperienceEditor({
       onClose={onClose}
       saving={saving}
       onSave={handleSave}
+      tone={tone}
     >
       <Field label="Name">
         <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
@@ -775,11 +921,13 @@ function PackagesModule({
   setPackages,
   destinations,
   loading,
+  tone,
 }: {
   packages: PackageRow[];
   setPackages: React.Dispatch<React.SetStateAction<PackageRow[]>>;
   destinations: DestinationRow[];
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -815,8 +963,9 @@ function PackagesModule({
     setPackages((curr) => curr.filter((p) => p.id !== id));
     if (editingId === id) setEditingId(null);
     startTransition(async () => {
-      try { await deletePackage(id); }
-      catch (err) {
+      try {
+        await deletePackage(id);
+      } catch (err) {
         setPackages(previous);
         alert(err instanceof Error ? err.message : "Failed to delete");
       }
@@ -827,7 +976,8 @@ function PackagesModule({
     <ModuleLayout
       title="Packages"
       description="Manage tour packages and pricing."
-      action={<AddButton onClick={handleCreate} pending={pending} label="Add package" />}
+      tone={tone}
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add package" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && packages.length === 0 && <LoadingSkeletons />}
@@ -842,6 +992,7 @@ function PackagesModule({
                 onEdit={() => setEditingId(p.id)}
                 onDelete={() => handleDelete(p.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -853,11 +1004,16 @@ function PackagesModule({
             key={editing.id}
             pkg={editing}
             destinations={destinations}
+            tone={tone}
             onClose={() => setEditingId(null)}
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState title="Select a package" description="Choose a package to edit." />
+          <EmptyEditorState
+            title="Select a package"
+            description="Choose a package to edit."
+            tone={tone}
+          />
         )
       }
     />
@@ -869,11 +1025,13 @@ function PackageEditor({
   destinations,
   onClose,
   onSave,
+  tone,
 }: {
   pkg: PackageRow;
   destinations: DestinationRow[];
   onClose: () => void;
   onSave: (p: PackageRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [title, setTitle] = useState(pkg.title);
   const [slug, setSlug] = useState(pkg.slug);
@@ -902,7 +1060,14 @@ function PackageEditor({
   }
 
   return (
-    <EditorShell eyebrow="Edit package" title="Package details" onClose={onClose} saving={saving} onSave={handleSave}>
+    <EditorShell
+      eyebrow="Edit package"
+      title="Package details"
+      onClose={onClose}
+      saving={saving}
+      onSave={handleSave}
+      tone={tone}
+    >
       <Field label="Title"><input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Destination">
@@ -938,11 +1103,13 @@ function StaysModule({
   setStays,
   destinations,
   loading,
+  tone,
 }: {
   stays: StayRow[];
   setStays: React.Dispatch<React.SetStateAction<StayRow[]>>;
   destinations: DestinationRow[];
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -954,7 +1121,9 @@ function StaysModule({
         const created = await createStay();
         setStays((curr) => [...curr, created]);
         setEditingId(created.id);
-      } catch (err) { alert(err instanceof Error ? err.message : "Failed to create"); }
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to create");
+      }
     });
   }
 
@@ -976,8 +1145,12 @@ function StaysModule({
     setStays((curr) => curr.filter((s) => s.id !== id));
     if (editingId === id) setEditingId(null);
     startTransition(async () => {
-      try { await deleteStay(id); }
-      catch (err) { setStays(previous); alert(err instanceof Error ? err.message : "Failed to delete"); }
+      try {
+        await deleteStay(id);
+      } catch (err) {
+        setStays(previous);
+        alert(err instanceof Error ? err.message : "Failed to delete");
+      }
     });
   }
 
@@ -985,7 +1158,8 @@ function StaysModule({
     <ModuleLayout
       title="Stay"
       description="Manage hotels, lodges, resorts and camps."
-      action={<AddButton onClick={handleCreate} pending={pending} label="Add stay" />}
+      tone={tone}
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add stay" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && stays.length === 0 && <LoadingSkeletons />}
@@ -1000,6 +1174,7 @@ function StaysModule({
                 onEdit={() => setEditingId(s.id)}
                 onDelete={() => handleDelete(s.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -1011,11 +1186,16 @@ function StaysModule({
             key={editing.id}
             stay={editing}
             destinations={destinations}
+            tone={tone}
             onClose={() => setEditingId(null)}
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState title="Select a stay" description="Choose a stay to edit." />
+          <EmptyEditorState
+            title="Select a stay"
+            description="Choose a stay to edit."
+            tone={tone}
+          />
         )
       }
     />
@@ -1027,11 +1207,13 @@ function StayEditor({
   destinations,
   onClose,
   onSave,
+  tone,
 }: {
   stay: StayRow;
   destinations: DestinationRow[];
   onClose: () => void;
   onSave: (s: StayRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [name, setName] = useState(stay.name);
   const [slug, setSlug] = useState(stay.slug);
@@ -1058,7 +1240,14 @@ function StayEditor({
   }
 
   return (
-    <EditorShell eyebrow="Edit stay" title="Stay details" onClose={onClose} saving={saving} onSave={handleSave}>
+    <EditorShell
+      eyebrow="Edit stay"
+      title="Stay details"
+      onClose={onClose}
+      saving={saving}
+      onSave={handleSave}
+      tone={tone}
+    >
       <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Type">
@@ -1090,10 +1279,12 @@ function EventsModule({
   events,
   setEvents,
   loading,
+  tone,
 }: {
   events: EventRow[];
   setEvents: React.Dispatch<React.SetStateAction<EventRow[]>>;
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -1105,15 +1296,22 @@ function EventsModule({
         const created = await createEvent();
         setEvents((curr) => [...curr, created]);
         setEditingId(created.id);
-      } catch (err) { alert(err instanceof Error ? err.message : "Failed to create"); }
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to create");
+      }
     });
   }
 
   async function handleSave(updated: EventRow) {
     const previous = events;
     setEvents((curr) => curr.map((e) => (e.id === updated.id ? updated : e)));
-    try { await updateEvent(updated.id, updated); setEditingId(null); }
-    catch (err) { setEvents(previous); alert(err instanceof Error ? err.message : "Failed to save"); }
+    try {
+      await updateEvent(updated.id, updated);
+      setEditingId(null);
+    } catch (err) {
+      setEvents(previous);
+      alert(err instanceof Error ? err.message : "Failed to save");
+    }
   }
 
   function handleDelete(id: number) {
@@ -1122,8 +1320,12 @@ function EventsModule({
     setEvents((curr) => curr.filter((e) => e.id !== id));
     if (editingId === id) setEditingId(null);
     startTransition(async () => {
-      try { await deleteEvent(id); }
-      catch (err) { setEvents(previous); alert(err instanceof Error ? err.message : "Failed to delete"); }
+      try {
+        await deleteEvent(id);
+      } catch (err) {
+        setEvents(previous);
+        alert(err instanceof Error ? err.message : "Failed to delete");
+      }
     });
   }
 
@@ -1131,7 +1333,8 @@ function EventsModule({
     <ModuleLayout
       title="Events"
       description="Manage festivals, expos, and seasonal events."
-      action={<AddButton onClick={handleCreate} pending={pending} label="Add event" />}
+      tone={tone}
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add event" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && events.length === 0 && <LoadingSkeletons />}
@@ -1146,6 +1349,7 @@ function EventsModule({
                 onEdit={() => setEditingId(e.id)}
                 onDelete={() => handleDelete(e.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -1153,9 +1357,19 @@ function EventsModule({
       }
       editor={
         editing ? (
-          <EventEditor key={editing.id} event={editing} onClose={() => setEditingId(null)} onSave={handleSave} />
+          <EventEditor
+            key={editing.id}
+            event={editing}
+            tone={tone}
+            onClose={() => setEditingId(null)}
+            onSave={handleSave}
+          />
         ) : (
-          <EmptyEditorState title="Select an event" description="Choose an event to edit." />
+          <EmptyEditorState
+            title="Select an event"
+            description="Choose an event to edit."
+            tone={tone}
+          />
         )
       }
     />
@@ -1166,10 +1380,12 @@ function EventEditor({
   event,
   onClose,
   onSave,
+  tone,
 }: {
   event: EventRow;
   onClose: () => void;
   onSave: (e: EventRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [name, setName] = useState(event.name);
   const [slug, setSlug] = useState(event.slug);
@@ -1195,7 +1411,14 @@ function EventEditor({
   }
 
   return (
-    <EditorShell eyebrow="Edit event" title="Event details" onClose={onClose} saving={saving} onSave={handleSave}>
+    <EditorShell
+      eyebrow="Edit event"
+      title="Event details"
+      onClose={onClose}
+      saving={saving}
+      onSave={handleSave}
+      tone={tone}
+    >
       <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -1221,10 +1444,12 @@ function PostsModule({
   posts,
   setPosts,
   loading,
+  tone,
 }: {
   posts: PostRow[];
   setPosts: React.Dispatch<React.SetStateAction<PostRow[]>>;
   loading: boolean;
+  tone: ModuleTone;
 }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -1236,15 +1461,22 @@ function PostsModule({
         const created = await createPost();
         setPosts((curr) => [created, ...curr]);
         setEditingId(created.id);
-      } catch (err) { alert(err instanceof Error ? err.message : "Failed to create"); }
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Failed to create");
+      }
     });
   }
 
   async function handleSave(updated: PostRow) {
     const previous = posts;
     setPosts((curr) => curr.map((p) => (p.id === updated.id ? updated : p)));
-    try { await updatePost(updated.id, updated); setEditingId(null); }
-    catch (err) { setPosts(previous); alert(err instanceof Error ? err.message : "Failed to save"); }
+    try {
+      await updatePost(updated.id, updated);
+      setEditingId(null);
+    } catch (err) {
+      setPosts(previous);
+      alert(err instanceof Error ? err.message : "Failed to save");
+    }
   }
 
   function handleDelete(id: number) {
@@ -1253,8 +1485,12 @@ function PostsModule({
     setPosts((curr) => curr.filter((p) => p.id !== id));
     if (editingId === id) setEditingId(null);
     startTransition(async () => {
-      try { await deletePost(id); }
-      catch (err) { setPosts(previous); alert(err instanceof Error ? err.message : "Failed to delete"); }
+      try {
+        await deletePost(id);
+      } catch (err) {
+        setPosts(previous);
+        alert(err instanceof Error ? err.message : "Failed to delete");
+      }
     });
   }
 
@@ -1262,7 +1498,8 @@ function PostsModule({
     <ModuleLayout
       title="Blog"
       description="Manage blog posts, tags, and publication."
-      action={<AddButton onClick={handleCreate} pending={pending} label="Add post" />}
+      tone={tone}
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add post" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && posts.length === 0 && <LoadingSkeletons />}
@@ -1277,6 +1514,7 @@ function PostsModule({
                 onEdit={() => setEditingId(p.id)}
                 onDelete={() => handleDelete(p.id)}
                 disabled={pending}
+                tone={tone}
               />
             </FadeIn>
           ))}
@@ -1284,9 +1522,19 @@ function PostsModule({
       }
       editor={
         editing ? (
-          <PostEditor key={editing.id} post={editing} onClose={() => setEditingId(null)} onSave={handleSave} />
+          <PostEditor
+            key={editing.id}
+            post={editing}
+            tone={tone}
+            onClose={() => setEditingId(null)}
+            onSave={handleSave}
+          />
         ) : (
-          <EmptyEditorState title="Select a post" description="Choose a post to edit." />
+          <EmptyEditorState
+            title="Select a post"
+            description="Choose a post to edit."
+            tone={tone}
+          />
         )
       }
     />
@@ -1297,10 +1545,12 @@ function PostEditor({
   post,
   onClose,
   onSave,
+  tone,
 }: {
   post: PostRow;
   onClose: () => void;
   onSave: (p: PostRow) => void | Promise<void>;
+  tone: ModuleTone;
 }) {
   const [title, setTitle] = useState(post.title);
   const [slug, setSlug] = useState(post.slug);
@@ -1326,7 +1576,14 @@ function PostEditor({
   }
 
   return (
-    <EditorShell eyebrow="Edit post" title="Post details" onClose={onClose} saving={saving} onSave={handleSave}>
+    <EditorShell
+      eyebrow="Edit post"
+      title="Post details"
+      onClose={onClose}
+      saving={saving}
+      onSave={handleSave}
+      tone={tone}
+    >
       <Field label="Title"><input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Excerpt"><textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={3} className={inputClass} /></Field>
@@ -1349,7 +1606,7 @@ function PostEditor({
 }
 
 /* -------------------------------------------------------------------------- */
-/* SHARED COMPONENTS                                                           */
+/* SHARED COMPONENTS                                                          */
 /* -------------------------------------------------------------------------- */
 
 function ModuleLayout({
@@ -1358,20 +1615,22 @@ function ModuleLayout({
   action,
   list,
   editor,
+  tone,
 }: {
   title: string;
   description: string;
   action: React.ReactNode;
   list: React.ReactNode;
   editor: React.ReactNode;
+  tone: ModuleTone;
 }) {
   return (
     <div className="mx-auto max-w-7xl">
       <FadeIn>
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-950 dark:text-white">{title}</h2>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+            <h2 className={`text-xl font-bold ${tone.text}`}>{title}</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               {description}
             </p>
           </div>
@@ -1398,6 +1657,7 @@ function RowCard({
   onEdit,
   onDelete,
   disabled,
+  tone,
 }: {
   active: boolean;
   title: string;
@@ -1407,28 +1667,36 @@ function RowCard({
   onEdit: () => void;
   onDelete: () => void;
   disabled: boolean;
+  tone: ModuleTone;
 }) {
   return (
     <div
       className={[
-        "rounded-2xl border bg-white p-5 transition dark:bg-ink-900",
+        "relative overflow-hidden rounded-2xl border bg-white p-5 pl-6 transition dark:bg-ink-900",
         active
-          ? "border-brand-300 ring-2 ring-brand-500/10 dark:border-brand-500/40"
-          : "border-slate-200 dark:border-white/10",
+          ? `${tone.border} ring-2 ${tone.ring} ${tone.bgSoft}`
+          : `border-slate-200 ${tone.borderHover} dark:border-white/10`,
       ].join(" ")}
     >
+      <span
+        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${
+          active ? "opacity-100" : "opacity-40"
+        }`}
+        aria-hidden
+      />
+
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-slate-950 dark:text-white">{title}</h3>
             {badge && (
-              <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
+              <span className={`rounded-full ${tone.pillBg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tone.pillText}`}>
                 {badge}
               </span>
             )}
           </div>
           <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
-          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
             {description || "No description yet."}
           </p>
         </div>
@@ -1436,7 +1704,7 @@ function RowCard({
           <button
             type="button"
             onClick={onEdit}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+            className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${tone.border} ${tone.text} ${tone.bgSoft} hover:opacity-80 dark:hover:opacity-90`}
           >
             Edit
           </button>
@@ -1458,17 +1726,19 @@ function AddButton({
   onClick,
   pending,
   label,
+  tone,
 }: {
   onClick: () => void;
   pending: boolean;
   label: string;
+  tone: ModuleTone;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={pending}
-      className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+      className={`inline-flex items-center gap-2 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60`}
     >
       + {pending ? "Adding…" : label}
     </button>
@@ -1482,6 +1752,7 @@ function EditorShell({
   onSave,
   saving,
   children,
+  tone,
 }: {
   eyebrow: string;
   title: string;
@@ -1489,12 +1760,15 @@ function EditorShell({
   onSave: () => void;
   saving: boolean;
   children: React.ReactNode;
+  tone: ModuleTone;
 }) {
   return (
-    <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 dark:border-white/10 dark:bg-ink-900">
-      <div className="sticky -top-5 z-10 -mx-5 -mt-5 mb-4 flex items-start justify-between border-b border-slate-200 bg-white px-5 py-4 dark:border-white/10 dark:bg-ink-900">
+    <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-ink-900">
+      <span className={`block h-1 w-full ${tone.bar}`} aria-hidden />
+
+      <div className="flex items-start justify-between border-b border-slate-200 bg-white px-5 py-4 dark:border-white/10 dark:bg-ink-900">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">
+          <div className={`text-xs font-semibold uppercase tracking-[0.14em] ${tone.text}`}>
             {eyebrow}
           </div>
           <h3 className="mt-1 font-semibold text-slate-950 dark:text-white">{title}</h3>
@@ -1509,26 +1783,28 @@ function EditorShell({
         </button>
       </div>
 
-      <div className="space-y-6">
-        {children}
+      <div className="max-h-[calc(100vh-8rem)] overflow-y-auto p-5">
+        <div className="space-y-6">
+          {children}
 
-        <div className="flex gap-2 border-t border-slate-200 pt-4 dark:border-white/10">
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saving}
-            className="flex-1 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
-          >
-            {saving ? "Saving…" : "Save changes"}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={saving}
-            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
-          >
-            Cancel
-          </button>
+          <div className="flex gap-2 border-t border-slate-200 pt-4 dark:border-white/10">
+            <button
+              type="button"
+              onClick={onSave}
+              disabled={saving}
+              className={`flex-1 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60`}
+            >
+              {saving ? "Saving…" : "Save changes"}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+              className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1546,14 +1822,22 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function EmptyEditorState({ title, description }: { title: string; description: string }) {
+function EmptyEditorState({
+  title,
+  description,
+  tone,
+}: {
+  title: string;
+  description: string;
+  tone: ModuleTone;
+}) {
   return (
-    <div className="sticky top-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center dark:border-white/10 dark:bg-ink-900">
-      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-white/5">
+    <div className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}>
+      <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}>
         ✎
       </div>
       <h3 className="mt-4 text-sm font-semibold text-slate-950 dark:text-white">{title}</h3>
-      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-slate-500 dark:text-slate-400">
+      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-slate-600 dark:text-slate-400">
         {description}
       </p>
     </div>
