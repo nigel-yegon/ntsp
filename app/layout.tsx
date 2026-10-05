@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@wrksz/themes/next";
+import { ThemeProvider } from "@wrksz/themes";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 
@@ -22,7 +22,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`} suppressHydrationWarning
       >
-        <ThemeProvider
+       <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
