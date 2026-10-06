@@ -349,7 +349,7 @@ export type PostUncheckedCreateInput = {
   excerpt: string
   content: string
   coverImage?: string | null
-  tags?: Prisma.PostCreatetagsInput | string[]
+  tags?: Prisma.PostCreatetagsInput | string
   published?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string

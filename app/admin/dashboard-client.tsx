@@ -1590,7 +1590,7 @@ function PostsModule({
                 key={p.id}
                 active={editingId === p.id}
                 title={p.title}
-                subtitle={`${p.publishedAt ?? "unpublished"} · ${p.tags.join(", ")}`}
+                subtitle={`${p.publishedAt ?? "unpublished"} · ${p.tags || "no tags"}`}
                 description={p.excerpt}
                 badge={p.published ? "Published" : "Draft"}
                 onEdit={() => setEditingId(p.id)}
