@@ -79,7 +79,7 @@ export default async function Home() {
           <section className="relative z-20 mb-18">
             <div className="mb-4">
               <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
-                Search for everything
+                Search everything
               </h2>
               <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
                 Destinations, experiences, packages, stays, events, and blog
