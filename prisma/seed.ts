@@ -211,10 +211,9 @@ async function main() {
   console.log(`✔ Seeded ${destinations.length} destinations`);
 
   // ═══════════════════════════════════════════════════════════════
-  // ATTRACTIONS — 24 records across destinations
+  // ATTRACTIONS — 24 records
   // ═══════════════════════════════════════════════════════════════
   const attractions = [
-    // Maasai Mara
     {
       name: "Great Wildebeest Migration",
       slug: "great-migration",
@@ -239,7 +238,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["maasai-mara"].id,
     },
-    // Amboseli
     {
       name: "Elephant Research Camp",
       slug: "amboseli-elephants",
@@ -256,7 +254,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["amboseli"].id,
     },
-    // Diani
     {
       name: "Diani Beach Snorkeling",
       slug: "diani-snorkeling",
@@ -281,7 +278,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["diani-beach"].id,
     },
-    // Lake Nakuru
     {
       name: "Flamingo Watching",
       slug: "nakuru-flamingos",
@@ -298,7 +294,6 @@ async function main() {
       category: "Wildlife",
       destinationId: destinationMap["lake-nakuru"].id,
     },
-    // Nairobi
     {
       name: "Nairobi National Park Safari",
       slug: "nairobi-safari",
@@ -331,7 +326,6 @@ async function main() {
       category: "Cultural",
       destinationId: destinationMap["nairobi"].id,
     },
-    // Tsavo East
     {
       name: "Red Elephant Safari",
       slug: "tsavo-red-elephants",
@@ -348,7 +342,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["tsavo-east"].id,
     },
-    // Tsavo West
     {
       name: "Mzima Springs",
       slug: "mzima-springs",
@@ -365,7 +358,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["tsavo-west"].id,
     },
-    // Samburu
     {
       name: "Samburu Special Five",
       slug: "samburu-special-five",
@@ -374,7 +366,6 @@ async function main() {
       category: "Wildlife",
       destinationId: destinationMap["samburu"].id,
     },
-    // Lamu
     {
       name: "Lamu Old Town Walking Tour",
       slug: "lamu-walking-tour",
@@ -384,14 +375,13 @@ async function main() {
       destinationId: destinationMap["lamu"].id,
     },
     {
-      name: "Dhow Sailing to Shelа",
+      name: "Dhow Sailing to Shela",
       slug: "lamu-dhow-shela",
       description:
         "Sail by traditional dhow to the tranquil beaches of Shela and enjoy a Swahili seafood lunch.",
       category: "Beach",
       destinationId: destinationMap["lamu"].id,
     },
-    // Mount Kenya
     {
       name: "Point Lenana Trek",
       slug: "point-lenana-trek",
@@ -400,7 +390,6 @@ async function main() {
       category: "Adventure",
       destinationId: destinationMap["mount-kenya"].id,
     },
-    // Watamu
     {
       name: "Turtle Watching at Watamu",
       slug: "watamu-turtles",
@@ -683,7 +672,6 @@ async function main() {
   // ACCOMMODATIONS — 24 records
   // ═══════════════════════════════════════════════════════════════
   const accommodations = [
-    // Maasai Mara
     {
       name: "Mara Serena Safari Lodge",
       slug: "mara-serena",
@@ -724,7 +712,6 @@ async function main() {
       priceRange: "KES 18,000 - 35,000",
       destinationId: destinationMap["maasai-mara"].id,
     },
-    // Amboseli
     {
       name: "Amboseli Serena Safari Lodge",
       slug: "amboseli-serena",
@@ -755,7 +742,6 @@ async function main() {
       priceRange: "KES 26,000 - 52,000",
       destinationId: destinationMap["amboseli"].id,
     },
-    // Diani
     {
       name: "Diani Sea Resort",
       slug: "diani-sea-resort",
@@ -786,7 +772,6 @@ async function main() {
       priceRange: "KES 30,000 - 65,000",
       destinationId: destinationMap["diani-beach"].id,
     },
-    // Lake Nakuru
     {
       name: "Sarova Lion Hill Lodge",
       slug: "sarova-lion-hill",
@@ -807,7 +792,6 @@ async function main() {
       priceRange: "KES 16,000 - 32,000",
       destinationId: destinationMap["lake-nakuru"].id,
     },
-    // Nairobi
     {
       name: "The Norfolk Hotel",
       slug: "norfolk-hotel",
@@ -838,7 +822,6 @@ async function main() {
       priceRange: "KES 55,000 - 95,000",
       destinationId: destinationMap["nairobi"].id,
     },
-    // Tsavo East
     {
       name: "Ashnil Aruba Lodge",
       slug: "ashnil-aruba",
@@ -859,7 +842,6 @@ async function main() {
       priceRange: "KES 28,000 - 55,000",
       destinationId: destinationMap["tsavo-east"].id,
     },
-    // Tsavo West
     {
       name: "Kilaguni Serena Safari Lodge",
       slug: "kilaguni-serena",
@@ -870,7 +852,6 @@ async function main() {
       priceRange: "KES 24,000 - 48,000",
       destinationId: destinationMap["tsavo-west"].id,
     },
-    // Samburu
     {
       name: "Samburu Sopa Lodge",
       slug: "samburu-sopa",
@@ -891,7 +872,6 @@ async function main() {
       priceRange: "KES 65,000 - 125,000",
       destinationId: destinationMap["samburu"].id,
     },
-    // Lamu
     {
       name: "The Majlis Resort",
       slug: "majlis-lamu",
@@ -912,7 +892,6 @@ async function main() {
       priceRange: "KES 28,000 - 55,000",
       destinationId: destinationMap["lamu"].id,
     },
-    // Mount Kenya
     {
       name: "Fairmont Mount Kenya Safari Club",
       slug: "fairmont-mt-kenya",
@@ -923,7 +902,6 @@ async function main() {
       priceRange: "KES 35,000 - 75,000",
       destinationId: destinationMap["mount-kenya"].id,
     },
-    // Watamu
     {
       name: "Medina Palms",
       slug: "medina-palms",
@@ -1163,7 +1141,7 @@ async function main() {
   console.log(`✔ Seeded ${events.length} events`);
 
   // ═══════════════════════════════════════════════════════════════
-  // BLOG POSTS — 20 records
+  // BLOG POSTS — 20 records (tags are comma-separated strings)
   // ═══════════════════════════════════════════════════════════════
   const posts = [
     {
@@ -1178,7 +1156,7 @@ Peak season runs from July to October, coinciding with the Great Wildebeest Migr
 The green season (November to May) is quieter and much cheaper. Rates can drop 40–60% compared to peak. The landscape is lush after the short rains, birdlife is abundant, and you often have sightings almost to yourself. The trade-off is that some camps close, and roads can be muddy.
 
 If you want to see the migration without the crowds, consider late June or early November — shoulder seasons with reasonable rates and good viewing.`,
-      tags: ["Safari", "Wildlife", "Planning"],
+      tags: "Safari,Wildlife,Planning",
       published: true,
       publishedAt: new Date("2026-09-12"),
     },
@@ -1196,7 +1174,7 @@ Where to stay depends on what you want. The northern end near the Kongo River is
 Don't miss: snorkeling or diving at Kisite-Mpunguti Marine Park, a sunset dhow cruise, and a day trip to the Shimba Hills for the rare sable antelope. For food, try the fresh seafood at one of the beachfront restaurants — the crab and prawns are exceptional.
 
 Best time to visit is December to March (dry, sunny) or July to October (cooler, fewer crowds). Avoid April and May, when the long rains hit.`,
-      tags: ["Beach", "Coast", "Planning"],
+      tags: "Beach,Coast,Planning",
       published: true,
       publishedAt: new Date("2026-08-28"),
     },
@@ -1214,7 +1192,7 @@ You'll need: a passport valid for at least six months beyond your arrival date, 
 Yellow fever vaccination is required if you're arriving from a yellow-fever-endemic country. Otherwise, it's recommended but not mandatory. Check with your travel clinic about malaria prophylaxis if you're heading to the coast or safari areas.
 
 At the border, you may be asked for proof of onward travel and sufficient funds. Have your return ticket and a bank statement or credit card ready.`,
-      tags: ["Planning", "Visa"],
+      tags: "Planning,Visa",
       published: true,
       publishedAt: new Date("2026-08-05"),
     },
@@ -1231,10 +1209,8 @@ Footwear: Comfortable closed shoes for game drives, sandals for around camp. Ski
 
 Gear: Binoculars (one pair per person), a camera with a zoom lens of at least 200mm, spare batteries, and plenty of memory cards. A wide-brimmed hat. Sunscreen. Insect repellent.
 
-Documents: Passport, eTA confirmation, travel insurance, vaccination certificate.`
-
-,
-      tags: ["Safari", "Planning"],
+Documents: Passport, eTA confirmation, travel insurance, vaccination certificate.`,
+      tags: "Safari,Planning",
       published: true,
       publishedAt: new Date("2026-07-22"),
     },
@@ -1258,7 +1234,7 @@ September to October: The herds spread across the Mara plains. Still excellent v
 November: The herds begin moving south again. Some Mara camps close; rates drop.
 
 December: The herds are back in the Serengeti. The cycle begins again.`,
-      tags: ["Wildlife", "Safari", "Planning"],
+      tags: "Wildlife,Safari,Planning",
       published: true,
       publishedAt: new Date("2026-07-10"),
     },
@@ -1273,10 +1249,8 @@ The growing regions: Nyeri, Kirinyaga, Murang'a, and the slopes of Mount Kenya p
 
 Where to taste: In Nairobi, look for specialty coffee shops like Spring Valley Coffee, The Boston Coffee House, and Connect Coffee Roasters. In Nyeri, visit a coffee estate and see the full process — picking, pulping, drying, roasting.
 
-What to buy: Single-origin AA beans, roasted within the last two weeks. Ask for the roast date. Avoid anything pre-ground.
-
-What to avoid: Over-roasted "espresso blends" that bury the origin character under charred flavors. Kenyan beans deserve a light to medium roast.`,
-      tags: ["Culture", "Nairobi"],
+What to buy: Single-origin AA beans, roasted within the last two weeks. Ask for the roast date. Avoid anything pre-ground.`,
+      tags: "Culture,Nairobi",
       published: true,
       publishedAt: new Date("2026-06-30"),
     },
@@ -1306,7 +1280,7 @@ Midday: The Maasai Market (different locations on different days — check befor
 Afternoon: The Nairobi Railway Museum or the Nairobi National Museum.
 
 Evening: Sundowners at the rooftop of the Sarova Stanley, then dinner at Fogo Gaucho or About Thyme.`,
-      tags: ["Nairobi", "Culture", "Planning"],
+      tags: "Nairobi,Culture,Planning",
       published: true,
       publishedAt: new Date("2026-06-14"),
     },
@@ -1323,16 +1297,14 @@ Watamu is quieter, smaller, and more Italian-influenced (a legacy of decades of 
 
 Choose Diani if: You want options, amenities, and a range of accommodation from budget to luxury.
 
-Choose Watamu if: You want a slower pace, easy reef access, and a more intimate scale.
-
-Both have excellent beaches. Both have warm water year-round. Neither is a mistake.`,
-      tags: ["Beach", "Coast"],
+Choose Watamu if: You want a slower pace, easy reef access, and a more intimate scale.`,
+      tags: "Beach,Coast",
       published: true,
       publishedAt: new Date("2026-05-28"),
     },
     {
       title: "Kenya's Big Five (and Where to See Them)",
-      slug: "kennys-big-five",
+      slug: "kenyas-big-five",
       excerpt:
         "Lion, leopard, elephant, buffalo, rhino — where to go for each.",
       content: `The Big Five — lion, leopard, elephant, buffalo, and rhino — were originally named for the difficulty of hunting them. Today they're the bucket-list animals for most safari-goers.
@@ -1346,7 +1318,7 @@ Elephant: Amboseli for the big tuskers against Kilimanjaro; Samburu for the "Sam
 Buffalo: Any major park. Huge herds are common in the Mara and Tsavo.
 
 Rhino: Lake Nakuru and Nairobi National Park are the most reliable. Both have fenced sanctuaries.`,
-      tags: ["Wildlife", "Safari"],
+      tags: "Wildlife,Safari",
       published: true,
       publishedAt: new Date("2026-05-11"),
     },
@@ -1361,10 +1333,8 @@ Lamu is the most intact historic town in East Africa. Cars are almost nonexisten
 
 Mombasa is the largest coastal city. Fort Jesus (a UNESCO World Heritage Site) tells the story of Portuguese, Omani, and British rule. Old Town's narrow streets and markets are worth a half day.
 
-Malindi has a distinctive Italian character from decades of Italian tourism, but beneath it lies a Swahili town with ancient ruins nearby — Gedi, a medieval city abandoned in the 17th century.
-
-Food on the coast: coconut curries, biryani, pilau, fresh seafood, and the Swahili version of samosas (called "sambusa"). Eat at the fish market in Mombasa, or the waterfront in Lamu.`,
-      tags: ["Coast", "Culture", "Beach"],
+Malindi has a distinctive Italian character from decades of Italian tourism, but beneath it lies a Swahili town with ancient ruins nearby — Gedi, a medieval city abandoned in the 17th century.`,
+      tags: "Coast,Culture,Beach",
       published: true,
       publishedAt: new Date("2026-04-22"),
     },
@@ -1386,7 +1356,7 @@ On the coast: Diani, Watamu, and Lamu are safe for tourists. Mombasa is generall
 Transport: Use Uber or Bolt in Nairobi and Mombasa. For intercity travel, use reputable coaches like Easy Coach or modern shuttle services.
 
 Emergency: Police 999 or 112. Tourist Police hotline: +254 20 341 4955.`,
-      tags: ["Planning", "Safety"],
+      tags: "Planning,Safety",
       published: true,
       publishedAt: new Date("2026-04-05"),
     },
@@ -1403,10 +1373,8 @@ Camera settings for wildlife: Shutter priority at 1/1000s or faster for moving a
 
 Golden hour is everything. Most photographers shoot from 6–9am and again from 4–6:30pm. Midday light is harsh and flat.
 
-Ethics: Never ask your guide to move off-road for a photo. Don't crowd wildlife at a sighting. Turn off flash. Don't use drones in national parks (it's illegal).
-
-What to photograph besides animals: The landscapes at golden hour. Maasai and Samburu people (ask permission first). The texture of the savannah. Your fellow travelers. The story, not just the trophy shot.`,
-      tags: ["Wildlife", "Photography", "Safari"],
+Ethics: Never ask your guide to move off-road for a photo. Don't crowd wildlife at a sighting. Turn off flash. Don't use drones in national parks (it's illegal).`,
+      tags: "Wildlife,Photography,Safari",
       published: true,
       publishedAt: new Date("2026-03-18"),
     },
@@ -1425,10 +1393,8 @@ Beisa oryx: Long, straight horns. Adapted to desert and semi-desert.
 
 Gerenuk: A long-necked antelope that stands on its hind legs to reach higher branches. Nicknamed the "giraffe gazelle."
 
-Somali ostrich: A distinct species with blue-grey legs and neck (males) or brown feathers (females).
-
-All five can often be seen in a single day in Samburu. The reserve is also home to leopards, lions, cheetahs, and elephants.`,
-      tags: ["Wildlife", "Safari"],
+Somali ostrich: A distinct species with blue-grey legs and neck (males) or brown feathers (females).`,
+      tags: "Wildlife,Safari",
       published: true,
       publishedAt: new Date("2026-03-01"),
     },
@@ -1447,18 +1413,14 @@ Tortilis Camp (Amboseli): Intimate tented camp on the edge of Amboseli, with Kil
 
 Elephant Bedroom Camp (Samburu): Elephants regularly walk through camp. The tented suites are spacious and beautiful.
 
-The Majlis (Lamu): Beachfront resort on Manda Island with views across the channel to Lamu Old Town.
-
-Segera Retreat (Laikipia): A private conservancy with a mix of art, conservation, and luxury. Five-star.
-
-These are expensive — but if you're going to splurge once, this is the list.`,
-      tags: ["Safari", "Planning", "Stay"],
+The Majlis (Lamu): Beachfront resort on Manda Island with views across the channel to Lamu Old Town.`,
+      tags: "Safari,Planning,Stay",
       published: true,
       publishedAt: new Date("2026-02-12"),
     },
     {
       title: "Traveling Kenya on a Budget",
-      slug: "kennys-budget-travel",
+      slug: "kenyas-budget-travel",
       excerpt:
         "How to see the best of Kenya without spending a fortune — camps, matatus, and local food.",
       content: `Kenya can be expensive. It can also be surprisingly affordable. Here's how to do it on a budget.
@@ -1469,10 +1431,8 @@ Accommodation: Hostels in Nairobi start around KES 2,000 per night. Airbnb and g
 
 Transport: Matatus connect every major town cheaply. A Nairobi-to-Mombasa bus is around KES 1,500. Standard-gauge railway is even cheaper.
 
-Food: Eat where locals eat. A plate of nyama choma at a local grill is KES 300–500. Ugali and sukuma wiki at a roadside hotel is KES 150. Nairobi has excellent Ethiopian, Indian, and Swahili food at reasonable prices.
-
-Parks: Kenya Wildlife Service park fees vary — around USD 60–80 per adult per day for the popular parks. Nairobi National Park is the cheapest, and it's inside the city.`,
-      tags: ["Planning", "Budget"],
+Food: Eat where locals eat. A plate of nyama choma at a local grill is KES 300–500. Ugali and sukuma wiki at a roadside hotel is KES 150.`,
+      tags: "Planning,Budget",
       published: true,
       publishedAt: new Date("2026-01-25"),
     },
@@ -1487,12 +1447,8 @@ What it is: Goat, beef, or chicken, roasted over charcoal until the outside is c
 
 Where to eat it: The best nyama choma is at local joints, not tourist restaurants. In Nairobi, try the areas around Kikuyu, Ngong Road, and the famous "Nyama Choma Trail" along Langata Road.
 
-How to order: You point at the cut of meat you want — a "quarter" or "half" of a goat is common. The butcher roasts it to order. You eat with your hands, using ugali to scoop.
-
-What to drink: Tusker beer, or a cold soda. Some places serve muratina, a traditional honey wine.
-
-Vegetarian? Sukuma wiki, ugali, and kachumbari make a great meal on their own.`,
-      tags: ["Culture", "Food", "Nairobi"],
+How to order: You point at the cut of meat you want — a "quarter" or "half" of a goat is common. The butcher roasts it to order. You eat with your hands, using ugali to scoop.`,
+      tags: "Culture,Food,Nairobi",
       published: true,
       publishedAt: new Date("2026-01-14"),
     },
@@ -1509,10 +1465,8 @@ Crescent Island: A private island in the lake where you can walk among giraffes,
 
 Boat safaris: Take a boat to see hippos up close (from a safe distance), fish eagles, and the lake's resident pelicans.
 
-Where to stay: Lake Naivasha Sopa Resort, Enashipai, or one of the many boutique lodges on the shore.
-
-What to eat: The restaurants at the lodges are good, but for something special, drive to The Ranch House or eat fresh tilapia at one of the lakeside grills.`,
-      tags: ["Nakuru", "Weekend", "Wildlife"],
+Where to stay: Lake Naivasha Sopa Resort, Enashipai, or one of the many boutique lodges on the shore.`,
+      tags: "Nakuru,Weekend,Wildlife",
       published: true,
       publishedAt: new Date("2025-12-20"),
     },
@@ -1529,16 +1483,14 @@ Rural roads: Variable. The road to the Mara is 5–6 hours from Nairobi, mostly 
 
 Traffic: Nairobi traffic is notorious. Avoid driving during rush hour (7–9am, 5–7pm) if you can.
 
-Self-drive? Possible for confident drivers with experience of left-hand driving. Not recommended for a first safari.
-
 Better option: Hire a driver-guide. They know the roads, the shortcuts, and the parks. The cost is worth every shilling.`,
-      tags: ["Planning", "Transport"],
+      tags: "Planning,Transport",
       published: true,
       publishedAt: new Date("2025-12-03"),
     },
     {
       title: "Kenya's Best Time to Visit for Birdwatching",
-      slug: "kennys-birdwatching",
+      slug: "kenyas-birdwatching",
       excerpt:
         "Over 1,100 species, two rainy seasons, and the migratory window — here's when to go.",
       content: `Kenya has over 1,100 recorded bird species — one of the richest avifaunas in Africa.
@@ -1549,10 +1501,8 @@ Palearctic migrants: Arrive from Europe and Asia from October to March. The Rift
 
 Intra-African migrants: Arrive with the rains. April to May and November are the peak periods.
 
-Best overall months: November to March for migratory species and pleasant weather. The Rift Valley lake circuit is at its best.
-
-Best specific sites: Lake Nakuru (flamingos, pelicans), Lake Baringo (over 470 species), Kakamega Forest (rainforest species), and the Arabuko-Sokoke Forest near Malindi (endemic species).`,
-      tags: ["Wildlife", "Birdwatching", "Planning"],
+Best overall months: November to March for migratory species and pleasant weather. The Rift Valley lake circuit is at its best.`,
+      tags: "Wildlife,Birdwatching,Planning",
       published: true,
       publishedAt: new Date("2025-11-18"),
     },
@@ -1569,39 +1519,32 @@ Avoid: Elephant rides, lion walks, and any "sanctuary" that allows cub-petting. 
 
 Support: Community conservancies like Lewa, Ol Pejeta, and Mara North. These pay local landowners, employ local staff, and protect wildlife corridors.
 
-Photography: Never pressure your guide to move off-road for a better shot. It damages habitat and stresses animals.
-
-Tipping: A significant part of many guides' income. Budget USD 10–20 per day.`,
-      tags: ["Wildlife", "Conservation", "Ethics"],
+Photography: Never pressure your guide to move off-road for a better shot. It damages habitat and stresses animals.`,
+      tags: "Wildlife,Conservation,Ethics",
       published: true,
       publishedAt: new Date("2025-10-30"),
     },
   ];
 
   for (const p of posts) {
-  await prisma.post.upsert({
-    where: { slug: p.slug },
-    update: {
-      title: p.title,
-      excerpt: p.excerpt,
-      content: p.content,
-      coverImage: null,
-      tags: { set: p.tags },
-      published: p.published,
-      publishedAt: p.publishedAt,
-    },
-    create: {
-      title: p.title,
-      slug: p.slug,
-      excerpt: p.excerpt,
-      content: p.content,
-      coverImage: null,
-      tags: p.tags,
-      published: p.published,
-      publishedAt: p.publishedAt,
-    },
-  });
-}
+    const postData = {
+      ...p,
+      tags:
+        typeof p.tags === "string"
+          ? p.tags
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter(Boolean)
+          : p.tags,
+    };
+
+    await prisma.post.upsert({
+      where: { slug: p.slug },
+      update: postData,
+      create: postData,
+    });
+  }
+
   console.log(`✔ Seeded ${posts.length} blog posts`);
 
   console.log("✅ Seed complete.");
