@@ -1526,22 +1526,11 @@ Photography: Never pressure your guide to move off-road for a better shot. It da
     },
   ];
 
-  for (const p of posts) {
-    const postData = {
-      ...p,
-      tags:
-        typeof p.tags === "string"
-          ? p.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter(Boolean)
-          : p.tags,
-    };
-
+      for (const p of posts) {
     await prisma.post.upsert({
       where: { slug: p.slug },
-      update: postData,
-      create: postData,
+      update: p,
+      create: p,
     });
   }
 

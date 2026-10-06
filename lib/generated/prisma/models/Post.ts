@@ -41,6 +41,7 @@ export type PostMinAggregateOutputType = {
   excerpt: string | null
   content: string | null
   coverImage: string | null
+  tags: string | null
   published: boolean | null
   publishedAt: Date | null
   createdAt: Date | null
@@ -54,6 +55,7 @@ export type PostMaxAggregateOutputType = {
   excerpt: string | null
   content: string | null
   coverImage: string | null
+  tags: string | null
   published: boolean | null
   publishedAt: Date | null
   createdAt: Date | null
@@ -91,6 +93,7 @@ export type PostMinAggregateInputType = {
   excerpt?: true
   content?: true
   coverImage?: true
+  tags?: true
   published?: true
   publishedAt?: true
   createdAt?: true
@@ -104,6 +107,7 @@ export type PostMaxAggregateInputType = {
   excerpt?: true
   content?: true
   coverImage?: true
+  tags?: true
   published?: true
   publishedAt?: true
   createdAt?: true
@@ -218,7 +222,7 @@ export type PostGroupByOutputType = {
   excerpt: string
   content: string
   coverImage: string | null
-  tags: string[]
+  tags: string
   published: boolean
   publishedAt: Date | null
   createdAt: Date
@@ -255,7 +259,7 @@ export type PostWhereInput = {
   excerpt?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringFilter<"Post"> | string
   coverImage?: Prisma.StringNullableFilter<"Post"> | string | null
-  tags?: Prisma.StringNullableListFilter<"Post">
+  tags?: Prisma.StringFilter<"Post"> | string
   published?: Prisma.BoolFilter<"Post"> | boolean
   publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
@@ -286,7 +290,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   excerpt?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringFilter<"Post"> | string
   coverImage?: Prisma.StringNullableFilter<"Post"> | string | null
-  tags?: Prisma.StringNullableListFilter<"Post">
+  tags?: Prisma.StringFilter<"Post"> | string
   published?: Prisma.BoolFilter<"Post"> | boolean
   publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
@@ -322,7 +326,7 @@ export type PostScalarWhereWithAggregatesInput = {
   excerpt?: Prisma.StringWithAggregatesFilter<"Post"> | string
   content?: Prisma.StringWithAggregatesFilter<"Post"> | string
   coverImage?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
-  tags?: Prisma.StringNullableListFilter<"Post">
+  tags?: Prisma.StringWithAggregatesFilter<"Post"> | string
   published?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
@@ -335,7 +339,7 @@ export type PostCreateInput = {
   excerpt: string
   content: string
   coverImage?: string | null
-  tags?: Prisma.PostCreatetagsInput | string[]
+  tags?: string
   published?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
@@ -349,7 +353,7 @@ export type PostUncheckedCreateInput = {
   excerpt: string
   content: string
   coverImage?: string | null
-  tags?: Prisma.PostCreatetagsInput | string
+  tags?: string
   published?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
@@ -362,7 +366,7 @@ export type PostUpdateInput = {
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.PostUpdatetagsInput | string[]
+  tags?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -376,7 +380,7 @@ export type PostUncheckedUpdateInput = {
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.PostUpdatetagsInput | string[]
+  tags?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,7 +394,7 @@ export type PostCreateManyInput = {
   excerpt: string
   content: string
   coverImage?: string | null
-  tags?: Prisma.PostCreatetagsInput | string[]
+  tags?: string
   published?: boolean
   publishedAt?: Date | string | null
   createdAt?: Date | string
@@ -403,7 +407,7 @@ export type PostUpdateManyMutationInput = {
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.PostUpdatetagsInput | string[]
+  tags?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -417,19 +421,11 @@ export type PostUncheckedUpdateManyInput = {
   excerpt?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   coverImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.PostUpdatetagsInput | string[]
+  tags?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
 }
 
 export type PostCountOrderByAggregateInput = {
@@ -457,6 +453,7 @@ export type PostMaxOrderByAggregateInput = {
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
   published?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -470,6 +467,7 @@ export type PostMinOrderByAggregateInput = {
   excerpt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   coverImage?: Prisma.SortOrder
+  tags?: Prisma.SortOrder
   published?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -478,15 +476,6 @@ export type PostMinOrderByAggregateInput = {
 
 export type PostSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-}
-
-export type PostCreatetagsInput = {
-  set: string[]
-}
-
-export type PostUpdatetagsInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -567,7 +556,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     excerpt: string
     content: string
     coverImage: string | null
-    tags: string[]
+    tags: string
     published: boolean
     publishedAt: Date | null
     createdAt: Date
@@ -1001,7 +990,7 @@ export interface PostFieldRefs {
   readonly excerpt: Prisma.FieldRef<"Post", 'String'>
   readonly content: Prisma.FieldRef<"Post", 'String'>
   readonly coverImage: Prisma.FieldRef<"Post", 'String'>
-  readonly tags: Prisma.FieldRef<"Post", 'String[]'>
+  readonly tags: Prisma.FieldRef<"Post", 'String'>
   readonly published: Prisma.FieldRef<"Post", 'Boolean'>
   readonly publishedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>

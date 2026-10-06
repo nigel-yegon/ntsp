@@ -1639,7 +1639,7 @@ function PostEditor({
   const [excerpt, setExcerpt] = useState(post.excerpt);
   const [content, setContent] = useState(post.content);
   const [coverImage, setCoverImage] = useState(post.coverImage ?? "");
-  const [tagsText, setTagsText] = useState(post.tags.join(", "));
+  const [tagsText, setTagsText] = useState(post.tags ?? "");
   const [published, setPublished] = useState(post.published);
   const [publishedAt, setPublishedAt] = useState(post.publishedAt ?? "");
   const [saving, startSave] = useTransition();
@@ -1650,7 +1650,7 @@ function PostEditor({
         ...post,
         title, slug, excerpt, content,
         coverImage: coverImage.trim() || null,
-        tags: tagsText.split(",").map((t) => t.trim()).filter(Boolean),
+        tags: tagsText.trim(),
         published,
         publishedAt: publishedAt || null,
       });
