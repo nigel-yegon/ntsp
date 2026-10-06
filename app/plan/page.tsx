@@ -1,4 +1,11 @@
 import Link from "next/link";
+import {
+  Plane,
+  PlaneTakeoff,
+  CalendarDays,
+  Lightbulb,
+  ArrowRight,
+} from "lucide-react";
 
 export const metadata = {
   title: "Plan Your Trip — NTSP",
@@ -12,28 +19,28 @@ const topics = [
     title: "Visa & Entry",
     description:
       "eTA requirements, passport validity, vaccinations, and what to have ready at the border.",
-    icon: "🛂",
+    Icon: Plane,
   },
   {
     href: "/plan/getting-around",
     title: "Getting Around",
     description:
       "Domestic flights, safari transfers, self-drive, and public transport across Kenya.",
-    icon: "✈️",
+    Icon: PlaneTakeoff,
   },
   {
     href: "/plan/when-to-visit",
     title: "When to Visit",
     description:
       "Season-by-season guide — migration season, green season, and the best months for each region.",
-    icon: "🌤️",
+    Icon: CalendarDays,
   },
   {
     href: "/plan/tips",
     title: "Travel Tips",
     description:
       "Money, SIM cards, health, safety, and cultural etiquette for a smooth trip.",
-    icon: "💡",
+    Icon: Lightbulb,
   },
 ];
 
@@ -61,29 +68,35 @@ export default function PlanPage() {
         {/* Quick topics */}
         <section className="mb-14">
           <div className="grid gap-5 sm:grid-cols-2">
-            {topics.map((t) => (
-              <Link
-                key={t.href}
-                href={t.href}
-                className="group relative flex flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-              >
-                <span
-                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                  aria-hidden
-                />
+            {topics.map((t) => {
+              const Icon = t.Icon;
+              return (
+                <Link
+                  key={t.href}
+                  href={t.href}
+                  className="group relative flex flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                >
+                  <span
+                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                    aria-hidden
+                  />
 
-                <div className="text-3xl">{t.icon}</div>
-                <h2 className="mt-3 text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                  {t.title}
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                  {t.description}
-                </p>
-                <span className="mt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                  Learn more →
-                </span>
-              </Link>
-            ))}
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h2 className="mt-3 text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                    {t.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                    {t.description}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                    Learn more
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -202,8 +215,9 @@ function ItineraryCard({ title, days, path, href }: ItineraryCardProps) {
       <p className="mt-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
         {path}
       </p>
-      <span className="mt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-        See a matching package →
+      <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+        See a matching package
+        <ArrowRight className="h-3.5 w-3.5" />
       </span>
     </Link>
   );
