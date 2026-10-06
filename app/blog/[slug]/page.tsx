@@ -22,16 +22,19 @@ export default async function PostPage({ params }: { params: Params }) {
 
   if (!post) notFound();
 
-  // Related posts: next two by date, excluding current
   const related = await prisma.post.findMany({
     where: { published: true, id: { not: post.id } },
     orderBy: { publishedAt: "desc" },
     take: 2,
   });
 
+  const postTags = post.tags
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
       <section className="hero-band border-b border-deep-200 dark:border-deep-800">
         <div className="mx-auto max-w-3xl px-4 py-14 md:py-16">
           <Link
@@ -55,9 +58,9 @@ export default async function PostPage({ params }: { params: Params }) {
             {post.excerpt}
           </p>
 
-          {post.tags.length > 0 && (
+          {postTags.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {postTags.map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full bg-brand-100 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
@@ -70,7 +73,6 @@ export default async function PostPage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <article className="mx-auto max-w-3xl px-4 py-12">
         <div className="space-y-5 text-lg leading-relaxed text-deep-700 dark:text-cream-300">
           {post.content.split("\n\n").map((para, i) => (

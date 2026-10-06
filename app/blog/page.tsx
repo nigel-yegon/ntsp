@@ -14,12 +14,20 @@ export default async function BlogPage() {
     orderBy: { publishedAt: "desc" },
   });
 
-  // Collect unique tags across all posts, sorted alphabetically
-  const tags = Array.from(new Set(posts.flatMap((p) => p.tags))).sort();
+  // Flatten comma-separated tags across all posts into a unique list
+  const tags = Array.from(
+    new Set(
+      posts.flatMap((p) =>
+        p.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+      ),
+    ),
+  ).sort();
 
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
       <section className="hero-band border-b border-deep-200 dark:border-deep-800">
         <div className="mx-auto max-w-4xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
@@ -34,7 +42,6 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <div className="mx-auto max-w-4xl px-4 py-12">
         {posts.length === 0 ? (
           <p className="text-deep-500 dark:text-cream-500">

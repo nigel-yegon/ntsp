@@ -48,9 +48,9 @@ export default async function Home() {
         eyebrow="Magical Kenya, curated"
         title={
           <>
-            Discover Kenya
+            Discover Kenya,
             <span className="block text-brand-600 dark:text-brand-400">
-              from safari to sea
+              the origin of wonder
             </span>
           </>
         }

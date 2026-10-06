@@ -10,7 +10,7 @@ export type PostRow = {
   excerpt: string;
   content: string;
   coverImage: string | null;
-  tags: string[];
+  tags: string;
   published: boolean;
   publishedAt: string | null;
 };
@@ -27,7 +27,7 @@ export async function listPosts(): Promise<PostRow[]> {
     excerpt: r.excerpt,
     content: r.content,
     coverImage: r.coverImage,
-    tags: r.tags ?? [],
+    tags: r.tags,
     published: r.published,
     publishedAt: r.publishedAt ? r.publishedAt.toISOString().slice(0, 10) : null,
   }));
@@ -41,7 +41,7 @@ export async function createPost(input?: Partial<PostRow>) {
       excerpt: input?.excerpt ?? "",
       content: input?.content ?? "",
       coverImage: input?.coverImage ?? null,
-      tags: input?.tags ?? [],
+      tags: input?.tags ?? "",
       published: input?.published ?? false,
       publishedAt: input?.publishedAt ? new Date(input.publishedAt) : null,
     },
@@ -56,9 +56,11 @@ export async function createPost(input?: Partial<PostRow>) {
     excerpt: created.excerpt,
     content: created.content,
     coverImage: created.coverImage,
-    tags: created.tags ?? [],
+    tags: created.tags,
     published: created.published,
-    publishedAt: created.publishedAt ? created.publishedAt.toISOString().slice(0, 10) : null,
+    publishedAt: created.publishedAt
+      ? created.publishedAt.toISOString().slice(0, 10)
+      : null,
   };
 }
 
@@ -88,14 +90,19 @@ export async function updatePost(id: number, patch: Partial<PostRow>) {
     excerpt: updated.excerpt,
     content: updated.content,
     coverImage: updated.coverImage,
-    tags: updated.tags ?? [],
+    tags: updated.tags,
     published: updated.published,
-    publishedAt: updated.publishedAt ? updated.publishedAt.toISOString().slice(0, 10) : null,
+    publishedAt: updated.publishedAt
+      ? updated.publishedAt.toISOString().slice(0, 10)
+      : null,
   };
 }
 
 export async function deletePost(id: number) {
-  const row = await prisma.post.findUnique({ where: { id }, select: { slug: true } });
+  const row = await prisma.post.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
   await prisma.post.delete({ where: { id } });
   revalidatePath("/admin");
   revalidatePath("/blog");

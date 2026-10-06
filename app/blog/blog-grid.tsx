@@ -9,7 +9,7 @@ type Post = {
   title: string;
   slug: string;
   excerpt: string;
-  tags: string[];
+  tags: string;
   publishedAt: Date | null;
 };
 
@@ -17,6 +17,13 @@ type Props = {
   posts: Post[];
   tags: string[];
 };
+
+function splitTags(tags: string): string[] {
+  return tags
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
 
 export function BlogGrid({ posts, tags }: Props) {
   const [query, setQuery] = useState("");
@@ -26,13 +33,15 @@ export function BlogGrid({ posts, tags }: Props) {
     const q = query.trim().toLowerCase();
 
     return posts.filter((p) => {
-      if (activeTag && !p.tags.includes(activeTag)) return false;
+      const postTags = splitTags(p.tags);
+
+      if (activeTag && !postTags.includes(activeTag)) return false;
 
       if (!q) return true;
       return (
         p.title.toLowerCase().includes(q) ||
         p.excerpt.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q))
+        postTags.some((t) => t.toLowerCase().includes(q))
       );
     });
   }, [query, activeTag, posts]);
@@ -84,7 +93,9 @@ export function BlogGrid({ posts, tags }: Props) {
             onClick={() => setActiveTag(null)}
           />
           {tags.map((tag) => {
-            const count = posts.filter((p) => p.tags.includes(tag)).length;
+            const count = posts.filter((p) =>
+              splitTags(p.tags).includes(tag),
+            ).length;
             return (
               <Pill
                 key={tag}
@@ -129,52 +140,55 @@ export function BlogGrid({ posts, tags }: Props) {
         </div>
       ) : (
         <div className="space-y-6">
-          {filtered.map((post, i) => (
-            <FadeIn key={post.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
-              <article>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="group relative block overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-                >
-                  <span
-                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                    aria-hidden
-                  />
+          {filtered.map((post, i) => {
+            const postTags = splitTags(post.tags);
+            return (
+              <FadeIn key={post.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
+                <article>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="group relative block overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                  >
+                    <span
+                      className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                      aria-hidden
+                    />
 
-                  <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                    {post.publishedAt?.toLocaleDateString("en-KE", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                    {post.title}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                    {post.excerpt}
-                  </p>
+                    <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
+                      {post.publishedAt?.toLocaleDateString("en-KE", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                    <h2 className="mt-2 text-xl font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                      {post.title}
+                    </h2>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                      {post.excerpt}
+                    </p>
 
-                  {post.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {post.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                    {postTags.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {postTags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                    Read article →
-                  </span>
-                </Link>
-              </article>
-            </FadeIn>
-          ))}
+                    <span className="mt-4 inline-block text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                      Read article →
+                    </span>
+                  </Link>
+                </article>
+              </FadeIn>
+            );
+          })}
         </div>
       )}
     </>
