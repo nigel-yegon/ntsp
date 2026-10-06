@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { HeroSection } from "./components/hero-section";
+import { GlobalSearch } from "./components/global-search";
 import FadeIn from "./components/fade-in";
 
 export const revalidate = 300;
@@ -11,7 +12,7 @@ export default async function Home() {
     await Promise.all([
       prisma.destination.findMany({
         where: { featured: true },
-        take: 3,
+        take: 6,
         orderBy: { name: "asc" },
       }),
       prisma.tourPackage.findMany({
@@ -31,7 +32,7 @@ export default async function Home() {
         orderBy: { name: "asc" },
       }),
       prisma.accommodation.findMany({
-        take: 3,
+        take: 6,
         include: { destination: true },
         orderBy: { name: "asc" },
       }),
@@ -73,6 +74,22 @@ export default async function Home() {
       </HeroSection>
 
       <div className="mx-auto max-w-6xl space-y-20 px-4 py-16">
+        {/* ─── GLOBAL SEARCH ─────────────────────────────────── */}
+        
+          <section className="relative z-20 mb-18">
+            <div className="mb-4">
+              <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+                Search for everything
+              </h2>
+              <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+                Destinations, experiences, packages, stays, events, and blog
+                posts — 
+              </p>
+            </div>
+            <GlobalSearch />
+          </section>
+        
+
         {/* ─── EXPERIENCES ───────────────────────────────────── */}
         <FadeIn whenVisible>
           <Section
