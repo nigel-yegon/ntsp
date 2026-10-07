@@ -20,8 +20,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const isAdmin = pathname.startsWith("/admin");
-  const isDashboard = pathname.startsWith("/dashboard");
+    const isDashboard = pathname.startsWith("/dashboard");
 
   useEffect(() => {
     setOpen(false);
@@ -53,7 +52,7 @@ export function Navbar() {
     <>
       <header
         className={`z-50 border-b transition-colors ${
-          isAdmin ? "" : "sticky top-0"
+          isDashboard ? "" : "sticky top-0"
         } ${
           scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"

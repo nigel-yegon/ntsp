@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { SiteChrome } from "./components/site-chrome";
+import { AccessibilityProvider } from "./components/accessibility/accessibility-provider";
+import AccessibilityToolbar from "./components/accessibility/accessibility-toolbar";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -29,7 +31,10 @@ export default function RootLayout({
           disableTransitionOnChange
           scriptProps={{ type: "application/json" }}
         >
-          <SiteChrome>{children}</SiteChrome>
+          <AccessibilityProvider>
+            <SiteChrome>{children}</SiteChrome>
+            <AccessibilityToolbar />
+          </AccessibilityProvider>
         </ThemeProvider>
         <Analytics />
       </body>
