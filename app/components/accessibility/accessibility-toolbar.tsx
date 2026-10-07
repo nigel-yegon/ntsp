@@ -63,7 +63,7 @@ export default function AccessibilityToolbar() {
 
   return (
     // Outer wrapper: top-right anchor. Bump to `top-20` if a fixed header sits above.
-    <div className="fixed right-4 top-25 z-9999 sm:right-6">
+    <div className="fixed right-4 top-5 z-9999 sm:right-6">
       {/* Trigger button — sits in the corner */}
       <button
         ref={triggerRef}
