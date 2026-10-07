@@ -116,7 +116,7 @@ export function Navbar() {
       </header>
 
       {open && (
-        <div className="fixed inset-0 z-50 xl:hidden">
+        <div className="fixed border-b inset-0 z-50 xl:hidden">
           <div
             className="absolute inset-0 bg-deep-950/50 backdrop-blur-sm"
             onClick={() => setOpen(false)}
