@@ -66,7 +66,7 @@ export function Navbar() {
           <Link
             href="/"
             className={`flex shrink-0 items-center ${
-              isDashboard ? "mr-0.5" : ""
+              isDashboard ? "ml-0.5" : ""
             }`}
             aria-label="National Tourism Service Portal home"
           >
