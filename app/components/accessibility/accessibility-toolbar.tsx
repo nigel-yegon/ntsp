@@ -7,6 +7,7 @@ import { useAccessibility } from "./accessibility-provider";
 export default function AccessibilityToolbar() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const panelId = useId();
   const titleId = useId();
 
@@ -26,7 +27,7 @@ export default function AccessibilityToolbar() {
     resetAccessibility,
   } = useAccessibility();
 
-  // ESC closes the panel and returns focus to the trigger.
+  // ESC closes and returns focus to the trigger.
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
@@ -39,21 +40,78 @@ export default function AccessibilityToolbar() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Click outside closes the panel.
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (
+        !panelRef.current?.contains(target) &&
+        !triggerRef.current?.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
   const closeAndRestoreFocus = () => {
     setOpen(false);
     triggerRef.current?.focus();
   };
 
   return (
-    <div className="fixed right-0 top-1/2 z-9999 -translate-y-1/2">
+    // Outer wrapper: top-right anchor. Bump to `top-20` if a fixed header sits above.
+    <div className="fixed right-4 top-25 z-9999 sm:right-6">
+      {/* Trigger button — sits in the corner */}
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-controls={panelId}
+        aria-label={
+          open
+            ? "Close accessibility settings"
+            : "Open accessibility settings"
+        }
+        className="
+          flex h-12 w-12
+          items-center justify-center
+          rounded-full
+          border border-brand-500
+          bg-brand-400
+          text-deep-800
+          shadow-lg
+          transition
+          hover:bg-brand-500
+          hover:shadow-xl
+          focus:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-brand-400
+          focus-visible:ring-offset-2
+          focus-visible:ring-offset-cream-200
+          dark:border-brand-600
+          dark:bg-brand-400
+          dark:text-deep-900
+          dark:hover:bg-brand-500
+          dark:focus-visible:ring-offset-deep-950
+        "
+      >
+        <Accessibility size={22} strokeWidth={2} aria-hidden="true" />
+      </button>
+
+      {/* Panel — anchored below the trigger, right-aligned to it */}
       {open && (
         <section
+          ref={panelRef}
           id={panelId}
           aria-labelledby={titleId}
           className="
-            absolute right-14 top-1/2 w-85
-            max-w-[calc(100vw-5rem)]
-            -translate-y-1/2
+            absolute right-0 top-full mt-3
+            w-85
+            max-w-[calc(100vw-2rem)]
             rounded-2xl
             border border-cream-300
             bg-cream-50
@@ -192,44 +250,6 @@ export default function AccessibilityToolbar() {
           </div>
         </section>
       )}
-
-      {/* Trigger */}
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        aria-expanded={open}
-        aria-controls={panelId}
-        aria-label={
-          open
-            ? "Close accessibility settings"
-            : "Open accessibility settings"
-        }
-        className="
-          flex h-14 w-12
-          items-center justify-center
-          rounded-l-xl
-          border border-r-0
-          border-brand-500
-          bg-brand-400
-          text-deep-800
-          shadow-lg
-          transition
-          hover:bg-brand-500
-          focus:outline-none
-          focus-visible:ring-2
-          focus-visible:ring-brand-400
-          focus-visible:ring-offset-2
-          focus-visible:ring-offset-cream-200
-          dark:border-brand-600
-          dark:bg-brand-400
-          dark:text-deep-900
-          dark:hover:bg-brand-500
-          dark:focus-visible:ring-offset-deep-950
-        "
-      >
-        <Accessibility size={24} strokeWidth={2} aria-hidden="true" />
-      </button>
     </div>
   );
 }
