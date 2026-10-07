@@ -53,7 +53,7 @@ export function Navbar() {
         } ${
           scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
-            : "border-transparent bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
+            : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
         }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
@@ -116,7 +116,7 @@ export function Navbar() {
       </header>
 
       {open && (
-        <div className="fixed border-b inset-0 z-50 xl:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <div
             className="absolute inset-0 bg-deep-950/50 backdrop-blur-sm"
             onClick={() => setOpen(false)}
