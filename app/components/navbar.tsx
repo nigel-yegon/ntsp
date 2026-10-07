@@ -8,11 +8,11 @@ import { ThemeToggle } from "./theme-toggle";
 
 const links = [
   { href: "/destinations", label: "Destinations" },
-  { href: "/experiences",  label: "Experiences"  },
-  { href: "/packages",     label: "Packages"     },
-  { href: "/stay",         label: "Stay"         },
-  { href: "/events",       label: "Events"       },
-  { href: "/blog",         label: "Blog"         },
+  { href: "/experiences", label: "Experiences" },
+  { href: "/packages", label: "Packages" },
+  { href: "/stay", label: "Stay" },
+  { href: "/events", label: "Events" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export function Navbar() {
@@ -21,6 +21,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   const isAdmin = pathname.startsWith("/admin");
+  const isDashboard = pathname.startsWith("/dashboard");
 
   useEffect(() => {
     setOpen(false);
@@ -30,13 +31,16 @@ export function Navbar() {
     function onScroll() {
       setScrolled(window.scrollY > 8);
     }
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
@@ -57,9 +61,13 @@ export function Navbar() {
         }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+
+          {/* Logo */}
           <Link
             href="/"
-            className="flex shrink-0 items-center"
+            className={`flex shrink-0 items-center ${
+              isDashboard ? "mr-0.5" : ""
+            }`}
             aria-label="National Tourism Service Portal home"
           >
             <Image
@@ -72,9 +80,11 @@ export function Navbar() {
             />
           </Link>
 
+          {/* Desktop navigation */}
           <ul className="hidden items-center gap-1 xl:flex">
             {links.map((l) => {
               const active = isActive(l.href);
+
               return (
                 <li key={l.href}>
                   <Link
@@ -86,6 +96,7 @@ export function Navbar() {
                     }`}
                   >
                     {l.label}
+
                     {active && (
                       <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand-500" />
                     )}
@@ -95,8 +106,10 @@ export function Navbar() {
             })}
           </ul>
 
+          {/* Right side */}
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
+
             <Link
               href="/plan"
               className="hidden rounded-md bg-deep-800 px-3.5 py-1.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 xl:inline-block dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
@@ -115,6 +128,7 @@ export function Navbar() {
         </nav>
       </header>
 
+      {/* Mobile menu */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
@@ -122,6 +136,7 @@ export function Navbar() {
             onClick={() => setOpen(false)}
             aria-hidden
           />
+
           <div className="absolute right-0 top-0 h-full w-72 max-w-[85vw] bg-cream-100 shadow-2xl dark:bg-deep-950">
             <div className="flex items-center justify-between border-b border-deep-200 px-4 py-3 dark:border-deep-800">
               <Link
@@ -138,6 +153,7 @@ export function Navbar() {
                   className="h-9 w-auto"
                 />
               </Link>
+
               <button
                 onClick={() => setOpen(false)}
                 className="rounded-md border border-deep-300 p-1.5 text-sm dark:border-deep-700"
@@ -150,6 +166,7 @@ export function Navbar() {
             <ul className="flex flex-col p-3">
               {links.map((l) => {
                 const active = isActive(l.href);
+
                 return (
                   <li key={l.href}>
                     <Link
