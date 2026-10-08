@@ -519,7 +519,7 @@ function DashboardHeader({
   const searchable = activeModule !== "overview" && activeModule !== "destinations";
 
   return (
-    <header className="border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
+    <header className="sticky top-0 z-30 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
