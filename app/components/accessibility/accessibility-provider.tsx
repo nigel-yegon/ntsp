@@ -9,9 +9,9 @@ import {
   type ReactNode,
 } from "react";
 
-type TextSize = "normal" | "large" | "xlarge";
+export type TextSize = "normal" | "large" | "xlarge";
 
-type AccessibilitySettings = {
+export type AccessibilitySettings = {
   textSize: TextSize;
   highContrast: boolean;
   grayscale: boolean;
@@ -44,7 +44,10 @@ const defaultSettings: AccessibilitySettings = {
 const AccessibilityContext =
   createContext<AccessibilityContextType | null>(null);
 
-/** Class names applied to <html>, keyed by the setting they reflect. */
+/**
+ * Class names applied to <html>, keyed by the setting they reflect.
+ * Keeping them in one map means adding a new option is a single-line change.
+ */
 const CLASS_MAP = {
   "accessibility-large-text": (s: AccessibilitySettings) =>
     s.textSize === "large",
@@ -66,16 +69,12 @@ function applyClasses(settings: AccessibilitySettings) {
   }
 }
 
-export function AccessibilityProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function AccessibilityProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] =
     useState<AccessibilitySettings>(defaultSettings);
-
   const [mounted, setMounted] = useState(false);
 
+  // Load persisted settings once on mount.
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -84,20 +83,19 @@ export function AccessibilityProvider({
         setSettings({ ...defaultSettings, ...parsed });
       }
     } catch {
-      // Ignore malformed localStorage data
+      // Ignore malformed localStorage data.
     }
     setMounted(true);
   }, []);
 
+  // Sync classes and persist whenever settings change (after hydration).
   useEffect(() => {
     if (!mounted) return;
-
     applyClasses(settings);
-
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     } catch {
-      // Storage may be unavailable (private mode, quota); safe to ignore
+      // Storage may be unavailable (private mode, quota); safe to ignore.
     }
   }, [settings, mounted]);
 

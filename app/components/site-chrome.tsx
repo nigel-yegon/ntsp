@@ -1,20 +1,26 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { Navbar } from "./navbar";
 import { Footer } from "./footer";
-import { PageTransition } from "./page-transition";
 
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin =
+    pathname?.startsWith("/admin") || pathname?.startsWith("/dashboard");
 
   return (
     <>
-      <Navbar />
-      <main className="flex-1">
-        <PageTransition>{children}</PageTransition>
+      <Navbar {...({ static: isAdmin } as any)} />
+
+      <main
+        data-nav-offset
+        className={`flex-1 ${isAdmin ? "" : "pt-0"}`}
+      >
+        {children}
       </main>
+
       {!isAdmin && <Footer />}
     </>
   );

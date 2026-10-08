@@ -453,3 +453,99 @@ input:-webkit-autofill:focus {
 
 /* ─── Accessibility panel: reset button uses brand tokens ───── */
 /* (see component refactor below for the class names used) */
+
+
+/* ─── Accessibility: Text size ──────────────────────────────── */
+.accessibility-large-text  { font-size: 118%; }
+.accessibility-xlarge-text { font-size: 137%; }
+
+/* ─── Accessibility: High contrast ──────────────────────────── */
+.accessibility-high-contrast {
+  --background: #ffffff;
+  --foreground: #000000;
+
+  --brand-400: #92400e;
+  --brand-500: #78350f;
+  --brand-600: #5b2a0c;
+
+  --deep-400: #333333;
+  --deep-500: #1f1f1f;
+  --deep-800: #000000;
+
+  --cream-100: #ffffff;
+  --cream-200: #fafafa;
+  --cream-300: #e5e5e5;
+}
+
+.accessibility-high-contrast.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --brand-400: #fbbf24;
+  --brand-500: #fcd34d;
+  --deep-800: #ffffff;
+  --cream-200: #000000;
+}
+
+.accessibility-high-contrast body::before,
+.accessibility-high-contrast .hero-band {
+  background: var(--background) !important;
+}
+
+.accessibility-high-contrast :focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* ─── Accessibility: Grayscale ──────────────────────────────── */
+.accessibility-grayscale {
+  filter: grayscale(1);
+}
+
+/* ─── Accessibility: Readable font ──────────────────────────── */
+.accessibility-readable-font,
+.accessibility-readable-font body,
+.accessibility-readable-font button,
+.accessibility-readable-font input,
+.accessibility-readable-font textarea,
+.accessibility-readable-font select {
+  font-family: "Atkinson Hyperlegible", Verdana, Tahoma, sans-serif !important;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Accessibility: Increased spacing ──────────────────────── */
+.accessibility-increased-spacing p,
+.accessibility-increased-spacing li,
+.accessibility-increased-spacing h1,
+.accessibility-increased-spacing h2,
+.accessibility-increased-spacing h3,
+.accessibility-increased-spacing h4,
+.accessibility-increased-spacing label,
+.accessibility-increased-spacing button,
+.accessibility-increased-spacing input,
+.accessibility-increased-spacing textarea {
+  line-height: 1.9 !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.12em !important;
+}
+
+/* ─── Accessibility: Reduced motion (manual toggle) ─────────── */
+.accessibility-reduced-motion *,
+.accessibility-reduced-motion *::before,
+.accessibility-reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ─── Navbar: static on admin/dashboard routes ──────────────── */
+/* Applied via [data-nav-static] on a layout wrapper. */
+[data-nav-static] [data-site-header] {
+  position: relative;
+  backdrop-filter: none;
+  background-color: var(--cream-100);
+}
+
+[data-nav-static] [data-nav-offset] {
+  padding-top: 0;
+}

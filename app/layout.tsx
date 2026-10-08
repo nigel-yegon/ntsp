@@ -29,7 +29,6 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          scriptProps={{ type: "application/json" }}
         >
           <AccessibilityProvider>
             <SiteChrome>{children}</SiteChrome>

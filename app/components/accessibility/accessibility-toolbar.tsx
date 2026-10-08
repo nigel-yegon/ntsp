@@ -27,7 +27,7 @@ export default function AccessibilityToolbar() {
     resetAccessibility,
   } = useAccessibility();
 
-  // ESC closes and returns focus to the trigger.
+  // ESC closes the panel and returns focus to the trigger.
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
@@ -62,9 +62,9 @@ export default function AccessibilityToolbar() {
   };
 
   return (
-    // Outer wrapper: top-right anchor. Bump to `top-20` if a fixed header sits above.
-    <div className="fixed right-4 top-5 z-9999 sm:right-6">
-      {/* Trigger button — sits in the corner */}
+    // Top-right anchor. Bump to top-24 if your fixed header is taller than ~80px.
+    <div className="fixed right-4 top-20 z-9999 sm:right-6">
+      {/* Trigger */}
       <button
         ref={triggerRef}
         type="button"
@@ -72,9 +72,7 @@ export default function AccessibilityToolbar() {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={
-          open
-            ? "Close accessibility settings"
-            : "Open accessibility settings"
+          open ? "Close accessibility settings" : "Open accessibility settings"
         }
         className="
           flex h-12 w-12
@@ -102,7 +100,7 @@ export default function AccessibilityToolbar() {
         <Accessibility size={22} strokeWidth={2} aria-hidden="true" />
       </button>
 
-      {/* Panel — anchored below the trigger, right-aligned to it */}
+      {/* Panel */}
       {open && (
         <section
           ref={panelRef}
