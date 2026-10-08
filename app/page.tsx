@@ -18,16 +18,16 @@ export default async function Home() {
       prisma.tourPackage.findMany({
         where: { featured: true },
         include: { destination: true },
-        take: 3,
+        take: 6,
         orderBy: { priceKes: "asc" },
       }),
       prisma.event.findMany({
         where: { featured: true },
         orderBy: { startDate: "asc" },
-        take: 3,
+        take: 6,
       }),
       prisma.attraction.findMany({
-        take: 6,
+        take: 9,
         include: { destination: true },
         orderBy: { name: "asc" },
       }),
@@ -39,7 +39,7 @@ export default async function Home() {
       prisma.post.findMany({
         where: { published: true },
         orderBy: { publishedAt: "desc" },
-        take: 3,
+        take: 6,
       }),
     ]);
 
