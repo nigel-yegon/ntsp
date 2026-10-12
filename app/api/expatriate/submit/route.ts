@@ -47,6 +47,7 @@ export async function POST(req: Request) {
 
   // ─── Create the application first (so we can key document rows to it) ───
   const referenceNo = await createReferenceNo();
+  console.log("[submit] Generated referenceNo:", referenceNo);
   const application = await prisma.application.create({
     data: {
       referenceNo,
