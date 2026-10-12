@@ -51,6 +51,13 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  User: 'User',
+  Company: 'Company',
+  Application: 'Application',
+  Document: 'Document',
+  ApplicationEvent: 'ApplicationEvent',
+  CommitteeVote: 'CommitteeVote',
+  Assignment: 'Assignment',
   ContactSubmission: 'ContactSubmission',
   Post: 'Post',
   Destination: 'Destination',
@@ -74,6 +81,116 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  passwordHash: 'passwordHash',
+  role: 'role',
+  companyId: 'companyId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  registrationNo: 'registrationNo',
+  kraPin: 'kraPin',
+  tourismLicenceNo: 'tourismLicenceNo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
+
+
+export const ApplicationScalarFieldEnum = {
+  id: 'id',
+  referenceNo: 'referenceNo',
+  status: 'status',
+  submittedById: 'submittedById',
+  companyId: 'companyId',
+  permitClass: 'permitClass',
+  applicationType: 'applicationType',
+  applicantName: 'applicantName',
+  applicantNationality: 'applicantNationality',
+  applicantPassportNo: 'applicantPassportNo',
+  applicantEmail: 'applicantEmail',
+  applicantPhone: 'applicantPhone',
+  purposeStatement: 'purposeStatement',
+  submittedAt: 'submittedAt',
+  perusalStartedAt: 'perusalStartedAt',
+  verificationStartedAt: 'verificationStartedAt',
+  committeeDecidedAt: 'committeeDecidedAt',
+  psDecidedAt: 'psDecidedAt',
+  forwardedAt: 'forwardedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
+
+
+export const DocumentScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  slotId: 'slotId',
+  fileName: 'fileName',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  uploadedAt: 'uploadedAt',
+  perusalStatus: 'perusalStatus',
+  verificationStatus: 'verificationStatus',
+  reviewNotes: 'reviewNotes',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt'
+} as const
+
+export type DocumentScalarFieldEnum = (typeof DocumentScalarFieldEnum)[keyof typeof DocumentScalarFieldEnum]
+
+
+export const ApplicationEventScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  type: 'type',
+  actorId: 'actorId',
+  message: 'message',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ApplicationEventScalarFieldEnum = (typeof ApplicationEventScalarFieldEnum)[keyof typeof ApplicationEventScalarFieldEnum]
+
+
+export const CommitteeVoteScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  voterId: 'voterId',
+  decision: 'decision',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type CommitteeVoteScalarFieldEnum = (typeof CommitteeVoteScalarFieldEnum)[keyof typeof CommitteeVoteScalarFieldEnum]
+
+
+export const AssignmentScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  role: 'role',
+  assigneeId: 'assigneeId',
+  assignedAt: 'assignedAt',
+  completedAt: 'completedAt'
+} as const
+
+export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
 
 
 export const ContactSubmissionScalarFieldEnum = {
@@ -206,6 +323,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -220,4 +345,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

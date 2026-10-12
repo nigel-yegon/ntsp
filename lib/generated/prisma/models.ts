@@ -8,6 +8,13 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/User'
+export type * from './models/Company'
+export type * from './models/Application'
+export type * from './models/Document'
+export type * from './models/ApplicationEvent'
+export type * from './models/CommitteeVote'
+export type * from './models/Assignment'
 export type * from './models/ContactSubmission'
 export type * from './models/Post'
 export type * from './models/Destination'

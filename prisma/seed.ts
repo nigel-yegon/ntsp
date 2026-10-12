@@ -1,6 +1,8 @@
-import 'dotenv/config';
-import { PrismaClient } from '../lib/generated/prisma/client';
-import { PrismaPostgresAdapter } from '@prisma/adapter-ppg';
+// prisma/seed.ts
+import "dotenv/config";
+import { PrismaClient } from "../lib/generated/prisma/client";
+import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
+import bcrypt from "bcryptjs";
 
 const adapter = new PrismaPostgresAdapter({
   connectionString: process.env.DATABASE_URL!,
@@ -11,9 +13,22 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log("🌱 Seeding NTSP database...");
 
-  // ═══════════════════════════════════════════════════════════════
-  // DESTINATIONS — 20 records
-  // ═══════════════════════════════════════════════════════════════
+  await seedDestinations();
+  await seedAttractions();
+  await seedTourPackages();
+  await seedAccommodations();
+  await seedEvents();
+  await seedBlogPosts();
+  await seedUsersAndCompany();
+
+  console.log("✅ Seed complete.");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DESTINATIONS — 20 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedDestinations() {
   const destinations = [
     {
       name: "Maasai Mara National Reserve",
@@ -197,22 +212,35 @@ async function main() {
     },
   ];
 
-  const destinationMap: Record<string, { id: number }> = {};
-
   for (const d of destinations) {
-    const record = await prisma.destination.upsert({
+    await prisma.destination.upsert({
       where: { slug: d.slug },
       update: {},
       create: d,
     });
-    destinationMap[d.slug] = record;
   }
 
   console.log(`✔ Seeded ${destinations.length} destinations`);
+}
 
-  // ═══════════════════════════════════════════════════════════════
-  // ATTRACTIONS — 24 records
-  // ═══════════════════════════════════════════════════════════════
+// Helper used by the subsequent sections
+async function getDestinationMap() {
+  const records = await prisma.destination.findMany({
+    select: { id: true, slug: true },
+  });
+  return Object.fromEntries(records.map((r) => [r.slug, r])) as Record<
+    string,
+    { id: number; slug: string }
+  >;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ATTRACTIONS — 24 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedAttractions() {
+  const destinationMap = await getDestinationMap();
+
   const attractions = [
     {
       name: "Great Wildebeest Migration",
@@ -409,10 +437,15 @@ async function main() {
   }
 
   console.log(`✔ Seeded ${attractions.length} attractions`);
+}
 
-  // ═══════════════════════════════════════════════════════════════
-  // TOUR PACKAGES — 22 records
-  // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// TOUR PACKAGES — 22 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedTourPackages() {
+  const destinationMap = await getDestinationMap();
+
   const packages = [
     {
       title: "3-Day Maasai Mara Safari",
@@ -667,10 +700,15 @@ async function main() {
   }
 
   console.log(`✔ Seeded ${packages.length} tour packages`);
+}
 
-  // ═══════════════════════════════════════════════════════════════
-  // ACCOMMODATIONS — 24 records
-  // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// ACCOMMODATIONS — 24 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedAccommodations() {
+  const destinationMap = await getDestinationMap();
+
   const accommodations = [
     {
       name: "Mara Serena Safari Lodge",
@@ -923,10 +961,13 @@ async function main() {
   }
 
   console.log(`✔ Seeded ${accommodations.length} accommodations`);
+}
 
-  // ═══════════════════════════════════════════════════════════════
-  // EVENTS — 20 records
-  // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// EVENTS — 20 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedEvents() {
   const events = [
     {
       name: "Magical Kenya Travel Expo (MKTE) 2026",
@@ -1139,10 +1180,17 @@ async function main() {
   }
 
   console.log(`✔ Seeded ${events.length} events`);
+}
 
-  // ═══════════════════════════════════════════════════════════════
-  // BLOG POSTS — 20 records (tags are comma-separated strings)
-  // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// BLOG POSTS — 20 records
+// ═══════════════════════════════════════════════════════════════
+
+async function seedBlogPosts() {
+  // NOTE: original seed used `update: p`, which overwrites any edits made
+  // through the admin UI on re-run. Switching to `update: {}` so re-seeding
+  // is safe once editors touch these. If you want the seed to always
+  // overwrite, change `update: {}` back to `update: p`.
   const posts = [
     {
       title: "The Best Time to Visit the Maasai Mara",
@@ -1526,17 +1574,79 @@ Photography: Never pressure your guide to move off-road for a better shot. It da
     },
   ];
 
-      for (const p of posts) {
+  for (const p of posts) {
     await prisma.post.upsert({
       where: { slug: p.slug },
-      update: p,
+      update: {},
       create: p,
     });
   }
 
   console.log(`✔ Seeded ${posts.length} blog posts`);
+}
 
-  console.log("✅ Seed complete.");
+// ═══════════════════════════════════════════════════════════════
+// USERS & COMPANY — for auth and workflow testing
+// ═══════════════════════════════════════════════════════════════
+
+async function seedUsersAndCompany() {
+  const passwordHash = await bcrypt.hash("password123", 10);
+
+  // A test employer company. In production, employers create their own
+  // company through signup — this is only for local testing.
+  const company = await prisma.company.upsert({
+    where: { registrationNo: "TEST-CO-001" },
+    update: {},
+    create: {
+      name: "Savannah Tours Ltd",
+      registrationNo: "TEST-CO-001",
+      kraPin: "P051234567X",
+      tourismLicenceNo: "TL/2026/001",
+    },
+  });
+
+  const users: {
+    email: string;
+    name: string;
+    role: "EMPLOYER" | "VERIFIER" | "COMMITTEE_MEMBER" | "PERMANENT_SECRETARY" | "ADMIN";
+    companyId?: string;
+  }[] = [
+    {
+      email: "employer@test.local",
+      name: "Test Employer",
+      role: "EMPLOYER",
+      companyId: company.id,
+    },
+    { email: "verifier@test.local", name: "Test Verifier", role: "VERIFIER" },
+    {
+      email: "committee@test.local",
+      name: "Test Committee Member",
+      role: "COMMITTEE_MEMBER",
+    },
+    {
+      email: "ps@test.local",
+      name: "Test Permanent Secretary",
+      role: "PERMANENT_SECRETARY",
+    },
+    { email: "admin@test.local", name: "Test Admin", role: "ADMIN" },
+  ];
+
+  for (const u of users) {
+    await prisma.user.upsert({
+      where: { email: u.email },
+      update: {},
+      create: {
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        passwordHash,
+        companyId: u.companyId,
+      },
+    });
+  }
+
+  console.log(`✔ Seeded ${users.length} users + 1 company`);
+  console.log(`   All test accounts use password: password123`);
 }
 
 main()

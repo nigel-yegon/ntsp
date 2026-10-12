@@ -115,3 +115,5 @@ ALTER TABLE "TourPackage" ADD CONSTRAINT "TourPackage_destinationId_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "Accommodation" ADD CONSTRAINT "Accommodation_destinationId_fkey" FOREIGN KEY ("destinationId") REFERENCES "Destination"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- prisma/migrations/<timestamp>_reference_sequence/migration.sql
+CREATE SEQUENCE IF NOT EXISTS expatriate_reference_seq START 1;
