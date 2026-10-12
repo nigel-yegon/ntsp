@@ -30,7 +30,13 @@ export default async function PerusalListPage() {
         </p>
       ) : (
         <ul className="space-y-3">
-          {applications.map((app) => (
+          {applications.map((app: {
+            id: string;
+            applicantName: string;
+            referenceNo: string;
+            company: { name: string };
+            status: "SUBMITTED" | "UNDER_PERUSAL";
+          }) => (
             <li key={app.id}>
               <Link
                 href={`/review/perusal/${app.id}`}

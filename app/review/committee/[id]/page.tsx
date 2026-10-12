@@ -12,12 +12,12 @@ import { tallyVotes } from "@/lib/tally";
 export default async function CommitteeDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const user = await requireRole(["COMMITTEE_MEMBER", "ADMIN"]);
 
   const application = await prisma.application.findUnique({
-    where: { id: params.id },
+    where: { id: (await params).id },
     include: {
       company: true,
       documents: { orderBy: { uploadedAt: "asc" } },

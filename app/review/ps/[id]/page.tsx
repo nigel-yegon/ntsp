@@ -12,12 +12,12 @@ import { tallyVotes } from "@/lib/tally";
 export default async function PsDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   await requireRole(["PERMANENT_SECRETARY", "ADMIN"]);
 
   const application = await prisma.application.findUnique({
-    where: { id: params.id },
+    where: { id: (await params).id },
     include: {
       company: true,
       documents: { orderBy: { uploadedAt: "asc" } },

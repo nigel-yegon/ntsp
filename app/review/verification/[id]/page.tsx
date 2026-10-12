@@ -12,12 +12,12 @@ import { VerificationDocumentActions } from "./verification-actions";
 export default async function VerificationDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   await requireRole(["VERIFIER", "ADMIN"]);
 
   const application = await prisma.application.findUnique({
-    where: { id: params.id },
+    where: { id: (await params).id },
     include: {
       company: true,
       documents: { orderBy: { uploadedAt: "asc" } },
