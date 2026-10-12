@@ -20,6 +20,7 @@ async function main() {
   await seedEvents();
   await seedBlogPosts();
   await seedUsersAndCompany();
+  await seedApplications();
 
   console.log("✅ Seed complete.");
 }
@@ -235,7 +236,7 @@ async function getDestinationMap() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ATTRACTIONS — 24 records
+// ATTRACTIONS — 23 records
 // ═══════════════════════════════════════════════════════════════
 
 async function seedAttractions() {
@@ -1187,10 +1188,6 @@ async function seedEvents() {
 // ═══════════════════════════════════════════════════════════════
 
 async function seedBlogPosts() {
-  // NOTE: original seed used `update: p`, which overwrites any edits made
-  // through the admin UI on re-run. Switching to `update: {}` so re-seeding
-  // is safe once editors touch these. If you want the seed to always
-  // overwrite, change `update: {}` back to `update: p`.
   const posts = [
     {
       title: "The Best Time to Visit the Maasai Mara",
@@ -1608,26 +1605,46 @@ async function seedUsersAndCompany() {
   const users: {
     email: string;
     name: string;
-    role: "EMPLOYER" | "VERIFIER" | "COMMITTEE_MEMBER" | "PERMANENT_SECRETARY" | "ADMIN";
+    role:
+      | "EMPLOYER"
+      | "VERIFIER"
+      | "COMMITTEE_MEMBER"
+      | "PERMANENT_SECRETARY"
+      | "ADMIN";
     companyId?: string;
   }[] = [
+    // Employer
     {
       email: "employer@test.local",
       name: "Test Employer",
       role: "EMPLOYER",
       companyId: company.id,
     },
+    // Verifiers
     { email: "verifier@test.local", name: "Test Verifier", role: "VERIFIER" },
+    // Committee (three members so quorum can be reached)
     {
       email: "committee@test.local",
-      name: "Test Committee Member",
+      name: "Committee Member One",
       role: "COMMITTEE_MEMBER",
     },
+    {
+      email: "committee2@test.local",
+      name: "Committee Member Two",
+      role: "COMMITTEE_MEMBER",
+    },
+    {
+      email: "committee3@test.local",
+      name: "Committee Member Three",
+      role: "COMMITTEE_MEMBER",
+    },
+    // Permanent Secretary
     {
       email: "ps@test.local",
       name: "Test Permanent Secretary",
       role: "PERMANENT_SECRETARY",
     },
+    // Admin
     { email: "admin@test.local", name: "Test Admin", role: "ADMIN" },
   ];
 
@@ -1647,6 +1664,411 @@ async function seedUsersAndCompany() {
 
   console.log(`✔ Seeded ${users.length} users + 1 company`);
   console.log(`   All test accounts use password: password123`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// APPLICATIONS — sample workflow data for reviewer testing
+// ═══════════════════════════════════════════════════════════════
+
+async function seedApplications() {
+  // ─── Look up the employer. Narrow to non-null locals so TypeScript
+  //     keeps the non-null guarantee inside the createApplication
+  //     closure below. Without this, TS18047 fires on `employer.id`.
+  const employerRecord = await prisma.user.findUnique({
+    where: { email: "employer@test.local" },
+  });
+  if (!employerRecord || !employerRecord.companyId) {
+    console.warn("⚠ Skipping applications — employer or company not found");
+    return;
+  }
+  const employer = employerRecord;
+  const companyId = employerRecord.companyId;
+
+  const verifier = await prisma.user.findUnique({
+    where: { email: "verifier@test.local" },
+  });
+  const committeeMember = await prisma.user.findUnique({
+    where: { email: "committee@test.local" },
+  });
+  const ps = await prisma.user.findUnique({
+    where: { email: "ps@test.local" },
+  });
+
+  const now = Date.now();
+  const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
+
+  type DocStage =
+    | "draft"
+    | "submitted"
+    | "under-perusal"
+    | "under-verification"
+    | "awaiting-committee"
+    | "awaiting-ps";
+
+  type DocSpec = {
+    slotId: string;
+    fileName: string;
+    mimeType: string;
+    sizeBytes: number;
+    perusalStatus:
+      | "PENDING"
+      | "ACCEPTED"
+      | "REJECTED"
+      | "NEEDS_RESUBMISSION";
+    verificationStatus:
+      | "PENDING"
+      | "ACCEPTED"
+      | "REJECTED"
+      | "NEEDS_RESUBMISSION";
+    reviewNotes?: string | null;
+  };
+
+  const standardDocs = (stage: DocStage): DocSpec[] => {
+    const perusalFor = (): DocSpec["perusalStatus"] => {
+      if (stage === "draft" || stage === "submitted") return "PENDING";
+      return "ACCEPTED";
+    };
+    const verificationFor = (): DocSpec["verificationStatus"] => {
+      if (
+        stage === "draft" ||
+        stage === "submitted" ||
+        stage === "under-perusal"
+      ) {
+        return "PENDING";
+      }
+      return "ACCEPTED";
+    };
+
+    return [
+      {
+        slotId: "passport",
+        fileName: "passport-biodata.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 1_240_000,
+        perusalStatus: perusalFor(),
+        verificationStatus: verificationFor(),
+        reviewNotes: null,
+      },
+      {
+        slotId: "purpose-letter",
+        fileName: "purpose-of-entry-letter.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 342_000,
+        perusalStatus: perusalFor(),
+        verificationStatus: verificationFor(),
+        reviewNotes:
+          stage === "under-perusal"
+            ? "Addressed correctly to the Principal Secretary."
+            : null,
+      },
+      {
+        slotId: "tourism-licence",
+        fileName: "tourism-licence-2026.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 890_000,
+        perusalStatus: perusalFor(),
+        verificationStatus: verificationFor(),
+        reviewNotes: null,
+      },
+      {
+        slotId: "certificate-incorporation",
+        fileName: "certificate-of-incorporation.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 620_000,
+        perusalStatus: perusalFor(),
+        verificationStatus: verificationFor(),
+        reviewNotes: null,
+      },
+      {
+        slotId: "kra-compliance",
+        fileName: "kra-tax-compliance.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 415_000,
+        perusalStatus: perusalFor(),
+        verificationStatus: verificationFor(),
+        reviewNotes: null,
+      },
+    ];
+  };
+
+  async function createApplication(spec: {
+    referenceNo: string;
+    status: string;
+    permitClass: "CLASS_G" | "CLASS_D" | "SPECIAL_PASS";
+    applicationType: "FIRST_APPLICATION" | "RENEWAL";
+    applicantName: string;
+    applicantNationality: string;
+    applicantPassportNo: string;
+    applicantEmail: string;
+    applicantPhone: string;
+    purposeStatement: string;
+    submittedDaysAgo: number | null;
+    docsStage: DocStage;
+  }) {
+    const submittedAt =
+      spec.submittedDaysAgo !== null ? daysAgo(spec.submittedDaysAgo) : null;
+
+    const application = await prisma.application.upsert({
+      where: { referenceNo: spec.referenceNo },
+      update: {},
+      create: {
+        referenceNo: spec.referenceNo,
+        status: spec.status as any,
+        submittedById: employer.id, // narrowed, no `!` needed
+        companyId: companyId, // narrowed, no `!` needed
+        permitClass: spec.permitClass,
+        applicationType: spec.applicationType,
+        applicantName: spec.applicantName,
+        applicantNationality: spec.applicantNationality,
+        applicantPassportNo: spec.applicantPassportNo,
+        applicantEmail: spec.applicantEmail,
+        applicantPhone: spec.applicantPhone,
+        purposeStatement: spec.purposeStatement,
+        submittedAt,
+        perusalStartedAt:
+          spec.docsStage === "under-perusal" ||
+          spec.docsStage === "under-verification" ||
+          spec.docsStage === "awaiting-committee" ||
+          spec.docsStage === "awaiting-ps"
+            ? daysAgo((spec.submittedDaysAgo ?? 0) - 1)
+            : null,
+        verificationStartedAt:
+          spec.docsStage === "under-verification" ||
+          spec.docsStage === "awaiting-committee" ||
+          spec.docsStage === "awaiting-ps"
+            ? daysAgo((spec.submittedDaysAgo ?? 0) - 2)
+            : null,
+        committeeDecidedAt:
+          spec.docsStage === "awaiting-ps"
+            ? daysAgo((spec.submittedDaysAgo ?? 0) - 4)
+            : null,
+        createdAt: submittedAt ?? daysAgo(7),
+      },
+    });
+
+    const docs = standardDocs(spec.docsStage);
+    for (const d of docs) {
+      await prisma.document.upsert({
+        where: {
+          applicationId_slotId_fileName: {
+            applicationId: application.id,
+            slotId: d.slotId,
+            fileName: d.fileName,
+          },
+        },
+        update: {},
+        create: {
+          applicationId: application.id,
+          slotId: d.slotId,
+          fileName: d.fileName,
+          mimeType: d.mimeType,
+          sizeBytes: d.sizeBytes,
+          storageKey: `seed/${application.id}/${d.slotId}/${d.fileName}`,
+          perusalStatus: d.perusalStatus,
+          verificationStatus: d.verificationStatus,
+          reviewNotes: d.reviewNotes ?? null,
+        },
+      });
+    }
+
+    const events: {
+      type: string;
+      actorId: string | null;
+      message: string | null;
+      daysAgo: number;
+    }[] = [];
+
+    if (spec.docsStage !== "draft") {
+      events.push({
+        type: "SUBMITTED",
+        actorId: employer.id,
+        message: `Application ${spec.referenceNo} submitted by Savannah Tours Ltd`,
+        daysAgo: spec.submittedDaysAgo ?? 0,
+      });
+    }
+    if (
+      spec.docsStage === "under-perusal" ||
+      spec.docsStage === "under-verification" ||
+      spec.docsStage === "awaiting-committee" ||
+      spec.docsStage === "awaiting-ps"
+    ) {
+      events.push({
+        type: "PERUSAL_STARTED",
+        actorId: verifier?.id ?? null,
+        message: "Document perusal started",
+        daysAgo: (spec.submittedDaysAgo ?? 0) - 1,
+      });
+    }
+    if (
+      spec.docsStage === "under-verification" ||
+      spec.docsStage === "awaiting-committee" ||
+      spec.docsStage === "awaiting-ps"
+    ) {
+      events.push({
+        type: "VERIFICATION_STARTED",
+        actorId: verifier?.id ?? null,
+        message: "All documents perused. Verification started.",
+        daysAgo: (spec.submittedDaysAgo ?? 0) - 2,
+      });
+    }
+    if (
+      spec.docsStage === "awaiting-committee" ||
+      spec.docsStage === "awaiting-ps"
+    ) {
+      events.push({
+        type: "ESCALATED_TO_COMMITTEE",
+        actorId: verifier?.id ?? null,
+        message: "All documents verified. Escalated to committee.",
+        daysAgo: (spec.submittedDaysAgo ?? 0) - 3,
+      });
+    }
+    if (spec.docsStage === "awaiting-ps") {
+      events.push({
+        type: "COMMITTEE_APPROVED",
+        actorId: committeeMember?.id ?? null,
+        message: "Committee approved the application.",
+        daysAgo: (spec.submittedDaysAgo ?? 0) - 4,
+      });
+      events.push({
+        type: "ESCALATED_TO_PS",
+        actorId: committeeMember?.id ?? null,
+        message: "Escalated to Permanent Secretary for final approval.",
+        daysAgo: (spec.submittedDaysAgo ?? 0) - 4,
+      });
+    }
+
+    for (const e of events) {
+      await prisma.applicationEvent.create({
+        data: {
+          applicationId: application.id,
+          type: e.type as any,
+          actorId: e.actorId,
+          message: e.message,
+          createdAt: daysAgo(e.daysAgo),
+        },
+      });
+    }
+
+    if (spec.docsStage === "awaiting-ps" && committeeMember) {
+      await prisma.committeeVote.upsert({
+        where: {
+          applicationId_voterId: {
+            applicationId: application.id,
+            voterId: committeeMember.id,
+          },
+        },
+        update: {},
+        create: {
+          applicationId: application.id,
+          voterId: committeeMember.id,
+          decision: "APPROVE",
+          comment: "Documents in order. Recommend approval.",
+        },
+      });
+    }
+
+    return application;
+  }
+
+  // ─── The six sample applications ──────────────────────────────
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0001",
+    status: "DRAFT",
+    permitClass: "CLASS_D",
+    applicationType: "FIRST_APPLICATION",
+    applicantName: "Amara Okonkwo",
+    applicantNationality: "Nigeria",
+    applicantPassportNo: "A12345678",
+    applicantEmail: "amara.okonkwo@example.com",
+    applicantPhone: "+254 700 111 222",
+    purposeStatement:
+      "Employment as Head of Safari Operations. DRAFT — awaiting academic qualification uploads before submission.",
+    submittedDaysAgo: null,
+    docsStage: "draft",
+  });
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0002",
+    status: "SUBMITTED",
+    permitClass: "CLASS_D",
+    applicationType: "FIRST_APPLICATION",
+    applicantName: "Chen Wei",
+    applicantNationality: "China",
+    applicantPassportNo: "E87654321",
+    applicantEmail: "chen.wei@example.com",
+    applicantPhone: "+254 700 222 333",
+    purposeStatement:
+      "Employment as Senior Wildlife Photographer at Savannah Tours Ltd. Contract offer attached, understudy programme in place.",
+    submittedDaysAgo: 2,
+    docsStage: "submitted",
+  });
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0003",
+    status: "UNDER_PERUSAL",
+    permitClass: "CLASS_G",
+    applicationType: "FIRST_APPLICATION",
+    applicantName: "Marie Dubois",
+    applicantNationality: "France",
+    applicantPassportNo: "F11223344",
+    applicantEmail: "marie.dubois@example.com",
+    applicantPhone: "+254 700 333 444",
+    purposeStatement:
+      "Investing USD 250,000 in a boutique tented camp development in the Maasai Mara. Proof of capital provided.",
+    submittedDaysAgo: 5,
+    docsStage: "under-perusal",
+  });
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0004",
+    status: "UNDER_VERIFICATION",
+    permitClass: "CLASS_D",
+    applicationType: "RENEWAL",
+    applicantName: "Rajesh Kumar",
+    applicantNationality: "India",
+    applicantPassportNo: "G55667788",
+    applicantEmail: "rajesh.kumar@example.com",
+    applicantPhone: "+254 700 444 555",
+    purposeStatement:
+      "Renewal of Class D permit for continued employment as Chief Safari Guide. All compliance documents current.",
+    submittedDaysAgo: 8,
+    docsStage: "under-verification",
+  });
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0005",
+    status: "AWAITING_COMMITTEE",
+    permitClass: "SPECIAL_PASS",
+    applicationType: "FIRST_APPLICATION",
+    applicantName: "Sofia Alvarez",
+    applicantNationality: "Spain",
+    applicantPassportNo: "H99887766",
+    applicantEmail: "sofia.alvarez@example.com",
+    applicantPhone: "+254 700 555 666",
+    purposeStatement:
+      "Special Pass for a six-month assignment as a guest hospitality trainer. All documents verified.",
+    submittedDaysAgo: 11,
+    docsStage: "awaiting-committee",
+  });
+
+  await createApplication({
+    referenceNo: "NTSP/EXP/2026/0006",
+    status: "AWAITING_PS_APPROVAL",
+    permitClass: "CLASS_G",
+    applicationType: "RENEWAL",
+    applicantName: "Yuki Tanaka",
+    applicantNationality: "Japan",
+    applicantPassportNo: "J33445566",
+    applicantEmail: "yuki.tanaka@example.com",
+    applicantPhone: "+254 700 666 777",
+    purposeStatement:
+      "Renewal of Class G investor permit. Committee approved; awaiting final recommendation to the Ministry of Interior.",
+    submittedDaysAgo: 15,
+    docsStage: "awaiting-ps",
+  });
+
+  console.log("✔ Seeded 6 sample applications across workflow stages");
 }
 
 main()

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { SiteChrome } from "./components/site-chrome";
+import { SiteChromeServer as SiteChrome } from "./components/site-chrome-server";
 import { AccessibilityProvider } from "./components/accessibility/accessibility-provider";
 import AccessibilityToolbar from "./components/accessibility/accessibility-toolbar";
 import { AppSessionProvider } from "./components/session-provider";

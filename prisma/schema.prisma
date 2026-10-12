@@ -25,7 +25,6 @@ model User {
   name         String
   passwordHash String?
   role         Role
-  // Employers belong to exactly one company.
   companyId    String?
   company      Company? @relation(fields: [companyId], references: [id])
   createdAt    DateTime @default(now())
@@ -34,6 +33,10 @@ model User {
   applicationsSubmitted Application[]      @relation("SubmittedBy")
   events                ApplicationEvent[]
   committeeVotes        CommitteeVote[]
+
+  // ── CHANGED: back-relations for Assignment and Document
+  assignments           Assignment[]
+  documentsReviewed     Document[]         @relation("DocumentReviewer")
 
   @@index([role])
   @@index([companyId])
@@ -44,7 +47,7 @@ model User {
 model Company {
   id               String   @id @default(cuid())
   name             String
-  registrationNo   String   @unique // Certificate of Incorporation number
+  registrationNo   String   @unique
   kraPin           String?
   tourismLicenceNo String?
   createdAt        DateTime @default(now())
@@ -78,7 +81,7 @@ enum ApplicationStatus {
   COMMITTEE_APPROVED
   COMMITTEE_DECLINED
   AWAITING_PS_APPROVAL
-  PS_APPROVED // forwarded to Ministry of Interior
+  PS_APPROVED
   PS_DECLINED
   WITHDRAWN
   FORWARDED_TO_INTERIOR
@@ -86,10 +89,9 @@ enum ApplicationStatus {
 
 model Application {
   id          String            @id @default(cuid())
-  referenceNo String            @unique // NTSP/EXP/2026/0001
+  referenceNo String            @unique
   status      ApplicationStatus @default(DRAFT)
 
-  // The employer who submitted (registered user)
   submittedById String
   submittedBy   User    @relation("SubmittedBy", fields: [submittedById], references: [id])
   companyId     String
@@ -98,15 +100,12 @@ model Application {
   permitClass     PermitClass
   applicationType ApplicationType
 
-  // Applicant (expatriate) — embedded, no login
   applicantName        String
   applicantNationality String
   applicantPassportNo  String
   applicantEmail       String
   applicantPhone       String
-
-  // Free-text justification (the "purpose of entry" letter, structured)
-  purposeStatement String?
+  purposeStatement     String?
 
   documents   Document[]
   events      ApplicationEvent[]
@@ -130,37 +129,38 @@ model Application {
 
 // ─── Documents ─────────────────────────────────────────────────
 
-model Document {
-  id            String      @id @default(cuid())
-  applicationId String
-  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-
-  // Slot identifier matching the frontend checklist (e.g. "passport", "tourism-licence")
-  slotId     String
-  fileName   String
-  mimeType   String
-  sizeBytes  Int
-  storageKey String // S3 key or equivalent
-  uploadedAt DateTime @default(now())
-
-  // Document-level review outcome
-  perusalStatus      DocumentReviewStatus @default(PENDING)
-  verificationStatus DocumentReviewStatus @default(PENDING)
-  reviewNotes        String?
-
-  reviewedById String?
-  reviewedAt   DateTime?
-
-  @@unique([applicationId, slotId, fileName])
-  @@index([applicationId])
-  @@index([slotId])
-}
-
 enum DocumentReviewStatus {
   PENDING
   ACCEPTED
   REJECTED
   NEEDS_RESUBMISSION
+}
+
+model Document {
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  slotId     String
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  uploadedAt DateTime @default(now())
+
+  perusalStatus      DocumentReviewStatus @default(PENDING)
+  verificationStatus DocumentReviewStatus @default(PENDING)
+  reviewNotes        String?
+
+  // ── CHANGED: reviewedById is now a real relation
+  reviewedById String?
+  reviewedBy   User?     @relation("DocumentReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+
+  @@unique([applicationId, slotId, fileName])
+  @@index([applicationId])
+  @@index([slotId])
+  @@index([reviewedById])
 }
 
 // ─── Workflow events (audit trail) ─────────────────────────────
@@ -188,15 +188,16 @@ model ApplicationEvent {
   applicationId String
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  type     EventType
-  actorId  String?
-  actor    User?     @relation(fields: [actorId], references: [id])
-  message  String?
+  type    EventType
+  actorId String?
+  actor   User?     @relation(fields: [actorId], references: [id])
+  message String?
   metadata Json?
 
   createdAt DateTime @default(now())
 
   @@index([applicationId, createdAt])
+  @@index([actorId])
 }
 
 // ─── Committee votes ───────────────────────────────────────────
@@ -222,6 +223,7 @@ model CommitteeVote {
 
   @@unique([applicationId, voterId])
   @@index([applicationId])
+  @@index([voterId])
 }
 
 // ─── Assignment (who is handling this application at the current stage) ───
@@ -238,8 +240,10 @@ model Assignment {
   applicationId String
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  role        AssignmentRole
-  assigneeId  String
+  role       AssignmentRole
+  // ── CHANGED: assigneeId now has a relation to User
+  assigneeId String
+  assignee   User   @relation(fields: [assigneeId], references: [id])
   assignedAt  DateTime       @default(now())
   completedAt DateTime?
 
@@ -247,7 +251,8 @@ model Assignment {
   @@index([assigneeId])
 }
 
-//Contact Form Submission
+// ─── Contact Form Submission ────────────────────────────────────
+
 model ContactSubmission {
   id        Int      @id @default(autoincrement())
   name      String
@@ -258,7 +263,8 @@ model ContactSubmission {
   createdAt DateTime @default(now())
 }
 
-// Blog posts 
+// ─── Blog posts ────────────────────────────────────────────────
+
 model Post {
   id          Int       @id @default(autoincrement())
   title       String
@@ -275,7 +281,8 @@ model Post {
   @@index([published, publishedAt])
 }
 
-// ─── Destinations (counties / parks / cities) ─────────────────────
+// ─── Destinations (counties / parks / cities) ──────────────────
+
 model Destination {
   id          Int             @id @default(autoincrement())
   name        String          @unique
@@ -286,20 +293,23 @@ model Destination {
   featured    Boolean         @default(false)
   order       Int             @default(0)
   published   Boolean         @default(true)
+
   attractions Attraction[]
   packages    TourPackage[]
   stays       Accommodation[]
+
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
 
-// ─── Attractions (things to see/do at a destination) ──────────────
+// ─── Attractions ───────────────────────────────────────────────
+
 model Attraction {
   id            Int         @id @default(autoincrement())
   name          String
   slug          String      @unique
   description   String
-  category      String // e.g. "Wildlife", "Beach", "Cultural", "Adventure"
+  category      String
   imageUrl      String?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
@@ -311,14 +321,15 @@ model Attraction {
   @@index([destinationId])
 }
 
-// ─── Tour Packages ─────────────────────────────────────────────────
+// ─── Tour Packages ─────────────────────────────────────────────
+
 model TourPackage {
   id            Int         @id @default(autoincrement())
   title         String
   slug          String      @unique
   summary       String
   description   String
-  priceKes      Int // price in Kenyan Shillings
+  priceKes      Int
   durationDays  Int
   imageUrl      String?
   destinationId Int
@@ -332,15 +343,16 @@ model TourPackage {
   @@index([destinationId])
 }
 
-// ─── Accommodations (hotels, lodges, camps) ───────────────────────
+// ─── Accommodations ────────────────────────────────────────────
+
 model Accommodation {
   id            Int         @id @default(autoincrement())
   name          String
   slug          String      @unique
-  type          String // "Hotel", "Lodge", "Tented Camp", "Resort"
+  type          String
   description   String
   location      String
-  priceRange    String? // e.g. "KES 15,000 - 40,000"
+  priceRange    String?
   imageUrl      String?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id])
@@ -352,7 +364,8 @@ model Accommodation {
   @@index([destinationId])
 }
 
-// ─── Events (festivals, expos, cultural events) ───────────────────
+// ─── Events ────────────────────────────────────────────────────
+
 model Event {
   id          Int       @id @default(autoincrement())
   name        String
