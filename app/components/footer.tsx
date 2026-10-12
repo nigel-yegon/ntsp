@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 const explore = [
-  { href: "/destinations", label: "Destinations" },
-  { href: "/experiences",  label: "Experiences"  },
-  { href: "/packages",     label: "Packages"     },
-  { href: "/events",       label: "Events"       },
-  { href: "/admin",         label: "Dashboard"   },
+  { href: "/admin",        label: "Dashboard"    },
+  { href: "/services",     label: "Services"     },
+  { href: "/incidents",  label: "Report Incident"  },
+  { href: "/invest",     label: "Invest in Kenya"     },
+  { href: "/operators",       label: "Tour Operators"       },
+  
 ];
 
 const plan = [

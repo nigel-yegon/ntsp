@@ -19,7 +19,6 @@ import { ThemeToggle } from "./theme-toggle";
 import type { SiteChromeSession } from "./site-chrome";
 
 const links = [
-  { href: "/services", label: "Services" },
   { href: "/destinations", label: "Destinations" },
   { href: "/experiences", label: "Experiences" },
   { href: "/packages", label: "Packages" },
