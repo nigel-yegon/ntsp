@@ -61,7 +61,7 @@ export function DocumentGroup({ documents, stage, renderActions }: Props) {
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="min-w-0">
                         <a
-                          href={`/api/documents/${doc.id}`}
+                          href={`/api/expatriate/submit/documents/${doc.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="block truncate text-sm font-medium text-brand-600 underline underline-offset-2 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
