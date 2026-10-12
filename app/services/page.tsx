@@ -86,7 +86,7 @@ export default async function ServicesPage() {
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-10">
         <h1 className="text-3xl font-semibold text-deep-800 dark:text-cream-100">
-          Services
+          Expatriate Vetting & Work Permits
         </h1>
         <p className="mt-2 max-w-2xl text-deep-500 dark:text-cream-400">
           Access National Tourism Service Portal services. Some open on the
@@ -95,7 +95,7 @@ export default async function ServicesPage() {
       </header>
 
       {session?.user && (
-        <section className="mb-10">
+        <section className="mb-10 border-b border-deep-800 pb-10 dark:border-cream-300/20">
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
               Your work permit applications
