@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   LogOut,
   User as UserIcon,
+  FileText,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "./theme-toggle";
@@ -23,7 +24,6 @@ const links = [
   { href: "/experiences", label: "Experiences" },
   { href: "/packages", label: "Packages" },
   { href: "/stay", label: "Stay" },
-
   { href: "/events", label: "Events" },
   { href: "/blog", label: "Blog" },
 ];
@@ -54,14 +54,15 @@ export function Navbar({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // Now tracks "which dropdown is open": null | 'user' | 'anon'
+  // Tracks which dropdown is open: null | 'user' | 'anon'
   const [menuOpen, setMenuOpen] = useState<null | "user" | "anon">(null);
 
   const isDashboard =
     isStatic ||
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/review") ||
-    pathname.startsWith("/admin");
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/services/applications");
 
   // Close all menus on route change
   useEffect(() => {
@@ -232,7 +233,7 @@ export function Navbar({
         </nav>
       </header>
 
-      {/* Mobile menu — unchanged except the auth section below */}
+      {/* Mobile menu */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
@@ -316,6 +317,15 @@ export function Navbar({
                     My dashboard
                   </Link>
 
+                  <Link
+                    href="/services/applications"
+                    onClick={() => setOpen(false)}
+                    className="mb-2 flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                  >
+                    <FileText size={16} aria-hidden="true" />
+                    Applications
+                  </Link>
+
                   <button
                     type="button"
                     onClick={() => {
@@ -391,6 +401,8 @@ function UserMenuPanel({
   onClose: () => void;
 }) {
   const home = ROLE_HOME[session.role] ?? "/";
+  const applicationsLabel =
+    session.role === "EMPLOYER" ? "My applications" : "Permit applications";
 
   return (
     <div
@@ -420,6 +432,16 @@ function UserMenuPanel({
       >
         <LayoutDashboard size={15} aria-hidden="true" />
         Go to my dashboard
+      </Link>
+
+      <Link
+        href="/services/applications"
+        role="menuitem"
+        onClick={onClose}
+        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-deep-700 transition hover:bg-cream-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-cream-200 dark:hover:bg-deep-900"
+      >
+        <FileText size={15} aria-hidden="true" />
+        {applicationsLabel}
       </Link>
 
       <button

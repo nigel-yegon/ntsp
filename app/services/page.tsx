@@ -95,56 +95,89 @@ export default async function ServicesPage() {
       </header>
 
       {session?.user && (
-        <section className="mb-10 border-b border-deep-800 pb-10 dark:border-cream-300/20">
-          <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
-              Your work permit applications
-            </h2>
-            <Link
-              href="/services/expatriate"
-              className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
-            >
-              Start a new application →
-            </Link>
-          </div>
-
-          {drafts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-6 text-center dark:border-deep-700 dark:bg-deep-900">
-              <p className="text-sm text-deep-500 dark:text-cream-400">
-                You have no drafts. Any in-progress applications will appear
-                here.
-              </p>
+        <>
+          {/* Applications listing — available to all signed-in users */}
+          <section className="mb-8">
+            <div className="rounded-2xl border border-cream-300 bg-cream-50 p-5 dark:border-deep-700 dark:bg-deep-900">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
+                    Applications
+                  </h2>
+                  <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
+                    Search, filter, and paginate through applications by status,
+                    permit class, and renewal type.
+                  </p>
+                </div>
+                <Link
+                  href="/services/applications"
+                  className="
+                    shrink-0 rounded-lg bg-brand-400 px-4 py-2
+                    text-sm font-medium text-deep-800
+                    transition hover:bg-brand-500
+                    focus-visible:outline-none focus-visible:ring-2
+                    focus-visible:ring-brand-400 focus-visible:ring-offset-2
+                    dark:focus-visible:ring-offset-deep-900
+                  "
+                >
+                  Open applications →
+                </Link>
+              </div>
             </div>
-          ) : (
-            <ul className="space-y-2">
-              {drafts.map((d) => (
-                <li key={d.id}>
-                  <Link
-                    href={`/services/expatriate/${d.id}`}
-                    className="
-                      flex items-center justify-between gap-3
-                      rounded-xl border border-cream-300 bg-cream-50 p-4
-                      transition hover:border-brand-400
-                      dark:border-deep-700 dark:bg-deep-900
-                      dark:hover:border-brand-500
-                    "
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-deep-800 dark:text-cream-100">
-                        {d.applicantName || "Untitled draft"}
-                      </p>
-                      <p className="mt-0.5 text-xs text-deep-500 dark:text-cream-400">
-                        {d.referenceNo} · updated{" "}
-                        {d.updatedAt.toLocaleDateString()}
-                      </p>
-                    </div>
-                    <StatusBadge status={d.status} />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+          </section>
+
+          {/* Drafts — employers only */}
+          <section className="mb-10 border-b border-deep-800 pb-10 dark:border-cream-300/20">
+            <div className="mb-4 flex items-baseline justify-between gap-3">
+              <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
+                Your work permit applications
+              </h2>
+              <Link
+                href="/services/expatriate"
+                className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+              >
+                Start a new application →
+              </Link>
+            </div>
+
+            {drafts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-6 text-center dark:border-deep-700 dark:bg-deep-900">
+                <p className="text-sm text-deep-500 dark:text-cream-400">
+                  You have no drafts. Any in-progress applications will appear
+                  here.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {drafts.map((d) => (
+                  <li key={d.id}>
+                    <Link
+                      href={`/services/expatriate/${d.id}`}
+                      className="
+                        flex items-center justify-between gap-3
+                        rounded-xl border border-cream-300 bg-cream-50 p-4
+                        transition hover:border-brand-400
+                        dark:border-deep-700 dark:bg-deep-900
+                        dark:hover:border-brand-500
+                      "
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-deep-800 dark:text-cream-100">
+                          {d.applicantName || "Untitled draft"}
+                        </p>
+                        <p className="mt-0.5 text-xs text-deep-500 dark:text-cream-400">
+                          {d.referenceNo} · updated{" "}
+                          {d.updatedAt.toLocaleDateString()}
+                        </p>
+                      </div>
+                      <StatusBadge status={d.status} />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </>
       )}
 
       <section>
@@ -181,13 +214,39 @@ function ReviewerServicesView({ role }: { role: string }) {
         You are signed in as a reviewer. Services on this page are for
         employers.
       </p>
+
+      {/* Applications listing is available to reviewers too */}
+      <div className="mt-8 rounded-2xl border border-cream-300 bg-cream-50 p-5 dark:border-deep-700 dark:bg-deep-900">
+        <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
+          All applications
+        </h2>
+        <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
+          Search and filter every application across all companies by status,
+          permit class, and renewal type.
+        </p>
+        <Link
+          href="/services/applications"
+          className="
+            mt-4 inline-block rounded-lg bg-brand-400 px-4 py-2
+            text-sm font-medium text-deep-800
+            transition hover:bg-brand-500
+            focus-visible:outline-none focus-visible:ring-2
+            focus-visible:ring-brand-400 focus-visible:ring-offset-2
+            dark:focus-visible:ring-offset-deep-900
+          "
+        >
+          Open applications →
+        </Link>
+      </div>
+
       <Link
         href={dest}
         className="
-          mt-6 inline-block rounded-lg bg-brand-400 px-5 py-2.5
-          text-sm font-medium text-deep-800 transition hover:bg-brand-500
+          mt-6 inline-block rounded-lg border border-brand-400 px-5 py-2.5
+          text-sm font-medium text-brand-700 transition hover:bg-brand-50
           focus-visible:outline-none focus-visible:ring-2
           focus-visible:ring-brand-400 focus-visible:ring-offset-2
+          dark:text-brand-300 dark:hover:bg-brand-950/40
           dark:focus-visible:ring-offset-deep-950
         "
       >

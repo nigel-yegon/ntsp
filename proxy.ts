@@ -12,10 +12,10 @@ const ROLE_HOME: Record<string, string> = {
 
 const ROLE_PREFIXES: Record<string, string[]> = {
   EMPLOYER: ["/services"],
-  VERIFIER: ["/review/perusal", "/review/verification"],
-  COMMITTEE_MEMBER: ["/review/committee"],
-  PERMANENT_SECRETARY: ["/review/ps"],
-  ADMIN: ["/admin", "/review"],
+  VERIFIER: ["/review/perusal", "/review/verification", "/services/applications"],
+  COMMITTEE_MEMBER: ["/review/committee", "/services/applications"],
+  PERMANENT_SECRETARY: ["/review/ps", "/services/applications"],
+  ADMIN: ["/admin", "/review", "/services"],
 };
 
 export default withAuth(
