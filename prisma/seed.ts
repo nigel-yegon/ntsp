@@ -1,10 +1,10 @@
 // prisma/seed.ts
 import "dotenv/config";
 import { PrismaClient } from "../lib/generated/prisma/client";
-import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaPostgresAdapter({
+const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
 

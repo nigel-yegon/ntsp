@@ -281,6 +281,7 @@ export type DocumentWhereInput = {
   reviewedById?: Prisma.StringNullableFilter<"Document"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   application?: Prisma.XOR<Prisma.ApplicationScalarRelationFilter, Prisma.ApplicationWhereInput>
+  reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type DocumentOrderByWithRelationInput = {
@@ -298,6 +299,7 @@ export type DocumentOrderByWithRelationInput = {
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   application?: Prisma.ApplicationOrderByWithRelationInput
+  reviewedBy?: Prisma.UserOrderByWithRelationInput
 }
 
 export type DocumentWhereUniqueInput = Prisma.AtLeast<{
@@ -319,6 +321,7 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   reviewedById?: Prisma.StringNullableFilter<"Document"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   application?: Prisma.XOR<Prisma.ApplicationScalarRelationFilter, Prisma.ApplicationWhereInput>
+  reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "applicationId_slotId_fileName">
 
 export type DocumentOrderByWithAggregationInput = {
@@ -372,9 +375,9 @@ export type DocumentCreateInput = {
   perusalStatus?: $Enums.DocumentReviewStatus
   verificationStatus?: $Enums.DocumentReviewStatus
   reviewNotes?: string | null
-  reviewedById?: string | null
   reviewedAt?: Date | string | null
   application: Prisma.ApplicationCreateNestedOneWithoutDocumentsInput
+  reviewedBy?: Prisma.UserCreateNestedOneWithoutDocumentsReviewedInput
 }
 
 export type DocumentUncheckedCreateInput = {
@@ -404,9 +407,9 @@ export type DocumentUpdateInput = {
   perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   application?: Prisma.ApplicationUpdateOneRequiredWithoutDocumentsNestedInput
+  reviewedBy?: Prisma.UserUpdateOneWithoutDocumentsReviewedNestedInput
 }
 
 export type DocumentUncheckedUpdateInput = {
@@ -452,7 +455,6 @@ export type DocumentUpdateManyMutationInput = {
   perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -544,6 +546,48 @@ export type DocumentSumOrderByAggregateInput = {
   sizeBytes?: Prisma.SortOrder
 }
 
+export type DocumentCreateNestedManyWithoutReviewedByInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput> | Prisma.DocumentCreateWithoutReviewedByInput[] | Prisma.DocumentUncheckedCreateWithoutReviewedByInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutReviewedByInput | Prisma.DocumentCreateOrConnectWithoutReviewedByInput[]
+  createMany?: Prisma.DocumentCreateManyReviewedByInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUncheckedCreateNestedManyWithoutReviewedByInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput> | Prisma.DocumentCreateWithoutReviewedByInput[] | Prisma.DocumentUncheckedCreateWithoutReviewedByInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutReviewedByInput | Prisma.DocumentCreateOrConnectWithoutReviewedByInput[]
+  createMany?: Prisma.DocumentCreateManyReviewedByInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUpdateManyWithoutReviewedByNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput> | Prisma.DocumentCreateWithoutReviewedByInput[] | Prisma.DocumentUncheckedCreateWithoutReviewedByInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutReviewedByInput | Prisma.DocumentCreateOrConnectWithoutReviewedByInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutReviewedByInput | Prisma.DocumentUpsertWithWhereUniqueWithoutReviewedByInput[]
+  createMany?: Prisma.DocumentCreateManyReviewedByInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutReviewedByInput | Prisma.DocumentUpdateWithWhereUniqueWithoutReviewedByInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutReviewedByInput | Prisma.DocumentUpdateManyWithWhereWithoutReviewedByInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentUncheckedUpdateManyWithoutReviewedByNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput> | Prisma.DocumentCreateWithoutReviewedByInput[] | Prisma.DocumentUncheckedCreateWithoutReviewedByInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutReviewedByInput | Prisma.DocumentCreateOrConnectWithoutReviewedByInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutReviewedByInput | Prisma.DocumentUpsertWithWhereUniqueWithoutReviewedByInput[]
+  createMany?: Prisma.DocumentCreateManyReviewedByInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutReviewedByInput | Prisma.DocumentUpdateWithWhereUniqueWithoutReviewedByInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutReviewedByInput | Prisma.DocumentUpdateManyWithWhereWithoutReviewedByInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
 export type DocumentCreateNestedManyWithoutApplicationInput = {
   create?: Prisma.XOR<Prisma.DocumentCreateWithoutApplicationInput, Prisma.DocumentUncheckedCreateWithoutApplicationInput> | Prisma.DocumentCreateWithoutApplicationInput[] | Prisma.DocumentUncheckedCreateWithoutApplicationInput[]
   connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutApplicationInput | Prisma.DocumentCreateOrConnectWithoutApplicationInput[]
@@ -598,6 +642,81 @@ export type EnumDocumentReviewStatusFieldUpdateOperationsInput = {
   set?: $Enums.DocumentReviewStatus
 }
 
+export type DocumentCreateWithoutReviewedByInput = {
+  id?: string
+  slotId: string
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  storageKey: string
+  uploadedAt?: Date | string
+  perusalStatus?: $Enums.DocumentReviewStatus
+  verificationStatus?: $Enums.DocumentReviewStatus
+  reviewNotes?: string | null
+  reviewedAt?: Date | string | null
+  application: Prisma.ApplicationCreateNestedOneWithoutDocumentsInput
+}
+
+export type DocumentUncheckedCreateWithoutReviewedByInput = {
+  id?: string
+  applicationId: string
+  slotId: string
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  storageKey: string
+  uploadedAt?: Date | string
+  perusalStatus?: $Enums.DocumentReviewStatus
+  verificationStatus?: $Enums.DocumentReviewStatus
+  reviewNotes?: string | null
+  reviewedAt?: Date | string | null
+}
+
+export type DocumentCreateOrConnectWithoutReviewedByInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput>
+}
+
+export type DocumentCreateManyReviewedByInputEnvelope = {
+  data: Prisma.DocumentCreateManyReviewedByInput | Prisma.DocumentCreateManyReviewedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentUpsertWithWhereUniqueWithoutReviewedByInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutReviewedByInput, Prisma.DocumentUncheckedUpdateWithoutReviewedByInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutReviewedByInput, Prisma.DocumentUncheckedCreateWithoutReviewedByInput>
+}
+
+export type DocumentUpdateWithWhereUniqueWithoutReviewedByInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutReviewedByInput, Prisma.DocumentUncheckedUpdateWithoutReviewedByInput>
+}
+
+export type DocumentUpdateManyWithWhereWithoutReviewedByInput = {
+  where: Prisma.DocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutReviewedByInput>
+}
+
+export type DocumentScalarWhereInput = {
+  AND?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+  OR?: Prisma.DocumentScalarWhereInput[]
+  NOT?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Document"> | string
+  applicationId?: Prisma.StringFilter<"Document"> | string
+  slotId?: Prisma.StringFilter<"Document"> | string
+  fileName?: Prisma.StringFilter<"Document"> | string
+  mimeType?: Prisma.StringFilter<"Document"> | string
+  sizeBytes?: Prisma.IntFilter<"Document"> | number
+  storageKey?: Prisma.StringFilter<"Document"> | string
+  uploadedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  perusalStatus?: Prisma.EnumDocumentReviewStatusFilter<"Document"> | $Enums.DocumentReviewStatus
+  verificationStatus?: Prisma.EnumDocumentReviewStatusFilter<"Document"> | $Enums.DocumentReviewStatus
+  reviewNotes?: Prisma.StringNullableFilter<"Document"> | string | null
+  reviewedById?: Prisma.StringNullableFilter<"Document"> | string | null
+  reviewedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+}
+
 export type DocumentCreateWithoutApplicationInput = {
   id?: string
   slotId: string
@@ -609,8 +728,8 @@ export type DocumentCreateWithoutApplicationInput = {
   perusalStatus?: $Enums.DocumentReviewStatus
   verificationStatus?: $Enums.DocumentReviewStatus
   reviewNotes?: string | null
-  reviewedById?: string | null
   reviewedAt?: Date | string | null
+  reviewedBy?: Prisma.UserCreateNestedOneWithoutDocumentsReviewedInput
 }
 
 export type DocumentUncheckedCreateWithoutApplicationInput = {
@@ -654,23 +773,64 @@ export type DocumentUpdateManyWithWhereWithoutApplicationInput = {
   data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutApplicationInput>
 }
 
-export type DocumentScalarWhereInput = {
-  AND?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
-  OR?: Prisma.DocumentScalarWhereInput[]
-  NOT?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
-  id?: Prisma.StringFilter<"Document"> | string
-  applicationId?: Prisma.StringFilter<"Document"> | string
-  slotId?: Prisma.StringFilter<"Document"> | string
-  fileName?: Prisma.StringFilter<"Document"> | string
-  mimeType?: Prisma.StringFilter<"Document"> | string
-  sizeBytes?: Prisma.IntFilter<"Document"> | number
-  storageKey?: Prisma.StringFilter<"Document"> | string
-  uploadedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
-  perusalStatus?: Prisma.EnumDocumentReviewStatusFilter<"Document"> | $Enums.DocumentReviewStatus
-  verificationStatus?: Prisma.EnumDocumentReviewStatusFilter<"Document"> | $Enums.DocumentReviewStatus
-  reviewNotes?: Prisma.StringNullableFilter<"Document"> | string | null
-  reviewedById?: Prisma.StringNullableFilter<"Document"> | string | null
-  reviewedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+export type DocumentCreateManyReviewedByInput = {
+  id?: string
+  applicationId: string
+  slotId: string
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  storageKey: string
+  uploadedAt?: Date | string
+  perusalStatus?: $Enums.DocumentReviewStatus
+  verificationStatus?: $Enums.DocumentReviewStatus
+  reviewNotes?: string | null
+  reviewedAt?: Date | string | null
+}
+
+export type DocumentUpdateWithoutReviewedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slotId?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  application?: Prisma.ApplicationUpdateOneRequiredWithoutDocumentsNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutReviewedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  slotId?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DocumentUncheckedUpdateManyWithoutReviewedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  slotId?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyApplicationInput = {
@@ -699,8 +859,8 @@ export type DocumentUpdateWithoutApplicationInput = {
   perusalStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   verificationStatus?: Prisma.EnumDocumentReviewStatusFieldUpdateOperationsInput | $Enums.DocumentReviewStatus
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.UserUpdateOneWithoutDocumentsReviewedNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutApplicationInput = {
@@ -750,6 +910,7 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   reviewedById?: boolean
   reviewedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -767,6 +928,7 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reviewedById?: boolean
   reviewedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -784,6 +946,7 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reviewedById?: boolean
   reviewedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectScalar = {
@@ -805,18 +968,22 @@ export type DocumentSelectScalar = {
 export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "applicationId" | "slotId" | "fileName" | "mimeType" | "sizeBytes" | "storageKey" | "uploadedAt" | "perusalStatus" | "verificationStatus" | "reviewNotes" | "reviewedById" | "reviewedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }
 export type DocumentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }
 export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  reviewedBy?: boolean | Prisma.Document$reviewedByArgs<ExtArgs>
 }
 
 export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Document"
   objects: {
     application: Prisma.$ApplicationPayload<ExtArgs>
+    reviewedBy: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1227,6 +1394,7 @@ readonly fields: DocumentFieldRefs;
 export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   application<T extends Prisma.ApplicationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApplicationDefaultArgs<ExtArgs>>): Prisma.Prisma__ApplicationClient<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reviewedBy<T extends Prisma.Document$reviewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$reviewedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1667,6 +1835,25 @@ export type DocumentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Documents to delete.
    */
   limit?: number
+}
+
+/**
+ * Document.reviewedBy
+ */
+export type Document$reviewedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

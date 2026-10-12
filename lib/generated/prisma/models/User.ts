@@ -210,6 +210,8 @@ export type UserWhereInput = {
   applicationsSubmitted?: Prisma.ApplicationListRelationFilter
   events?: Prisma.ApplicationEventListRelationFilter
   committeeVotes?: Prisma.CommitteeVoteListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
+  documentsReviewed?: Prisma.DocumentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -225,6 +227,8 @@ export type UserOrderByWithRelationInput = {
   applicationsSubmitted?: Prisma.ApplicationOrderByRelationAggregateInput
   events?: Prisma.ApplicationEventOrderByRelationAggregateInput
   committeeVotes?: Prisma.CommitteeVoteOrderByRelationAggregateInput
+  assignments?: Prisma.AssignmentOrderByRelationAggregateInput
+  documentsReviewed?: Prisma.DocumentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -243,6 +247,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   applicationsSubmitted?: Prisma.ApplicationListRelationFilter
   events?: Prisma.ApplicationEventListRelationFilter
   committeeVotes?: Prisma.CommitteeVoteListRelationFilter
+  assignments?: Prisma.AssignmentListRelationFilter
+  documentsReviewed?: Prisma.DocumentListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -285,6 +291,8 @@ export type UserCreateInput = {
   applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -299,6 +307,8 @@ export type UserUncheckedCreateInput = {
   applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUpdateInput = {
@@ -313,6 +323,8 @@ export type UserUpdateInput = {
   applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -327,6 +339,8 @@ export type UserUncheckedUpdateInput = {
   applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -486,6 +500,22 @@ export type UserUpdateOneRequiredWithoutApplicationsSubmittedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicationsSubmittedInput, Prisma.UserUpdateWithoutApplicationsSubmittedInput>, Prisma.UserUncheckedUpdateWithoutApplicationsSubmittedInput>
 }
 
+export type UserCreateNestedOneWithoutDocumentsReviewedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDocumentsReviewedInput, Prisma.UserUncheckedCreateWithoutDocumentsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDocumentsReviewedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDocumentsReviewedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDocumentsReviewedInput, Prisma.UserUncheckedCreateWithoutDocumentsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDocumentsReviewedInput
+  upsert?: Prisma.UserUpsertWithoutDocumentsReviewedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDocumentsReviewedInput, Prisma.UserUpdateWithoutDocumentsReviewedInput>, Prisma.UserUncheckedUpdateWithoutDocumentsReviewedInput>
+}
+
 export type UserCreateNestedOneWithoutEventsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutEventsInput, Prisma.UserUncheckedCreateWithoutEventsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutEventsInput
@@ -516,6 +546,20 @@ export type UserUpdateOneRequiredWithoutCommitteeVotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommitteeVotesInput, Prisma.UserUpdateWithoutCommitteeVotesInput>, Prisma.UserUncheckedUpdateWithoutCommitteeVotesInput>
 }
 
+export type UserCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignmentsInput, Prisma.UserUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignmentsInput, Prisma.UserUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.UserUpsertWithoutAssignmentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.UserUpdateWithoutAssignmentsInput>, Prisma.UserUncheckedUpdateWithoutAssignmentsInput>
+}
+
 export type UserCreateWithoutCompanyInput = {
   id?: string
   email: string
@@ -527,6 +571,8 @@ export type UserCreateWithoutCompanyInput = {
   applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutCompanyInput = {
@@ -540,6 +586,8 @@ export type UserUncheckedCreateWithoutCompanyInput = {
   applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutCompanyInput = {
@@ -593,6 +641,8 @@ export type UserCreateWithoutApplicationsSubmittedInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
   events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutApplicationsSubmittedInput = {
@@ -606,6 +656,8 @@ export type UserUncheckedCreateWithoutApplicationsSubmittedInput = {
   updatedAt?: Date | string
   events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutApplicationsSubmittedInput = {
@@ -635,6 +687,8 @@ export type UserUpdateWithoutApplicationsSubmittedInput = {
   company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
   events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationsSubmittedInput = {
@@ -648,6 +702,84 @@ export type UserUncheckedUpdateWithoutApplicationsSubmittedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserCreateWithoutDocumentsReviewedInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
+  applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+}
+
+export type UserUncheckedCreateWithoutDocumentsReviewedInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role: $Enums.Role
+  companyId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+}
+
+export type UserCreateOrConnectWithoutDocumentsReviewedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDocumentsReviewedInput, Prisma.UserUncheckedCreateWithoutDocumentsReviewedInput>
+}
+
+export type UserUpsertWithoutDocumentsReviewedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDocumentsReviewedInput, Prisma.UserUncheckedUpdateWithoutDocumentsReviewedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDocumentsReviewedInput, Prisma.UserUncheckedCreateWithoutDocumentsReviewedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDocumentsReviewedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDocumentsReviewedInput, Prisma.UserUncheckedUpdateWithoutDocumentsReviewedInput>
+}
+
+export type UserUpdateWithoutDocumentsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
+  applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDocumentsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
 }
 
 export type UserCreateWithoutEventsInput = {
@@ -661,6 +793,8 @@ export type UserCreateWithoutEventsInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
   applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
   committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutEventsInput = {
@@ -674,6 +808,8 @@ export type UserUncheckedCreateWithoutEventsInput = {
   updatedAt?: Date | string
   applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutEventsInput = {
@@ -703,6 +839,8 @@ export type UserUpdateWithoutEventsInput = {
   company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
   applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
   committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventsInput = {
@@ -716,6 +854,8 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateWithoutCommitteeVotesInput = {
@@ -729,6 +869,8 @@ export type UserCreateWithoutCommitteeVotesInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
   applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserUncheckedCreateWithoutCommitteeVotesInput = {
@@ -742,6 +884,8 @@ export type UserUncheckedCreateWithoutCommitteeVotesInput = {
   updatedAt?: Date | string
   applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
   events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
 }
 
 export type UserCreateOrConnectWithoutCommitteeVotesInput = {
@@ -771,6 +915,8 @@ export type UserUpdateWithoutCommitteeVotesInput = {
   company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
   applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommitteeVotesInput = {
@@ -784,6 +930,84 @@ export type UserUncheckedUpdateWithoutCommitteeVotesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserCreateWithoutAssignmentsInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
+  applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutAssignmentsInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash?: string | null
+  role: $Enums.Role
+  companyId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutAssignmentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignmentsInput, Prisma.UserUncheckedCreateWithoutAssignmentsInput>
+}
+
+export type UserUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAssignmentsInput, Prisma.UserUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignmentsInput, Prisma.UserUncheckedCreateWithoutAssignmentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAssignmentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAssignmentsInput, Prisma.UserUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type UserUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
+  applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyCompanyInput = {
@@ -807,6 +1031,8 @@ export type UserUpdateWithoutCompanyInput = {
   applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCompanyInput = {
@@ -820,6 +1046,8 @@ export type UserUncheckedUpdateWithoutCompanyInput = {
   applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
   events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
   committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCompanyInput = {
@@ -841,12 +1069,16 @@ export type UserCountOutputType = {
   applicationsSubmitted: number
   events: number
   committeeVotes: number
+  assignments: number
+  documentsReviewed: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   applicationsSubmitted?: boolean | UserCountOutputTypeCountApplicationsSubmittedArgs
   events?: boolean | UserCountOutputTypeCountEventsArgs
   committeeVotes?: boolean | UserCountOutputTypeCountCommitteeVotesArgs
+  assignments?: boolean | UserCountOutputTypeCountAssignmentsArgs
+  documentsReviewed?: boolean | UserCountOutputTypeCountDocumentsReviewedArgs
 }
 
 /**
@@ -880,6 +1112,20 @@ export type UserCountOutputTypeCountCommitteeVotesArgs<ExtArgs extends runtime.T
   where?: Prisma.CommitteeVoteWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssignmentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDocumentsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -894,6 +1140,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   applicationsSubmitted?: boolean | Prisma.User$applicationsSubmittedArgs<ExtArgs>
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   committeeVotes?: boolean | Prisma.User$committeeVotesArgs<ExtArgs>
+  assignments?: boolean | Prisma.User$assignmentsArgs<ExtArgs>
+  documentsReviewed?: boolean | Prisma.User$documentsReviewedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -938,6 +1186,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   applicationsSubmitted?: boolean | Prisma.User$applicationsSubmittedArgs<ExtArgs>
   events?: boolean | Prisma.User$eventsArgs<ExtArgs>
   committeeVotes?: boolean | Prisma.User$committeeVotesArgs<ExtArgs>
+  assignments?: boolean | Prisma.User$assignmentsArgs<ExtArgs>
+  documentsReviewed?: boolean | Prisma.User$documentsReviewedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -954,6 +1204,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     applicationsSubmitted: Prisma.$ApplicationPayload<ExtArgs>[]
     events: Prisma.$ApplicationEventPayload<ExtArgs>[]
     committeeVotes: Prisma.$CommitteeVotePayload<ExtArgs>[]
+    assignments: Prisma.$AssignmentPayload<ExtArgs>[]
+    documentsReviewed: Prisma.$DocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1362,6 +1614,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   applicationsSubmitted<T extends Prisma.User$applicationsSubmittedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationsSubmittedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   events<T extends Prisma.User$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   committeeVotes<T extends Prisma.User$committeeVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$committeeVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommitteeVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignments<T extends Prisma.User$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documentsReviewed<T extends Prisma.User$documentsReviewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$documentsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1888,6 +2142,54 @@ export type User$committeeVotesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.CommitteeVoteScalarFieldEnum | Prisma.CommitteeVoteScalarFieldEnum[]
+}
+
+/**
+ * User.assignments
+ */
+export type User$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Assignment
+   */
+  select?: Prisma.AssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Assignment
+   */
+  omit?: Prisma.AssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssignmentInclude<ExtArgs> | null
+  where?: Prisma.AssignmentWhereInput
+  orderBy?: Prisma.AssignmentOrderByWithRelationInput | Prisma.AssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.AssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssignmentScalarFieldEnum | Prisma.AssignmentScalarFieldEnum[]
+}
+
+/**
+ * User.documentsReviewed
+ */
+export type User$documentsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Document
+   */
+  select?: Prisma.DocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Document
+   */
+  omit?: Prisma.DocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentInclude<ExtArgs> | null
+  where?: Prisma.DocumentWhereInput
+  orderBy?: Prisma.DocumentOrderByWithRelationInput | Prisma.DocumentOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
 }
 
 /**

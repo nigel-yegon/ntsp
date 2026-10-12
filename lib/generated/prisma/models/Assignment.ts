@@ -191,6 +191,7 @@ export type AssignmentWhereInput = {
   assignedAt?: Prisma.DateTimeFilter<"Assignment"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Assignment"> | Date | string | null
   application?: Prisma.XOR<Prisma.ApplicationScalarRelationFilter, Prisma.ApplicationWhereInput>
+  assignee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type AssignmentOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type AssignmentOrderByWithRelationInput = {
   assignedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   application?: Prisma.ApplicationOrderByWithRelationInput
+  assignee?: Prisma.UserOrderByWithRelationInput
 }
 
 export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
@@ -215,6 +217,7 @@ export type AssignmentWhereUniqueInput = Prisma.AtLeast<{
   assignedAt?: Prisma.DateTimeFilter<"Assignment"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"Assignment"> | Date | string | null
   application?: Prisma.XOR<Prisma.ApplicationScalarRelationFilter, Prisma.ApplicationWhereInput>
+  assignee?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "applicationId_role">
 
 export type AssignmentOrderByWithAggregationInput = {
@@ -244,10 +247,10 @@ export type AssignmentScalarWhereWithAggregatesInput = {
 export type AssignmentCreateInput = {
   id?: string
   role: $Enums.AssignmentRole
-  assigneeId: string
   assignedAt?: Date | string
   completedAt?: Date | string | null
   application: Prisma.ApplicationCreateNestedOneWithoutAssignmentsInput
+  assignee: Prisma.UserCreateNestedOneWithoutAssignmentsInput
 }
 
 export type AssignmentUncheckedCreateInput = {
@@ -262,10 +265,10 @@ export type AssignmentUncheckedCreateInput = {
 export type AssignmentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
-  assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentsNestedInput
+  assignee?: Prisma.UserUpdateOneRequiredWithoutAssignmentsNestedInput
 }
 
 export type AssignmentUncheckedUpdateInput = {
@@ -289,7 +292,6 @@ export type AssignmentCreateManyInput = {
 export type AssignmentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
-  assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -345,6 +347,48 @@ export type AssignmentMinOrderByAggregateInput = {
   completedAt?: Prisma.SortOrder
 }
 
+export type AssignmentCreateNestedManyWithoutAssigneeInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput> | Prisma.AssignmentCreateWithoutAssigneeInput[] | Prisma.AssignmentUncheckedCreateWithoutAssigneeInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutAssigneeInput | Prisma.AssignmentCreateOrConnectWithoutAssigneeInput[]
+  createMany?: Prisma.AssignmentCreateManyAssigneeInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+}
+
+export type AssignmentUncheckedCreateNestedManyWithoutAssigneeInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput> | Prisma.AssignmentCreateWithoutAssigneeInput[] | Prisma.AssignmentUncheckedCreateWithoutAssigneeInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutAssigneeInput | Prisma.AssignmentCreateOrConnectWithoutAssigneeInput[]
+  createMany?: Prisma.AssignmentCreateManyAssigneeInputEnvelope
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+}
+
+export type AssignmentUpdateManyWithoutAssigneeNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput> | Prisma.AssignmentCreateWithoutAssigneeInput[] | Prisma.AssignmentUncheckedCreateWithoutAssigneeInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutAssigneeInput | Prisma.AssignmentCreateOrConnectWithoutAssigneeInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutAssigneeInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutAssigneeInput[]
+  createMany?: Prisma.AssignmentCreateManyAssigneeInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutAssigneeInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutAssigneeInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutAssigneeInput | Prisma.AssignmentUpdateManyWithWhereWithoutAssigneeInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+}
+
+export type AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput = {
+  create?: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput> | Prisma.AssignmentCreateWithoutAssigneeInput[] | Prisma.AssignmentUncheckedCreateWithoutAssigneeInput[]
+  connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutAssigneeInput | Prisma.AssignmentCreateOrConnectWithoutAssigneeInput[]
+  upsert?: Prisma.AssignmentUpsertWithWhereUniqueWithoutAssigneeInput | Prisma.AssignmentUpsertWithWhereUniqueWithoutAssigneeInput[]
+  createMany?: Prisma.AssignmentCreateManyAssigneeInputEnvelope
+  set?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  disconnect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  delete?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  connect?: Prisma.AssignmentWhereUniqueInput | Prisma.AssignmentWhereUniqueInput[]
+  update?: Prisma.AssignmentUpdateWithWhereUniqueWithoutAssigneeInput | Prisma.AssignmentUpdateWithWhereUniqueWithoutAssigneeInput[]
+  updateMany?: Prisma.AssignmentUpdateManyWithWhereWithoutAssigneeInput | Prisma.AssignmentUpdateManyWithWhereWithoutAssigneeInput[]
+  deleteMany?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+}
+
 export type AssignmentCreateNestedManyWithoutApplicationInput = {
   create?: Prisma.XOR<Prisma.AssignmentCreateWithoutApplicationInput, Prisma.AssignmentUncheckedCreateWithoutApplicationInput> | Prisma.AssignmentCreateWithoutApplicationInput[] | Prisma.AssignmentUncheckedCreateWithoutApplicationInput[]
   connectOrCreate?: Prisma.AssignmentCreateOrConnectWithoutApplicationInput | Prisma.AssignmentCreateOrConnectWithoutApplicationInput[]
@@ -391,12 +435,66 @@ export type EnumAssignmentRoleFieldUpdateOperationsInput = {
   set?: $Enums.AssignmentRole
 }
 
+export type AssignmentCreateWithoutAssigneeInput = {
+  id?: string
+  role: $Enums.AssignmentRole
+  assignedAt?: Date | string
+  completedAt?: Date | string | null
+  application: Prisma.ApplicationCreateNestedOneWithoutAssignmentsInput
+}
+
+export type AssignmentUncheckedCreateWithoutAssigneeInput = {
+  id?: string
+  applicationId: string
+  role: $Enums.AssignmentRole
+  assignedAt?: Date | string
+  completedAt?: Date | string | null
+}
+
+export type AssignmentCreateOrConnectWithoutAssigneeInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput>
+}
+
+export type AssignmentCreateManyAssigneeInputEnvelope = {
+  data: Prisma.AssignmentCreateManyAssigneeInput | Prisma.AssignmentCreateManyAssigneeInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssignmentUpsertWithWhereUniqueWithoutAssigneeInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssignmentUpdateWithoutAssigneeInput, Prisma.AssignmentUncheckedUpdateWithoutAssigneeInput>
+  create: Prisma.XOR<Prisma.AssignmentCreateWithoutAssigneeInput, Prisma.AssignmentUncheckedCreateWithoutAssigneeInput>
+}
+
+export type AssignmentUpdateWithWhereUniqueWithoutAssigneeInput = {
+  where: Prisma.AssignmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssignmentUpdateWithoutAssigneeInput, Prisma.AssignmentUncheckedUpdateWithoutAssigneeInput>
+}
+
+export type AssignmentUpdateManyWithWhereWithoutAssigneeInput = {
+  where: Prisma.AssignmentScalarWhereInput
+  data: Prisma.XOR<Prisma.AssignmentUpdateManyMutationInput, Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeInput>
+}
+
+export type AssignmentScalarWhereInput = {
+  AND?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+  OR?: Prisma.AssignmentScalarWhereInput[]
+  NOT?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Assignment"> | string
+  applicationId?: Prisma.StringFilter<"Assignment"> | string
+  role?: Prisma.EnumAssignmentRoleFilter<"Assignment"> | $Enums.AssignmentRole
+  assigneeId?: Prisma.StringFilter<"Assignment"> | string
+  assignedAt?: Prisma.DateTimeFilter<"Assignment"> | Date | string
+  completedAt?: Prisma.DateTimeNullableFilter<"Assignment"> | Date | string | null
+}
+
 export type AssignmentCreateWithoutApplicationInput = {
   id?: string
   role: $Enums.AssignmentRole
-  assigneeId: string
   assignedAt?: Date | string
   completedAt?: Date | string | null
+  assignee: Prisma.UserCreateNestedOneWithoutAssignmentsInput
 }
 
 export type AssignmentUncheckedCreateWithoutApplicationInput = {
@@ -433,16 +531,36 @@ export type AssignmentUpdateManyWithWhereWithoutApplicationInput = {
   data: Prisma.XOR<Prisma.AssignmentUpdateManyMutationInput, Prisma.AssignmentUncheckedUpdateManyWithoutApplicationInput>
 }
 
-export type AssignmentScalarWhereInput = {
-  AND?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
-  OR?: Prisma.AssignmentScalarWhereInput[]
-  NOT?: Prisma.AssignmentScalarWhereInput | Prisma.AssignmentScalarWhereInput[]
-  id?: Prisma.StringFilter<"Assignment"> | string
-  applicationId?: Prisma.StringFilter<"Assignment"> | string
-  role?: Prisma.EnumAssignmentRoleFilter<"Assignment"> | $Enums.AssignmentRole
-  assigneeId?: Prisma.StringFilter<"Assignment"> | string
-  assignedAt?: Prisma.DateTimeFilter<"Assignment"> | Date | string
-  completedAt?: Prisma.DateTimeNullableFilter<"Assignment"> | Date | string | null
+export type AssignmentCreateManyAssigneeInput = {
+  id?: string
+  applicationId: string
+  role: $Enums.AssignmentRole
+  assignedAt?: Date | string
+  completedAt?: Date | string | null
+}
+
+export type AssignmentUpdateWithoutAssigneeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  application?: Prisma.ApplicationUpdateOneRequiredWithoutAssignmentsNestedInput
+}
+
+export type AssignmentUncheckedUpdateWithoutAssigneeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type AssignmentUncheckedUpdateManyWithoutAssigneeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  applicationId?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
+  assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AssignmentCreateManyApplicationInput = {
@@ -456,9 +574,9 @@ export type AssignmentCreateManyApplicationInput = {
 export type AssignmentUpdateWithoutApplicationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumAssignmentRoleFieldUpdateOperationsInput | $Enums.AssignmentRole
-  assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   assignedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assignee?: Prisma.UserUpdateOneRequiredWithoutAssignmentsNestedInput
 }
 
 export type AssignmentUncheckedUpdateWithoutApplicationInput = {
@@ -487,6 +605,7 @@ export type AssignmentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   assignedAt?: boolean
   completedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -497,6 +616,7 @@ export type AssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   assignedAt?: boolean
   completedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -507,6 +627,7 @@ export type AssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   assignedAt?: boolean
   completedAt?: boolean
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assignment"]>
 
 export type AssignmentSelectScalar = {
@@ -521,18 +642,22 @@ export type AssignmentSelectScalar = {
 export type AssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "applicationId" | "role" | "assigneeId" | "assignedAt" | "completedAt", ExtArgs["result"]["assignment"]>
 export type AssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type AssignmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type AssignmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   application?: boolean | Prisma.ApplicationDefaultArgs<ExtArgs>
+  assignee?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $AssignmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Assignment"
   objects: {
     application: Prisma.$ApplicationPayload<ExtArgs>
+    assignee: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -936,6 +1061,7 @@ readonly fields: AssignmentFieldRefs;
 export interface Prisma__AssignmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   application<T extends Prisma.ApplicationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApplicationDefaultArgs<ExtArgs>>): Prisma.Prisma__ApplicationClient<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  assignee<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
