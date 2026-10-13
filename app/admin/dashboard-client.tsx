@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
+import { BusinessesPanel } from "./businesses/businesses-panel";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
@@ -51,6 +52,7 @@ import {
 
 type ModuleKey =
   | "overview"
+  | "businesses"
   | "destinations"
   | "experiences"
   | "packages"
@@ -99,6 +101,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillBg: "bg-brand-100 dark:bg-brand-950",
     pillText: "text-brand-800 dark:text-brand-200",
     icon: <CompassMarkIcon />,
+  },
+  businesses: {
+    ring: "ring-slate-500/20",
+    border: "border-slate-300 dark:border-slate-800",
+    borderHover: "hover:border-slate-500 dark:hover:border-slate-500",
+    bgSoft: "bg-slate-50 dark:bg-slate-950/40",
+    bgActive: "bg-slate-100 dark:bg-slate-950/70",
+    text: "text-slate-700 dark:text-slate-300",
+    button: "bg-slate-700",
+    buttonHover: "hover:bg-slate-800",
+    bar: "bg-slate-600",
+    pillBg: "bg-slate-100 dark:bg-slate-950",
+    pillText: "text-slate-800 dark:text-slate-200",
+    icon: <BuildingIcon />,
   },
   experiences: {
     ring: "ring-emerald-500/20",
@@ -300,6 +316,8 @@ export function DashboardClient() {
                 <Overview stats={stats} onNavigate={setActiveModule} />
               )}
 
+              {activeModule === "businesses" && <BusinessesPanel />}
+
               {activeModule === "destinations" && (
                 <DestinationsModule
                   destinations={destinations}
@@ -383,6 +401,7 @@ function DashboardSidebar({
     icon: React.ReactNode;
   }[] = [
     { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />    },
+    { key: "businesses",   label: "Businesses",   description: "Manage businesses",    icon: TONES.businesses.icon,   tone: TONES.businesses },
     { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: TONES.destinations.icon, tone: TONES.destinations },
     { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: TONES.experiences.icon,  tone: TONES.experiences },
     { key: "packages",     label: "Packages",     description: "Manage packages",      icon: TONES.packages.icon,     tone: TONES.packages },
@@ -508,6 +527,7 @@ function DashboardHeader({
 }) {
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
+    businesses: "Businesses",
     destinations: "Destinations",
     experiences: "Experiences",
     packages: "Packages",
@@ -516,7 +536,10 @@ function DashboardHeader({
     blog: "Blog",
   };
 
-  const searchable = activeModule !== "overview" && activeModule !== "destinations";
+  const searchable =
+    activeModule !== "overview" &&
+    activeModule !== "destinations" &&
+    activeModule !== "businesses";
 
   return (
     <header className="sticky top-0 z-30 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
@@ -556,6 +579,7 @@ function DashboardHeader({
     </header>
   );
 }
+
 /* -------------------------------------------------------------------------- */
 /* OVERVIEW                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -2015,6 +2039,15 @@ function CompassMarkIcon() {
     <svg {...iconBase}>
       <circle cx="12" cy="12" r="9" />
       <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg {...iconBase}>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M9 21v-4h6v4M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01" />
     </svg>
   );
 }

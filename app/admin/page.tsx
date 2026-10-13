@@ -1,3 +1,4 @@
+// app/admin/page.tsx
 import { DashboardClient } from "./dashboard-client";
 
 export const metadata = {

@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BusinessVerificationBadge } from "@/app/components/dashboard/business-verification-badge";
+import { UnpublishButton } from "./unpublish-button";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +26,7 @@ export default async function BusinessListingsPage() {
         slug: true,
         location: true,
         published: true,
-        _count: {
-          select: {
-            bookings: true,
-            threads: true,
-          },
-        },
+        _count: { select: { bookings: true, threads: true } },
       },
     }),
     prisma.tourPackage.findMany({
@@ -42,17 +38,13 @@ export default async function BusinessListingsPage() {
         slug: true,
         priceKes: true,
         published: true,
-        _count: {
-          select: {
-            bookings: true,
-            threads: true,
-          },
-        },
+        _count: { select: { bookings: true, threads: true } },
       },
     }),
   ]);
 
   const verification = profile?.verificationStatus ?? "PENDING";
+  const isApproved = verification === "APPROVED";
 
   return (
     <section className="space-y-8">
@@ -66,14 +58,22 @@ export default async function BusinessListingsPage() {
             packages. Inquiries and bookings route here.
           </p>
         </div>
-        <BusinessVerificationBadge status={verification} />
+        <div className="flex items-center gap-3">
+          <BusinessVerificationBadge status={verification} />
+          <Link
+            href="/dashboard/listings/new"
+            className="rounded-lg bg-brand-400 px-4 py-2 text-sm font-medium text-deep-800 transition hover:bg-brand-500"
+          >
+            Add listing
+          </Link>
+        </div>
       </header>
 
       {verification === "PENDING" && (
         <p className="rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800 dark:border-brand-900 dark:bg-brand-950/30 dark:text-brand-200">
-          Your account is awaiting approval. Listings you own are visible to
-          you but not publicly available until an administrator approves your
-          profile.
+          Your account is awaiting approval. You can create listings now, but
+          they stay hidden from the public site until an administrator approves
+          your profile. The Publish toggle will have no effect until then.
         </p>
       )}
 
@@ -88,13 +88,16 @@ export default async function BusinessListingsPage() {
         title="Accommodations"
         emptyMessage="You don't own any accommodations yet."
         items={accommodations.map((a) => ({
-          id: `acc-${a.id}`,
+          key: `acc-${a.id}`,
           title: a.name,
           subtitle: a.location,
-          href: `/stay/${a.slug}`,
+          publicHref: `/stay/${a.slug}`,
+          editHref: `/dashboard/listings/acc-${a.id}/edit`,
           published: a.published,
           bookingCount: a._count.bookings,
           threadCount: a._count.threads,
+          rawId: a.id,
+          rawType: "accommodation" as const,
         }))}
       />
 
@@ -102,13 +105,16 @@ export default async function BusinessListingsPage() {
         title="Tour packages"
         emptyMessage="You don't own any tour packages yet."
         items={packages.map((p) => ({
-          id: `pkg-${p.id}`,
+          key: `pkg-${p.id}`,
           title: p.title,
           subtitle: `KES ${p.priceKes.toLocaleString()}`,
-          href: `/packages/${p.slug}`,
+          publicHref: `/packages/${p.slug}`,
+          editHref: `/dashboard/listings/pkg-${p.id}/edit`,
           published: p.published,
           bookingCount: p._count.bookings,
           threadCount: p._count.threads,
+          rawId: p.id,
+          rawType: "package" as const,
         }))}
       />
     </section>
@@ -116,13 +122,16 @@ export default async function BusinessListingsPage() {
 }
 
 type ListingItem = {
-  id: string;
+  key: string;
   title: string;
   subtitle: string;
-  href: string;
+  publicHref: string;
+  editHref: string;
   published: boolean;
   bookingCount: number;
   threadCount: number;
+  rawId: number;
+  rawType: "accommodation" | "package";
 };
 
 function ListSection({
@@ -147,38 +156,58 @@ function ListSection({
         <ul className="space-y-2">
           {items.map((item) => (
             <li
-              key={item.id}
+              key={item.key}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-cream-300 bg-cream-50 p-4 dark:border-deep-700 dark:bg-deep-900"
             >
               <div className="min-w-0">
-                <Link
-                  href={item.href}
-                  className="font-medium text-deep-800 hover:text-brand-600 dark:text-cream-100 dark:hover:text-brand-400"
-                >
+                <p className="font-medium text-deep-800 dark:text-cream-100">
                   {item.title}
-                </Link>
+                </p>
                 <p className="mt-0.5 text-xs text-deep-500 dark:text-cream-400">
                   {item.subtitle}
                 </p>
+                <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-deep-500 dark:text-cream-400">
+                  <span>
+                    {item.bookingCount}{" "}
+                    {item.bookingCount === 1 ? "booking" : "bookings"}
+                  </span>
+                  <span>
+                    {item.threadCount}{" "}
+                    {item.threadCount === 1 ? "inquiry" : "inquiries"}
+                  </span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 font-medium ${
+                      item.published
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+                        : "bg-cream-200 text-deep-600 dark:bg-deep-800 dark:text-cream-400"
+                    }`}
+                  >
+                    {item.published ? "Published" : "Unpublished"}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-xs text-deep-500 dark:text-cream-400">
-                <span>
-                  {item.bookingCount}{" "}
-                  {item.bookingCount === 1 ? "booking" : "bookings"}
-                </span>
-                <span>
-                  {item.threadCount}{" "}
-                  {item.threadCount === 1 ? "inquiry" : "inquiries"}
-                </span>
-                <span
-                  className={`rounded-full px-2 py-0.5 font-medium ${
-                    item.published
-                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
-                      : "bg-cream-200 text-deep-600 dark:bg-deep-800 dark:text-cream-400"
-                  }`}
+
+              <div className="flex shrink-0 items-center gap-2">
+                <Link
+                  href={item.publicHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg border border-cream-300 px-3 py-1.5 text-xs font-medium text-deep-700 transition hover:bg-cream-100 dark:border-deep-700 dark:text-cream-300 dark:hover:bg-deep-800"
                 >
-                  {item.published ? "Published" : "Unpublished"}
-                </span>
+                  View
+                </Link>
+                <Link
+                  href={item.editHref}
+                  className="rounded-lg border border-brand-300 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 transition hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-950/40 dark:text-brand-300"
+                >
+                  Edit
+                </Link>
+                {item.published && (
+                  <UnpublishButton
+                    listingId={item.rawId}
+                    type={item.rawType}
+                  />
+                )}
               </div>
             </li>
           ))}
