@@ -1959,6 +1959,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
+  phone: 'phone',
   emailVerified: 'emailVerified',
   image: 'image',
   passwordHash: 'passwordHash',

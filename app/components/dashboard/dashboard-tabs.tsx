@@ -9,6 +9,7 @@ const CUSTOMER_TABS = [
   { href: "/dashboard/applications", label: "Applications" },
   { href: "/dashboard/bookings", label: "Bookings" },
   { href: "/dashboard/messages", label: "Messages" },
+  { href: "/dashboard/profile", label: "Profile" },   // ← new
 ];
 
 const BUSINESS_TABS = [
@@ -16,6 +17,7 @@ const BUSINESS_TABS = [
   { href: "/dashboard/listings", label: "Listings" },
   { href: "/dashboard/bookings", label: "Bookings" },
   { href: "/dashboard/messages", label: "Messages" },
+  { href: "/dashboard/profile", label: "My Profile" },   // ← new
 ];
 
 export function DashboardTabs({ role }: { role: string }) {
