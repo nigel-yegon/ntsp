@@ -79,10 +79,56 @@ function StatCard({
   );
 }
 
-function BusinessOverview({ userId }: { userId: string }) {
+async function BusinessOverview({ userId }: { userId: string }) {
+  const [profile, listings, pendingBookings, unreadThreads] = await Promise.all([
+    prisma.businessProfile.findUnique({
+      where: { userId },
+      select: { businessName: true, verificationStatus: true },
+    }),
+    Promise.all([
+      prisma.accommodation.count({ where: { businessId: userId } }),
+      prisma.tourPackage.count({ where: { businessId: userId } }),
+    ]).then(([a, p]) => a + p),
+    prisma.booking.count({ where: { businessId: userId, status: "REQUESTED" } }),
+    prisma.messageThread.count({
+      where: {
+        businessId: userId,
+        messages: {
+          some: { readByBusiness: false, authorId: { not: userId } },
+        },
+      },
+    }),
+  ]);
+
   return (
-    <p className="text-sm text-deep-500 dark:text-cream-400">
-      Business dashboard coming next.
-    </p>
+    <div className="space-y-4">
+      {profile?.verificationStatus === "PENDING" && (
+        <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          Your account is pending administrator review. You can prepare your
+          listings, but they won't be publicly visible until approved.
+        </p>
+      )}
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard
+          label="Listings"
+          count={listings}
+          href="/dashboard/listings"
+          hint="Accommodations and packages you own"
+        />
+        <StatCard
+          label="Awaiting response"
+          count={pendingBookings}
+          href="/dashboard/bookings"
+          hint="Booking requests you haven't answered"
+        />
+        <StatCard
+          label="Unread inquiries"
+          count={unreadThreads}
+          href="/dashboard/messages"
+          hint="Threads with new messages"
+        />
+      </div>
+    </div>
   );
 }

@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { MessageList } from "@/app/components/dashboard/message-list";
 import { MessageComposer } from "@/app/components/dashboard/message-composer";
 
-export default async function CustomerThreadPage({
+export default async function ThreadPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -19,6 +19,7 @@ export default async function CustomerThreadPage({
   const thread = await prisma.messageThread.findUnique({
     where: { id },
     include: {
+      customer: { select: { id: true, name: true, email: true } },
       business: {
         select: {
           id: true,
@@ -29,20 +30,36 @@ export default async function CustomerThreadPage({
     },
   });
 
-  if (!thread || thread.customerId !== session.user.id) notFound();
+  if (!thread) notFound();
 
-  // Mark all business-authored messages as read by the customer.
-  await prisma.message.updateMany({
-    where: {
-      threadId: thread.id,
-      authorId: { not: session.user.id },
-      readByCustomer: false,
-    },
-    data: { readByCustomer: true },
-  });
+  const isCustomer = thread.customerId === session.user.id;
+  const isBusiness = thread.businessId === session.user.id;
+  if (!isCustomer && !isBusiness) notFound();
 
-  const businessName =
-    thread.business.businessProfile?.businessName ?? "Business";
+  // Mark messages from the other side as read by the current user.
+  if (isCustomer) {
+    await prisma.message.updateMany({
+      where: {
+        threadId: thread.id,
+        authorId: { not: session.user.id },
+        readByCustomer: false,
+      },
+      data: { readByCustomer: true },
+    });
+  } else {
+    await prisma.message.updateMany({
+      where: {
+        threadId: thread.id,
+        authorId: { not: session.user.id },
+        readByBusiness: false,
+      },
+      data: { readByBusiness: true },
+    });
+  }
+
+  const headerLabel = isBusiness
+    ? `${thread.customer.name} (${thread.customer.email})`
+    : thread.business.businessProfile?.businessName ?? "Business";
 
   return (
     <section className="space-y-4">
@@ -56,7 +73,7 @@ export default async function CustomerThreadPage({
       <div className="rounded-2xl border border-cream-300 bg-cream-50 dark:border-deep-700 dark:bg-deep-900">
         <header className="border-b border-cream-200 p-5 dark:border-deep-800">
           <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
-            {businessName}
+            {headerLabel}
           </h2>
           <p className="mt-0.5 text-sm text-deep-500 dark:text-cream-400">
             re: {thread.subjectLabel}
