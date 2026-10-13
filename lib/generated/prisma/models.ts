@@ -9,12 +9,18 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/Account'
+export type * from './models/VerificationToken'
+export type * from './models/BusinessProfile'
 export type * from './models/Company'
 export type * from './models/Application'
 export type * from './models/Document'
 export type * from './models/ApplicationEvent'
 export type * from './models/CommitteeVote'
 export type * from './models/Assignment'
+export type * from './models/Booking'
+export type * from './models/MessageThread'
+export type * from './models/Message'
 export type * from './models/ContactSubmission'
 export type * from './models/Post'
 export type * from './models/Destination'

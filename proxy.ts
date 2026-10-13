@@ -12,10 +12,21 @@ const ROLE_HOME: Record<string, string> = {
 
 const ROLE_PREFIXES: Record<string, string[]> = {
   EMPLOYER: ["/services"],
+  CUSTOMER: ["/dashboard"],
+  BUSINESS: ["/dashboard"],
   VERIFIER: ["/review/perusal", "/review/verification", "/services/applications"],
   COMMITTEE_MEMBER: ["/review/committee", "/services/applications"],
   PERMANENT_SECRETARY: ["/review/ps", "/services/applications"],
-  ADMIN: ["/admin", "/review", "/services"],
+  ADMIN: ["/admin", "/review", "/services", "/dashboard"],
+};
+
+export const config = {
+  matcher: [
+    "/services/:path*",
+    "/review/:path*",
+    "/admin/:path*",
+    "/dashboard/:path*",  // ← new
+  ],
 };
 
 export default withAuth(
@@ -46,7 +57,3 @@ export default withAuth(
     },
   }
 );
-
-export const config = {
-  matcher: ["/services/:path*", "/review/:path*", "/admin/:path*"],
-};

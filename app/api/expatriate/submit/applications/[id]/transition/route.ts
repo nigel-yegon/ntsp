@@ -41,7 +41,9 @@ export async function POST(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (!canTransition(application.status, to, session.user.role)) {
+  const actorRole = session.user.role as Parameters<typeof canTransition>[2];
+
+  if (!canTransition(application.status, to, actorRole)) {
     return NextResponse.json(
       { error: `Transition ${application.status} → ${to} not allowed` },
       { status: 403 }

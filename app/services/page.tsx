@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { StatusBadge } from "@/app/components/review/status-badge";
+import { redirect } from "next/navigation";
 
 const ROLE_HOME: Record<string, string> = {
   VERIFIER: "/review/perusal",
@@ -64,6 +65,16 @@ const publicServices: Service[] = [
 
 export default async function ServicesPage() {
   const session = await getServerSession(authOptions);
+
+  // OAuth users arrive without a company. Send them to profile
+  // completion before they can do anything employer-specific.
+  if (
+    session?.user &&
+    session.user.role === "EMPLOYER" &&
+    !session.user.companyId
+  ) {
+    redirect("/services/profile");
+  }
 
   // Reviewer roles get a role-appropriate shortcut instead of employer content.
   if (session?.user && session.user.role !== "EMPLOYER") {

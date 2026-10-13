@@ -52,12 +52,18 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Account: 'Account',
+  VerificationToken: 'VerificationToken',
+  BusinessProfile: 'BusinessProfile',
   Company: 'Company',
   Application: 'Application',
   Document: 'Document',
   ApplicationEvent: 'ApplicationEvent',
   CommitteeVote: 'CommitteeVote',
   Assignment: 'Assignment',
+  Booking: 'Booking',
+  MessageThread: 'MessageThread',
+  Message: 'Message',
   ContactSubmission: 'ContactSubmission',
   Post: 'Post',
   Destination: 'Destination',
@@ -87,6 +93,8 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   name: 'name',
+  emailVerified: 'emailVerified',
+  image: 'image',
   passwordHash: 'passwordHash',
   role: 'role',
   companyId: 'companyId',
@@ -95,6 +103,55 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state'
+} as const
+
+export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+export const VerificationTokenScalarFieldEnum = {
+  identifier: 'identifier',
+  token: 'token',
+  expires: 'expires'
+} as const
+
+export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const BusinessProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  businessName: 'businessName',
+  registrationNo: 'registrationNo',
+  kraPin: 'kraPin',
+  description: 'description',
+  logoUrl: 'logoUrl',
+  contactEmail: 'contactEmail',
+  contactPhone: 'contactPhone',
+  website: 'website',
+  verificationStatus: 'verificationStatus',
+  approvedAt: 'approvedAt',
+  approvedById: 'approvedById',
+  rejectionReason: 'rejectionReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusinessProfileScalarFieldEnum = (typeof BusinessProfileScalarFieldEnum)[keyof typeof BusinessProfileScalarFieldEnum]
 
 
 export const CompanyScalarFieldEnum = {
@@ -193,6 +250,54 @@ export const AssignmentScalarFieldEnum = {
 export type AssignmentScalarFieldEnum = (typeof AssignmentScalarFieldEnum)[keyof typeof AssignmentScalarFieldEnum]
 
 
+export const BookingScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  businessId: 'businessId',
+  accommodationId: 'accommodationId',
+  tourPackageId: 'tourPackageId',
+  checkIn: 'checkIn',
+  checkOut: 'checkOut',
+  guests: 'guests',
+  notes: 'notes',
+  status: 'status',
+  respondedAt: 'respondedAt',
+  responseNote: 'responseNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const MessageThreadScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  businessId: 'businessId',
+  subject: 'subject',
+  accommodationId: 'accommodationId',
+  tourPackageId: 'tourPackageId',
+  subjectLabel: 'subjectLabel',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MessageThreadScalarFieldEnum = (typeof MessageThreadScalarFieldEnum)[keyof typeof MessageThreadScalarFieldEnum]
+
+
+export const MessageScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  authorId: 'authorId',
+  body: 'body',
+  readByCustomer: 'readByCustomer',
+  readByBusiness: 'readByBusiness',
+  createdAt: 'createdAt'
+} as const
+
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
 export const ContactSubmissionScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -270,6 +375,7 @@ export const TourPackageScalarFieldEnum = {
   order: 'order',
   published: 'published',
   featured: 'featured',
+  businessId: 'businessId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -289,6 +395,7 @@ export const AccommodationScalarFieldEnum = {
   destinationId: 'destinationId',
   order: 'order',
   published: 'published',
+  businessId: 'businessId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

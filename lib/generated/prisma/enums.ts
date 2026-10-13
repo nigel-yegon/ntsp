@@ -11,6 +11,8 @@
 
 export const Role = {
   EMPLOYER: 'EMPLOYER',
+  CUSTOMER: 'CUSTOMER',
+  BUSINESS: 'BUSINESS',
   VERIFIER: 'VERIFIER',
   COMMITTEE_MEMBER: 'COMMITTEE_MEMBER',
   PERMANENT_SECRETARY: 'PERMANENT_SECRETARY',
@@ -18,6 +20,16 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const BusinessVerification = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  SUSPENDED: 'SUSPENDED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type BusinessVerification = (typeof BusinessVerification)[keyof typeof BusinessVerification]
 
 
 export const PermitClass = {
@@ -103,3 +115,22 @@ export const AssignmentRole = {
 } as const
 
 export type AssignmentRole = (typeof AssignmentRole)[keyof typeof AssignmentRole]
+
+
+export const BookingStatus = {
+  REQUESTED: 'REQUESTED',
+  CONFIRMED: 'CONFIRMED',
+  DECLINED: 'DECLINED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
+
+
+export const ThreadSubject = {
+  ACCOMMODATION: 'ACCOMMODATION',
+  TOUR_PACKAGE: 'TOUR_PACKAGE'
+} as const
+
+export type ThreadSubject = (typeof ThreadSubject)[keyof typeof ThreadSubject]

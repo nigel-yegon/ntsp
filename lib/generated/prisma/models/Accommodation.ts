@@ -50,6 +50,7 @@ export type AccommodationMinAggregateOutputType = {
   destinationId: number | null
   order: number | null
   published: boolean | null
+  businessId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +67,7 @@ export type AccommodationMaxAggregateOutputType = {
   destinationId: number | null
   order: number | null
   published: boolean | null
+  businessId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -82,6 +84,7 @@ export type AccommodationCountAggregateOutputType = {
   destinationId: number
   order: number
   published: number
+  businessId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -112,6 +115,7 @@ export type AccommodationMinAggregateInputType = {
   destinationId?: true
   order?: true
   published?: true
+  businessId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -128,6 +132,7 @@ export type AccommodationMaxAggregateInputType = {
   destinationId?: true
   order?: true
   published?: true
+  businessId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -144,6 +149,7 @@ export type AccommodationCountAggregateInputType = {
   destinationId?: true
   order?: true
   published?: true
+  businessId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -247,6 +253,7 @@ export type AccommodationGroupByOutputType = {
   destinationId: number
   order: number
   published: boolean
+  businessId: string | null
   createdAt: Date
   updatedAt: Date
   _count: AccommodationCountAggregateOutputType | null
@@ -286,9 +293,13 @@ export type AccommodationWhereInput = {
   destinationId?: Prisma.IntFilter<"Accommodation"> | number
   order?: Prisma.IntFilter<"Accommodation"> | number
   published?: Prisma.BoolFilter<"Accommodation"> | boolean
+  businessId?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
+  business?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  bookings?: Prisma.BookingListRelationFilter
+  threads?: Prisma.MessageThreadListRelationFilter
 }
 
 export type AccommodationOrderByWithRelationInput = {
@@ -303,9 +314,13 @@ export type AccommodationOrderByWithRelationInput = {
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  businessId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   destination?: Prisma.DestinationOrderByWithRelationInput
+  business?: Prisma.UserOrderByWithRelationInput
+  bookings?: Prisma.BookingOrderByRelationAggregateInput
+  threads?: Prisma.MessageThreadOrderByRelationAggregateInput
 }
 
 export type AccommodationWhereUniqueInput = Prisma.AtLeast<{
@@ -323,9 +338,13 @@ export type AccommodationWhereUniqueInput = Prisma.AtLeast<{
   destinationId?: Prisma.IntFilter<"Accommodation"> | number
   order?: Prisma.IntFilter<"Accommodation"> | number
   published?: Prisma.BoolFilter<"Accommodation"> | boolean
+  businessId?: Prisma.StringNullableFilter<"Accommodation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
   destination?: Prisma.XOR<Prisma.DestinationScalarRelationFilter, Prisma.DestinationWhereInput>
+  business?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  bookings?: Prisma.BookingListRelationFilter
+  threads?: Prisma.MessageThreadListRelationFilter
 }, "id" | "slug">
 
 export type AccommodationOrderByWithAggregationInput = {
@@ -340,6 +359,7 @@ export type AccommodationOrderByWithAggregationInput = {
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  businessId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AccommodationCountOrderByAggregateInput
@@ -364,6 +384,7 @@ export type AccommodationScalarWhereWithAggregatesInput = {
   destinationId?: Prisma.IntWithAggregatesFilter<"Accommodation"> | number
   order?: Prisma.IntWithAggregatesFilter<"Accommodation"> | number
   published?: Prisma.BoolWithAggregatesFilter<"Accommodation"> | boolean
+  businessId?: Prisma.StringNullableWithAggregatesFilter<"Accommodation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Accommodation"> | Date | string
 }
@@ -381,6 +402,9 @@ export type AccommodationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   destination: Prisma.DestinationCreateNestedOneWithoutStaysInput
+  business?: Prisma.UserCreateNestedOneWithoutOwnedAccommodationsInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadCreateNestedManyWithoutAccommodationInput
 }
 
 export type AccommodationUncheckedCreateInput = {
@@ -395,8 +419,11 @@ export type AccommodationUncheckedCreateInput = {
   destinationId: number
   order?: number
   published?: boolean
+  businessId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutAccommodationInput
 }
 
 export type AccommodationUpdateInput = {
@@ -412,6 +439,9 @@ export type AccommodationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   destination?: Prisma.DestinationUpdateOneRequiredWithoutStaysNestedInput
+  business?: Prisma.UserUpdateOneWithoutOwnedAccommodationsNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUpdateManyWithoutAccommodationNestedInput
 }
 
 export type AccommodationUncheckedUpdateInput = {
@@ -426,8 +456,11 @@ export type AccommodationUncheckedUpdateInput = {
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
   order?: Prisma.IntFieldUpdateOperationsInput | number
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUncheckedUpdateManyWithoutAccommodationNestedInput
 }
 
 export type AccommodationCreateManyInput = {
@@ -442,6 +475,7 @@ export type AccommodationCreateManyInput = {
   destinationId: number
   order?: number
   published?: boolean
+  businessId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -472,6 +506,7 @@ export type AccommodationUncheckedUpdateManyInput = {
   destinationId?: Prisma.IntFieldUpdateOperationsInput | number
   order?: Prisma.IntFieldUpdateOperationsInput | number
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -486,6 +521,11 @@ export type AccommodationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type AccommodationNullableScalarRelationFilter = {
+  is?: Prisma.AccommodationWhereInput | null
+  isNot?: Prisma.AccommodationWhereInput | null
+}
+
 export type AccommodationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -498,6 +538,7 @@ export type AccommodationCountOrderByAggregateInput = {
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  businessId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -520,6 +561,7 @@ export type AccommodationMaxOrderByAggregateInput = {
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  businessId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -536,6 +578,7 @@ export type AccommodationMinOrderByAggregateInput = {
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   published?: Prisma.SortOrder
+  businessId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -544,6 +587,80 @@ export type AccommodationSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   destinationId?: Prisma.SortOrder
   order?: Prisma.SortOrder
+}
+
+export type AccommodationCreateNestedManyWithoutBusinessInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput> | Prisma.AccommodationCreateWithoutBusinessInput[] | Prisma.AccommodationUncheckedCreateWithoutBusinessInput[]
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBusinessInput | Prisma.AccommodationCreateOrConnectWithoutBusinessInput[]
+  createMany?: Prisma.AccommodationCreateManyBusinessInputEnvelope
+  connect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+}
+
+export type AccommodationUncheckedCreateNestedManyWithoutBusinessInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput> | Prisma.AccommodationCreateWithoutBusinessInput[] | Prisma.AccommodationUncheckedCreateWithoutBusinessInput[]
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBusinessInput | Prisma.AccommodationCreateOrConnectWithoutBusinessInput[]
+  createMany?: Prisma.AccommodationCreateManyBusinessInputEnvelope
+  connect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+}
+
+export type AccommodationUpdateManyWithoutBusinessNestedInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput> | Prisma.AccommodationCreateWithoutBusinessInput[] | Prisma.AccommodationUncheckedCreateWithoutBusinessInput[]
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBusinessInput | Prisma.AccommodationCreateOrConnectWithoutBusinessInput[]
+  upsert?: Prisma.AccommodationUpsertWithWhereUniqueWithoutBusinessInput | Prisma.AccommodationUpsertWithWhereUniqueWithoutBusinessInput[]
+  createMany?: Prisma.AccommodationCreateManyBusinessInputEnvelope
+  set?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  disconnect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  delete?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  connect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  update?: Prisma.AccommodationUpdateWithWhereUniqueWithoutBusinessInput | Prisma.AccommodationUpdateWithWhereUniqueWithoutBusinessInput[]
+  updateMany?: Prisma.AccommodationUpdateManyWithWhereWithoutBusinessInput | Prisma.AccommodationUpdateManyWithWhereWithoutBusinessInput[]
+  deleteMany?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
+}
+
+export type AccommodationUncheckedUpdateManyWithoutBusinessNestedInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput> | Prisma.AccommodationCreateWithoutBusinessInput[] | Prisma.AccommodationUncheckedCreateWithoutBusinessInput[]
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBusinessInput | Prisma.AccommodationCreateOrConnectWithoutBusinessInput[]
+  upsert?: Prisma.AccommodationUpsertWithWhereUniqueWithoutBusinessInput | Prisma.AccommodationUpsertWithWhereUniqueWithoutBusinessInput[]
+  createMany?: Prisma.AccommodationCreateManyBusinessInputEnvelope
+  set?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  disconnect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  delete?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  connect?: Prisma.AccommodationWhereUniqueInput | Prisma.AccommodationWhereUniqueInput[]
+  update?: Prisma.AccommodationUpdateWithWhereUniqueWithoutBusinessInput | Prisma.AccommodationUpdateWithWhereUniqueWithoutBusinessInput[]
+  updateMany?: Prisma.AccommodationUpdateManyWithWhereWithoutBusinessInput | Prisma.AccommodationUpdateManyWithWhereWithoutBusinessInput[]
+  deleteMany?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
+}
+
+export type AccommodationCreateNestedOneWithoutBookingsInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBookingsInput, Prisma.AccommodationUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBookingsInput
+  connect?: Prisma.AccommodationWhereUniqueInput
+}
+
+export type AccommodationUpdateOneWithoutBookingsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutBookingsInput, Prisma.AccommodationUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutBookingsInput
+  upsert?: Prisma.AccommodationUpsertWithoutBookingsInput
+  disconnect?: Prisma.AccommodationWhereInput | boolean
+  delete?: Prisma.AccommodationWhereInput | boolean
+  connect?: Prisma.AccommodationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccommodationUpdateToOneWithWhereWithoutBookingsInput, Prisma.AccommodationUpdateWithoutBookingsInput>, Prisma.AccommodationUncheckedUpdateWithoutBookingsInput>
+}
+
+export type AccommodationCreateNestedOneWithoutThreadsInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutThreadsInput, Prisma.AccommodationUncheckedCreateWithoutThreadsInput>
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutThreadsInput
+  connect?: Prisma.AccommodationWhereUniqueInput
+}
+
+export type AccommodationUpdateOneWithoutThreadsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccommodationCreateWithoutThreadsInput, Prisma.AccommodationUncheckedCreateWithoutThreadsInput>
+  connectOrCreate?: Prisma.AccommodationCreateOrConnectWithoutThreadsInput
+  upsert?: Prisma.AccommodationUpsertWithoutThreadsInput
+  disconnect?: Prisma.AccommodationWhereInput | boolean
+  delete?: Prisma.AccommodationWhereInput | boolean
+  connect?: Prisma.AccommodationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccommodationUpdateToOneWithWhereWithoutThreadsInput, Prisma.AccommodationUpdateWithoutThreadsInput>, Prisma.AccommodationUncheckedUpdateWithoutThreadsInput>
 }
 
 export type AccommodationCreateNestedManyWithoutDestinationInput = {
@@ -588,6 +705,259 @@ export type AccommodationUncheckedUpdateManyWithoutDestinationNestedInput = {
   deleteMany?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
 }
 
+export type AccommodationCreateWithoutBusinessInput = {
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  order?: number
+  published?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  destination: Prisma.DestinationCreateNestedOneWithoutStaysInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationUncheckedCreateWithoutBusinessInput = {
+  id?: number
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  destinationId: number
+  order?: number
+  published?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationCreateOrConnectWithoutBusinessInput = {
+  where: Prisma.AccommodationWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput>
+}
+
+export type AccommodationCreateManyBusinessInputEnvelope = {
+  data: Prisma.AccommodationCreateManyBusinessInput | Prisma.AccommodationCreateManyBusinessInput[]
+  skipDuplicates?: boolean
+}
+
+export type AccommodationUpsertWithWhereUniqueWithoutBusinessInput = {
+  where: Prisma.AccommodationWhereUniqueInput
+  update: Prisma.XOR<Prisma.AccommodationUpdateWithoutBusinessInput, Prisma.AccommodationUncheckedUpdateWithoutBusinessInput>
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutBusinessInput, Prisma.AccommodationUncheckedCreateWithoutBusinessInput>
+}
+
+export type AccommodationUpdateWithWhereUniqueWithoutBusinessInput = {
+  where: Prisma.AccommodationWhereUniqueInput
+  data: Prisma.XOR<Prisma.AccommodationUpdateWithoutBusinessInput, Prisma.AccommodationUncheckedUpdateWithoutBusinessInput>
+}
+
+export type AccommodationUpdateManyWithWhereWithoutBusinessInput = {
+  where: Prisma.AccommodationScalarWhereInput
+  data: Prisma.XOR<Prisma.AccommodationUpdateManyMutationInput, Prisma.AccommodationUncheckedUpdateManyWithoutBusinessInput>
+}
+
+export type AccommodationScalarWhereInput = {
+  AND?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
+  OR?: Prisma.AccommodationScalarWhereInput[]
+  NOT?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
+  id?: Prisma.IntFilter<"Accommodation"> | number
+  name?: Prisma.StringFilter<"Accommodation"> | string
+  slug?: Prisma.StringFilter<"Accommodation"> | string
+  type?: Prisma.StringFilter<"Accommodation"> | string
+  description?: Prisma.StringFilter<"Accommodation"> | string
+  location?: Prisma.StringFilter<"Accommodation"> | string
+  priceRange?: Prisma.StringNullableFilter<"Accommodation"> | string | null
+  imageUrl?: Prisma.StringNullableFilter<"Accommodation"> | string | null
+  destinationId?: Prisma.IntFilter<"Accommodation"> | number
+  order?: Prisma.IntFilter<"Accommodation"> | number
+  published?: Prisma.BoolFilter<"Accommodation"> | boolean
+  businessId?: Prisma.StringNullableFilter<"Accommodation"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
+}
+
+export type AccommodationCreateWithoutBookingsInput = {
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  order?: number
+  published?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  destination: Prisma.DestinationCreateNestedOneWithoutStaysInput
+  business?: Prisma.UserCreateNestedOneWithoutOwnedAccommodationsInput
+  threads?: Prisma.MessageThreadCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationUncheckedCreateWithoutBookingsInput = {
+  id?: number
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  destinationId: number
+  order?: number
+  published?: boolean
+  businessId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  threads?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationCreateOrConnectWithoutBookingsInput = {
+  where: Prisma.AccommodationWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutBookingsInput, Prisma.AccommodationUncheckedCreateWithoutBookingsInput>
+}
+
+export type AccommodationUpsertWithoutBookingsInput = {
+  update: Prisma.XOR<Prisma.AccommodationUpdateWithoutBookingsInput, Prisma.AccommodationUncheckedUpdateWithoutBookingsInput>
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutBookingsInput, Prisma.AccommodationUncheckedCreateWithoutBookingsInput>
+  where?: Prisma.AccommodationWhereInput
+}
+
+export type AccommodationUpdateToOneWithWhereWithoutBookingsInput = {
+  where?: Prisma.AccommodationWhereInput
+  data: Prisma.XOR<Prisma.AccommodationUpdateWithoutBookingsInput, Prisma.AccommodationUncheckedUpdateWithoutBookingsInput>
+}
+
+export type AccommodationUpdateWithoutBookingsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  destination?: Prisma.DestinationUpdateOneRequiredWithoutStaysNestedInput
+  business?: Prisma.UserUpdateOneWithoutOwnedAccommodationsNestedInput
+  threads?: Prisma.MessageThreadUpdateManyWithoutAccommodationNestedInput
+}
+
+export type AccommodationUncheckedUpdateWithoutBookingsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  threads?: Prisma.MessageThreadUncheckedUpdateManyWithoutAccommodationNestedInput
+}
+
+export type AccommodationCreateWithoutThreadsInput = {
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  order?: number
+  published?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  destination: Prisma.DestinationCreateNestedOneWithoutStaysInput
+  business?: Prisma.UserCreateNestedOneWithoutOwnedAccommodationsInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationUncheckedCreateWithoutThreadsInput = {
+  id?: number
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  destinationId: number
+  order?: number
+  published?: boolean
+  businessId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutAccommodationInput
+}
+
+export type AccommodationCreateOrConnectWithoutThreadsInput = {
+  where: Prisma.AccommodationWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutThreadsInput, Prisma.AccommodationUncheckedCreateWithoutThreadsInput>
+}
+
+export type AccommodationUpsertWithoutThreadsInput = {
+  update: Prisma.XOR<Prisma.AccommodationUpdateWithoutThreadsInput, Prisma.AccommodationUncheckedUpdateWithoutThreadsInput>
+  create: Prisma.XOR<Prisma.AccommodationCreateWithoutThreadsInput, Prisma.AccommodationUncheckedCreateWithoutThreadsInput>
+  where?: Prisma.AccommodationWhereInput
+}
+
+export type AccommodationUpdateToOneWithWhereWithoutThreadsInput = {
+  where?: Prisma.AccommodationWhereInput
+  data: Prisma.XOR<Prisma.AccommodationUpdateWithoutThreadsInput, Prisma.AccommodationUncheckedUpdateWithoutThreadsInput>
+}
+
+export type AccommodationUpdateWithoutThreadsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  destination?: Prisma.DestinationUpdateOneRequiredWithoutStaysNestedInput
+  business?: Prisma.UserUpdateOneWithoutOwnedAccommodationsNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutAccommodationNestedInput
+}
+
+export type AccommodationUncheckedUpdateWithoutThreadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutAccommodationNestedInput
+}
+
 export type AccommodationCreateWithoutDestinationInput = {
   name: string
   slug: string
@@ -600,6 +970,9 @@ export type AccommodationCreateWithoutDestinationInput = {
   published?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  business?: Prisma.UserCreateNestedOneWithoutOwnedAccommodationsInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadCreateNestedManyWithoutAccommodationInput
 }
 
 export type AccommodationUncheckedCreateWithoutDestinationInput = {
@@ -613,8 +986,11 @@ export type AccommodationUncheckedCreateWithoutDestinationInput = {
   imageUrl?: string | null
   order?: number
   published?: boolean
+  businessId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutAccommodationInput
+  threads?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutAccommodationInput
 }
 
 export type AccommodationCreateOrConnectWithoutDestinationInput = {
@@ -643,23 +1019,71 @@ export type AccommodationUpdateManyWithWhereWithoutDestinationInput = {
   data: Prisma.XOR<Prisma.AccommodationUpdateManyMutationInput, Prisma.AccommodationUncheckedUpdateManyWithoutDestinationInput>
 }
 
-export type AccommodationScalarWhereInput = {
-  AND?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
-  OR?: Prisma.AccommodationScalarWhereInput[]
-  NOT?: Prisma.AccommodationScalarWhereInput | Prisma.AccommodationScalarWhereInput[]
-  id?: Prisma.IntFilter<"Accommodation"> | number
-  name?: Prisma.StringFilter<"Accommodation"> | string
-  slug?: Prisma.StringFilter<"Accommodation"> | string
-  type?: Prisma.StringFilter<"Accommodation"> | string
-  description?: Prisma.StringFilter<"Accommodation"> | string
-  location?: Prisma.StringFilter<"Accommodation"> | string
-  priceRange?: Prisma.StringNullableFilter<"Accommodation"> | string | null
-  imageUrl?: Prisma.StringNullableFilter<"Accommodation"> | string | null
-  destinationId?: Prisma.IntFilter<"Accommodation"> | number
-  order?: Prisma.IntFilter<"Accommodation"> | number
-  published?: Prisma.BoolFilter<"Accommodation"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Accommodation"> | Date | string
+export type AccommodationCreateManyBusinessInput = {
+  id?: number
+  name: string
+  slug: string
+  type: string
+  description: string
+  location: string
+  priceRange?: string | null
+  imageUrl?: string | null
+  destinationId: number
+  order?: number
+  published?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AccommodationUpdateWithoutBusinessInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  destination?: Prisma.DestinationUpdateOneRequiredWithoutStaysNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUpdateManyWithoutAccommodationNestedInput
+}
+
+export type AccommodationUncheckedUpdateWithoutBusinessInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUncheckedUpdateManyWithoutAccommodationNestedInput
+}
+
+export type AccommodationUncheckedUpdateManyWithoutBusinessInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  priceRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  destinationId?: Prisma.IntFieldUpdateOperationsInput | number
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AccommodationCreateManyDestinationInput = {
@@ -673,6 +1097,7 @@ export type AccommodationCreateManyDestinationInput = {
   imageUrl?: string | null
   order?: number
   published?: boolean
+  businessId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -689,6 +1114,9 @@ export type AccommodationUpdateWithoutDestinationInput = {
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  business?: Prisma.UserUpdateOneWithoutOwnedAccommodationsNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUpdateManyWithoutAccommodationNestedInput
 }
 
 export type AccommodationUncheckedUpdateWithoutDestinationInput = {
@@ -702,8 +1130,11 @@ export type AccommodationUncheckedUpdateWithoutDestinationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutAccommodationNestedInput
+  threads?: Prisma.MessageThreadUncheckedUpdateManyWithoutAccommodationNestedInput
 }
 
 export type AccommodationUncheckedUpdateManyWithoutDestinationInput = {
@@ -717,10 +1148,49 @@ export type AccommodationUncheckedUpdateManyWithoutDestinationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  businessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type AccommodationCountOutputType
+ */
+
+export type AccommodationCountOutputType = {
+  bookings: number
+  threads: number
+}
+
+export type AccommodationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bookings?: boolean | AccommodationCountOutputTypeCountBookingsArgs
+  threads?: boolean | AccommodationCountOutputTypeCountThreadsArgs
+}
+
+/**
+ * AccommodationCountOutputType without action
+ */
+export type AccommodationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccommodationCountOutputType
+   */
+  select?: Prisma.AccommodationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AccommodationCountOutputType without action
+ */
+export type AccommodationCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookingWhereInput
+}
+
+/**
+ * AccommodationCountOutputType without action
+ */
+export type AccommodationCountOutputTypeCountThreadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageThreadWhereInput
+}
 
 
 export type AccommodationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -735,9 +1205,14 @@ export type AccommodationSelect<ExtArgs extends runtime.Types.Extensions.Interna
   destinationId?: boolean
   order?: boolean
   published?: boolean
+  businessId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
+  bookings?: boolean | Prisma.Accommodation$bookingsArgs<ExtArgs>
+  threads?: boolean | Prisma.Accommodation$threadsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccommodationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["accommodation"]>
 
 export type AccommodationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -752,9 +1227,11 @@ export type AccommodationSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   destinationId?: boolean
   order?: boolean
   published?: boolean
+  businessId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
 }, ExtArgs["result"]["accommodation"]>
 
 export type AccommodationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -769,9 +1246,11 @@ export type AccommodationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   destinationId?: boolean
   order?: boolean
   published?: boolean
+  businessId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
 }, ExtArgs["result"]["accommodation"]>
 
 export type AccommodationSelectScalar = {
@@ -786,25 +1265,35 @@ export type AccommodationSelectScalar = {
   destinationId?: boolean
   order?: boolean
   published?: boolean
+  businessId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AccommodationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "type" | "description" | "location" | "priceRange" | "imageUrl" | "destinationId" | "order" | "published" | "createdAt" | "updatedAt", ExtArgs["result"]["accommodation"]>
+export type AccommodationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "type" | "description" | "location" | "priceRange" | "imageUrl" | "destinationId" | "order" | "published" | "businessId" | "createdAt" | "updatedAt", ExtArgs["result"]["accommodation"]>
 export type AccommodationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
+  bookings?: boolean | Prisma.Accommodation$bookingsArgs<ExtArgs>
+  threads?: boolean | Prisma.Accommodation$threadsArgs<ExtArgs>
+  _count?: boolean | Prisma.AccommodationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccommodationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
 }
 export type AccommodationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   destination?: boolean | Prisma.DestinationDefaultArgs<ExtArgs>
+  business?: boolean | Prisma.Accommodation$businessArgs<ExtArgs>
 }
 
 export type $AccommodationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Accommodation"
   objects: {
     destination: Prisma.$DestinationPayload<ExtArgs>
+    business: Prisma.$UserPayload<ExtArgs> | null
+    bookings: Prisma.$BookingPayload<ExtArgs>[]
+    threads: Prisma.$MessageThreadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -818,6 +1307,7 @@ export type $AccommodationPayload<ExtArgs extends runtime.Types.Extensions.Inter
     destinationId: number
     order: number
     published: boolean
+    businessId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["accommodation"]>
@@ -1215,6 +1705,9 @@ readonly fields: AccommodationFieldRefs;
 export interface Prisma__AccommodationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   destination<T extends Prisma.DestinationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DestinationDefaultArgs<ExtArgs>>): Prisma.Prisma__DestinationClient<runtime.Types.Result.GetResult<Prisma.$DestinationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  business<T extends Prisma.Accommodation$businessArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Accommodation$businessArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  bookings<T extends Prisma.Accommodation$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Accommodation$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  threads<T extends Prisma.Accommodation$threadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Accommodation$threadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1255,6 +1748,7 @@ export interface AccommodationFieldRefs {
   readonly destinationId: Prisma.FieldRef<"Accommodation", 'Int'>
   readonly order: Prisma.FieldRef<"Accommodation", 'Int'>
   readonly published: Prisma.FieldRef<"Accommodation", 'Boolean'>
+  readonly businessId: Prisma.FieldRef<"Accommodation", 'String'>
   readonly createdAt: Prisma.FieldRef<"Accommodation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Accommodation", 'DateTime'>
 }
@@ -1655,6 +2149,73 @@ export type AccommodationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Accommodations to delete.
    */
   limit?: number
+}
+
+/**
+ * Accommodation.business
+ */
+export type Accommodation$businessArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Accommodation.bookings
+ */
+export type Accommodation$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Booking
+   */
+  select?: Prisma.BookingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Booking
+   */
+  omit?: Prisma.BookingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingInclude<ExtArgs> | null
+  where?: Prisma.BookingWhereInput
+  orderBy?: Prisma.BookingOrderByWithRelationInput | Prisma.BookingOrderByWithRelationInput[]
+  cursor?: Prisma.BookingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * Accommodation.threads
+ */
+export type Accommodation$threadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageThread
+   */
+  select?: Prisma.MessageThreadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MessageThread
+   */
+  omit?: Prisma.MessageThreadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageThreadInclude<ExtArgs> | null
+  where?: Prisma.MessageThreadWhereInput
+  orderBy?: Prisma.MessageThreadOrderByWithRelationInput | Prisma.MessageThreadOrderByWithRelationInput[]
+  cursor?: Prisma.MessageThreadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageThreadScalarFieldEnum | Prisma.MessageThreadScalarFieldEnum[]
 }
 
 /**

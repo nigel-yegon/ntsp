@@ -30,6 +30,8 @@ const links = [
 
 const ROLE_HOME: Record<string, string> = {
   EMPLOYER: "/services",
+  CUSTOMER: "/dashboard",
+  BUSINESS: "/dashboard",
   VERIFIER: "/review/perusal",
   COMMITTEE_MEMBER: "/review/committee",
   PERMANENT_SECRETARY: "/review/ps",
@@ -38,6 +40,8 @@ const ROLE_HOME: Record<string, string> = {
 
 const ROLE_LABEL: Record<string, string> = {
   EMPLOYER: "Employer",
+  CUSTOMER: "Traveller",
+  BUSINESS: "Business",
   VERIFIER: "Verifier",
   COMMITTEE_MEMBER: "Committee",
   PERMANENT_SECRETARY: "Permanent Secretary",

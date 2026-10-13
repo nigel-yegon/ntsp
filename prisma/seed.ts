@@ -1,4 +1,5 @@
 // prisma/seed.ts
+// prisma/seed.ts
 import "dotenv/config";
 import { PrismaClient } from "../lib/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -20,10 +21,311 @@ async function main() {
   await seedEvents();
   await seedBlogPosts();
   await seedUsersAndCompany();
+
+  // Business + customer accounts, plus ownership assignment for
+  // listings and message/booking sample data. Runs after users so the
+  // employer + admin accounts already exist.
+  await seedBusinessesAndCustomers();
+
   await seedApplications();
 
   console.log("✅ Seed complete.");
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Themed constant used by the seedBusinessesAndCustomers section.
+// 4 businesses + 6 customers = 10 accounts total.
+// ═══════════════════════════════════════════════════════════════
+
+const BUSINESS_SEEDS = [
+  {
+    email: "mara@business.local",
+    name: "Mara Serena Manager",
+    businessName: "Mara Serena Safari Lodges",
+    contactEmail: "bookings@mara-serena.example",
+    contactPhone: "+254 700 100 100",
+    description:
+      "A collection of lodges and camps in the Maasai Mara, offering full-board game drive packages.",
+    verificationStatus: "APPROVED" as const,
+    accommodationSlugs: ["mara-serena", "mara-sopa", "governors-camp"],
+    packageSlugs: ["3-day-maasai-mara", "4-day-mara-camping"],
+  },
+  {
+    email: "diani@business.local",
+    name: "Diani Resorts Manager",
+    businessName: "Diani Beach Resorts",
+    contactEmail: "reservations@diani-resorts.example",
+    contactPhone: "+254 700 200 200",
+    description:
+      "Beachfront resorts and villas on Kenya's award-winning Diani Beach, with snorkeling and dhow cruise packages.",
+    verificationStatus: "APPROVED" as const,
+    accommodationSlugs: ["diani-sea-resort", "almanara-villas", "sands-nomad"],
+    packageSlugs: ["5-day-diani-retreat"],
+  },
+  {
+    email: "savannah@business.local",
+    name: "Savannah Tours Operator",
+    businessName: "Savannah Tours Ltd",
+    contactEmail: "info@savannah-tours.example",
+    contactPhone: "+254 700 300 300",
+    description:
+      "A safari tour operator running scheduled and custom itineraries across Kenya's national parks and reserves.",
+    verificationStatus: "APPROVED" as const,
+    accommodationSlugs: [],
+    packageSlugs: [
+      "7-day-kenya-highlights",
+      "10-day-bush-and-beach",
+      "5-day-samburu-laikipia",
+      "8-day-southern-kenya",
+      "6-day-mount-kenya-trek",
+    ],
+  },
+  {
+    email: "amboseli@business.local",
+    name: "Amboseli Lodges Manager",
+    businessName: "Amboseli Lodges",
+    contactEmail: "stay@amboseli-lodges.example",
+    contactPhone: "+254 700 400 400",
+    description:
+      "Lodges and camps with views of Mount Kilimanjaro in Amboseli National Park.",
+    // PENDING so the admin approval flow has something to act on.
+    verificationStatus: "PENDING" as const,
+    accommodationSlugs: ["amboseli-serena", "tortilis-camp", "ol-tukai"],
+    packageSlugs: [],
+  },
+];
+
+const CUSTOMER_SEEDS = [
+  {
+    email: "customer1@test.local",
+    name: "Amina Hassan",
+  },
+  {
+    email: "customer2@test.local",
+    name: "James Mwangi",
+  },
+  {
+    email: "customer3@test.local",
+    name: "Sophie Turner",
+  },
+  {
+    email: "customer4@test.local",
+    name: "David Kimani",
+  },
+  {
+    email: "customer5@test.local",
+    name: "Lucia Fernández",
+  },
+  {
+    email: "customer6@test.local",
+    name: "Hiroshi Sato",
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// BUSINESSES & CUSTOMERS — 4 businesses + 6 customers = 10 accounts
+// ═══════════════════════════════════════════════════════════════
+
+async function seedBusinessesAndCustomers() {
+  const passwordHash = await bcrypt.hash("password123", 10);
+  const now = Date.now();
+  const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
+
+  // ─── Businesses ────────────────────────────────────────────
+  const businessUsers = new Map<string, { id: string; name: string }>();
+
+  for (const b of BUSINESS_SEEDS) {
+    const user = await prisma.user.upsert({
+      where: { email: b.email },
+      update: {},
+      create: {
+        email: b.email,
+        name: b.name,
+        role: "BUSINESS",
+        passwordHash,
+      },
+    });
+
+    await prisma.businessProfile.upsert({
+      where: { userId: user.id },
+      update: {},
+      create: {
+        userId: user.id,
+        businessName: b.businessName,
+        contactEmail: b.contactEmail,
+        contactPhone: b.contactPhone,
+        description: b.description,
+        verificationStatus: b.verificationStatus,
+        approvedAt: b.verificationStatus === "APPROVED" ? daysAgo(30) : null,
+      },
+    });
+
+    for (const slug of b.accommodationSlugs) {
+      await prisma.accommodation.updateMany({
+        where: { slug },
+        data: { businessId: user.id },
+      });
+    }
+
+    for (const slug of b.packageSlugs) {
+      await prisma.tourPackage.updateMany({
+        where: { slug },
+        data: { businessId: user.id },
+      });
+    }
+
+    businessUsers.set(b.email, { id: user.id, name: b.businessName });
+  }
+
+  console.log(
+    `✔ Seeded ${BUSINESS_SEEDS.length} businesses ` +
+      `(${BUSINESS_SEEDS.filter((b) => b.verificationStatus === "APPROVED").length} approved, ` +
+      `${BUSINESS_SEEDS.filter((b) => b.verificationStatus === "PENDING").length} pending)`
+  );
+
+  // ─── Customers ─────────────────────────────────────────────
+  const customerUsers = new Map<string, { id: string; name: string }>();
+
+  for (const c of CUSTOMER_SEEDS) {
+    const user = await prisma.user.upsert({
+      where: { email: c.email },
+      update: {},
+      create: {
+        email: c.email,
+        name: c.name,
+        role: "CUSTOMER",
+        passwordHash,
+      },
+    });
+    customerUsers.set(c.email, { id: user.id, name: c.name });
+  }
+
+  console.log(`✔ Seeded ${CUSTOMER_SEEDS.length} customers`);
+
+  // ─── Sample message threads ────────────────────────────────
+  // Two customers reach out to two different businesses about two
+  // different listings, so the business dashboard has content.
+
+  const maraBusiness = businessUsers.get("mara@business.local")!;
+  const dianiBusiness = businessUsers.get("diani@business.local")!;
+  const customer1 = customerUsers.get("customer1@test.local")!;
+  const customer2 = customerUsers.get("customer2@test.local")!;
+
+  const maraSerena = await prisma.accommodation.findUnique({
+    where: { slug: "mara-serena" },
+    select: { id: true, name: true },
+  });
+  const dianiSea = await prisma.accommodation.findUnique({
+    where: { slug: "diani-sea-resort" },
+    select: { id: true, name: true },
+  });
+
+  if (maraSerena) {
+    const thread = await prisma.messageThread.create({
+      data: {
+        customerId: customer1.id,
+        businessId: maraBusiness.id,
+        subject: "ACCOMMODATION",
+        accommodationId: maraSerena.id,
+        subjectLabel: maraSerena.name,
+        createdAt: daysAgo(3),
+        updatedAt: daysAgo(2),
+        messages: {
+          create: [
+            {
+              authorId: customer1.id,
+              body: "Hi, I'm interested in a 3-night stay in early August. Do you have availability for two adults? Is the balloon safari included in the rate?",
+              readByCustomer: true,
+              readByBusiness: false,
+              createdAt: daysAgo(3),
+            },
+            {
+              authorId: maraBusiness.id,
+              body: "Hello Amina, thank you for reaching out. We have availability 5–8 August. The balloon safari is a separate add-on (USD 450 per person). Would you like me to hold those dates?",
+              readByCustomer: false,
+              readByBusiness: true,
+              createdAt: daysAgo(2),
+            },
+          ],
+        },
+      },
+    });
+    console.log(`   · Thread ${thread.id} (Mara / Amina)`);
+  }
+
+  if (dianiSea) {
+    const thread = await prisma.messageThread.create({
+      data: {
+        customerId: customer2.id,
+        businessId: dianiBusiness.id,
+        subject: "ACCOMMODATION",
+        accommodationId: dianiSea.id,
+        subjectLabel: dianiSea.name,
+        createdAt: daysAgo(1),
+        updatedAt: daysAgo(1),
+        messages: {
+          create: [
+            {
+              authorId: customer2.id,
+              body: "Do you offer airport transfers from Moi International? And is the rate all-inclusive?",
+              readByCustomer: true,
+              readByBusiness: false,
+              createdAt: daysAgo(1),
+            },
+          ],
+        },
+      },
+    });
+    console.log(`   · Thread ${thread.id} (Diani / James)`);
+  }
+
+  // ─── Sample bookings ───────────────────────────────────────
+  if (maraSerena) {
+    await prisma.booking.create({
+      data: {
+        customerId: customer1.id,
+        businessId: maraBusiness.id,
+        accommodationId: maraSerena.id,
+        checkIn: new Date("2026-08-05"),
+        checkOut: new Date("2026-08-08"),
+        guests: 2,
+        notes: "Requesting a room with a view of the plains if possible.",
+        status: "REQUESTED",
+        createdAt: daysAgo(3),
+      },
+    });
+    console.log("   · Booking 1 (Mara Serena, REQUESTED)");
+  }
+
+  if (dianiSea) {
+    await prisma.booking.create({
+      data: {
+        customerId: customer2.id,
+        businessId: dianiBusiness.id,
+        accommodationId: dianiSea.id,
+        checkIn: new Date("2026-09-12"),
+        checkOut: new Date("2026-09-17"),
+        guests: 4,
+        notes: "Family trip, two adults two children.",
+        status: "CONFIRMED",
+        respondedAt: daysAgo(0),
+        responseNote:
+          "Confirmed. Sea-facing family suite reserved. Payment link sent by email.",
+        createdAt: daysAgo(4),
+      },
+    });
+    console.log("   · Booking 2 (Diani Sea Resort, CONFIRMED)");
+  }
+
+  console.log(
+    `✔ Seeded sample threads and bookings for business dashboards`
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// [everything from seedDestinations down to seedApplications is
+//  unchanged from your existing file]
+// ═══════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════
 // DESTINATIONS — 20 records

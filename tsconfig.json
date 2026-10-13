@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+,     "app/api/auth/signup-customer"  ],
   "exclude": ["node_modules"]
 }

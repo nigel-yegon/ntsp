@@ -3,26 +3,30 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { SignupForm } from "./signup-form";
+import { SignupTabs } from "./signup-tabs";
 
 export const metadata = { title: "Create an account — NTSP" };
 
 export default async function SignupPage() {
   const session = await getServerSession(authOptions);
-  if (session?.user) redirect("/services");
+  if (session?.user) {
+    // Already signed in — nothing to do here.
+    redirect("/services");
+  }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-12">
+    <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-4 py-12">
       <header className="mb-8">
         <h1 className="text-2xl font-semibold text-deep-800 dark:text-cream-100">
-          Create an employer account
+          Create an account
         </h1>
         <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
-          Register your company to submit and track work permit applications.
+          Choose the type of account you need. You can always sign up again
+          with a different email.
         </p>
       </header>
 
-      <SignupForm />
+      <SignupTabs />
 
       <p className="mt-6 text-center text-sm text-deep-500 dark:text-cream-400">
         Already have an account?{" "}
