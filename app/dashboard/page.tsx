@@ -23,7 +23,16 @@ async function CustomerOverview({
   email: string;
 }) {
   const [applications, bookings, threads] = await Promise.all([
-    prisma.application.count({ where: { applicantEmail: email } }),
+    
+    // app/dashboard/page.tsx — CustomerOverview
+    prisma.application.count({
+      where: {
+        applicantEmail: {
+          equals: email,
+          mode: "insensitive",
+        },
+      },
+    }),
     prisma.booking.count({ where: { customerId: userId } }),
     prisma.messageThread.count({ where: { customerId: userId } }),
   ]);

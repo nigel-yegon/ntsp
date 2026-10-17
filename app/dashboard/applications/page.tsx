@@ -18,7 +18,11 @@ export default async function CustomerApplicationsPage() {
   if (!session?.user) return null;
 
   const applications = await prisma.application.findMany({
-    where: { applicantEmail: session.user.email },
+    where: { applicantEmail: {
+      equals: session.user.email, 
+      mode:"insensitive", 
+    },
+  },
     orderBy: [{ submittedAt: "desc" }, { createdAt: "desc" }],
     include: {
       company: { select: { name: true } },
