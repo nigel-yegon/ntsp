@@ -120,21 +120,18 @@ export function Navbar({
   return (
     <>
       <header
-        className={`z-50 border-b transition-colors ${
-          isDashboard ? "" : "top-0"
-        } ${
-          scrolled
+        className={`z-50 border-b transition-colors ${isDashboard ? "" : "top-0"
+          } ${scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
             : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
-        }`}
+          }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           {/* Logo */}
           <Link
             href="/"
-            className={`flex shrink-0 items-center ${
-              isDashboard ? "ml-0.5" : ""
-            }`}
+            className={`flex shrink-0 items-center ${isDashboard ? "ml-0.5" : ""
+              }`}
             aria-label="National Tourism Service Portal home"
           >
             <Image
@@ -155,11 +152,10 @@ export function Navbar({
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                      active
+                    className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${active
                         ? "text-brand-600 dark:text-brand-300"
                         : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
-                    }`}
+                      }`}
                   >
                     {l.label}
                     {active && (
@@ -280,11 +276,10 @@ export function Navbar({
                     <Link
                       href={l.href}
                       onClick={() => setOpen(false)}
-                      className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${
-                        active
+                      className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
                           ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
                           : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
-                      }`}
+                        }`}
                     >
                       {l.label}
                     </Link>
@@ -438,7 +433,7 @@ function UserMenuPanel({
         Go to my dashboard
       </Link>
 
-      <Link
+      {/* <Link
         href="/services/applications"
         role="menuitem"
         onClick={onClose}
@@ -446,7 +441,18 @@ function UserMenuPanel({
       >
         <FileText size={15} aria-hidden="true" />
         {applicationsLabel}
-      </Link>
+      </Link> */}
+      {session.role !== "CUSTOMER" && (
+        <Link
+          href="/services/applications"
+          role="menuitem"
+          onClick={onClose}
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-deep-700 transition hover:bg-cream-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-cream-200 dark:hover:bg-deep-900"
+        >
+          <FileText size={15} aria-hidden="true" />
+          {applicationsLabel}
+        </Link>
+      )}
 
       <button
         type="button"
