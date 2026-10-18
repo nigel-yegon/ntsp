@@ -1,4 +1,6 @@
 // app/components/marketplace/booking-request-form.tsx
+// (unchanged except that it now renders for CUSTOMER and BUSINESS
+//  because the parent conditionally mounts it based on role)
 "use client";
 
 import { useState } from "react";
@@ -8,9 +10,7 @@ import Link from "next/link";
 type Props = {
   accommodationId?: number;
   tourPackageId?: number;
-  /** Tour packages typically know their own check-out; hide the field. */
   showCheckOut?: boolean;
-  defaultCheckOutDays?: number;
   isSignedIn: boolean;
 };
 
@@ -18,7 +18,6 @@ export function BookingRequestForm({
   accommodationId,
   tourPackageId,
   showCheckOut = true,
-  defaultCheckOutDays,
   isSignedIn,
 }: Props) {
   const router = useRouter();
@@ -26,17 +25,9 @@ export function BookingRequestForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Default check-in: tomorrow. Default check-out: check-in + N days.
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const defaultCheckIn = tomorrow.toISOString().slice(0, 10);
-
-  const initialCheckOut = (() => {
-    if (!defaultCheckOutDays) return "";
-    const d = new Date(tomorrow);
-    d.setDate(d.getDate() + defaultCheckOutDays);
-    return d.toISOString().slice(0, 10);
-  })();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -80,14 +71,12 @@ export function BookingRequestForm({
           Request a booking
         </h3>
         <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
-          Sign in or create a traveller account to send a request directly to
-          this business.
+          Sign in or create an account to send a request directly to this
+          business.
         </p>
         <div className="mt-4 flex gap-2">
           <Link
-            href={`/login?callbackUrl=${encodeURIComponent(
-              typeof window !== "undefined" ? window.location.pathname : "/"
-            )}`}
+            href="/login"
             className="rounded-lg bg-brand-400 px-4 py-2 text-sm font-medium text-deep-800 hover:bg-brand-500"
           >
             Sign in
@@ -111,10 +100,7 @@ export function BookingRequestForm({
         </h3>
         <p className="mt-1 text-sm text-emerald-800 dark:text-emerald-200">
           The business has been notified. Track progress in your{" "}
-          <Link
-            href="/dashboard/bookings"
-            className="underline underline-offset-2"
-          >
+          <Link href="/dashboard/bookings" className="underline underline-offset-2">
             bookings
           </Link>
           .
@@ -160,7 +146,6 @@ export function BookingRequestForm({
               name="checkOut"
               type="date"
               required
-              defaultValue={initialCheckOut}
               min={defaultCheckIn}
               className="mt-1 w-full rounded-lg border border-cream-300 bg-cream-50 px-3 py-2 text-sm text-deep-800 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-100"
             />

@@ -18,9 +18,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (session.user.role !== "CUSTOMER") {
+  // Only CUSTOMER and BUSINESS accounts can send inquiries.
+  // EMPLOYER, VERIFIER, COMMITTEE_MEMBER, PERMANENT_SECRETARY and
+  // ADMIN have no reason to message a marketplace business.
+  if (
+    session.user.role !== "CUSTOMER" &&
+    session.user.role !== "BUSINESS"
+  ) {
     return NextResponse.json(
-      { error: "Only traveller accounts can send inquiries" },
+      { error: "Only customer and business accounts can send inquiries" },
       { status: 403 }
     );
   }
@@ -59,13 +65,20 @@ export async function POST(req: Request) {
         businessId: true,
         published: true,
         business: {
-          select: { businessProfile: { select: { verificationStatus: true } } },
+          select: {
+            businessProfile: { select: { verificationStatus: true } },
+          },
         },
       },
     });
-    if (!acc) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    if (!acc) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
     if (!acc.published || !acc.businessId) {
-      return NextResponse.json({ error: "Listing unavailable" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Listing unavailable" },
+        { status: 400 }
+      );
     }
     if (acc.business?.businessProfile?.verificationStatus !== "APPROVED") {
       return NextResponse.json(
@@ -84,13 +97,20 @@ export async function POST(req: Request) {
         businessId: true,
         published: true,
         business: {
-          select: { businessProfile: { select: { verificationStatus: true } } },
+          select: {
+            businessProfile: { select: { verificationStatus: true } },
+          },
         },
       },
     });
-    if (!pkg) return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    if (!pkg) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
     if (!pkg.published || !pkg.businessId) {
-      return NextResponse.json({ error: "Listing unavailable" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Listing unavailable" },
+        { status: 400 }
+      );
     }
     if (pkg.business?.businessProfile?.verificationStatus !== "APPROVED") {
       return NextResponse.json(
@@ -103,9 +123,17 @@ export async function POST(req: Request) {
     subjectLabel = pkg.title;
   }
 
-  // If the customer already has an open thread for this listing
-  // with this business, reuse it — append the message instead of
-  // spawning a new thread.
+  // A business can't send an inquiry to its own listing.
+  if (businessId === session.user.id) {
+    return NextResponse.json(
+      { error: "You can't send an inquiry to your own listing" },
+      { status: 400 }
+    );
+  }
+
+  // If the sender already has an open thread for this listing with
+  // this business, reuse it — append the message instead of spawning
+  // a new thread.
   const existing = await prisma.messageThread.findFirst({
     where: {
       customerId: session.user.id,

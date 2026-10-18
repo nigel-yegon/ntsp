@@ -21,9 +21,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (session.user.role !== "CUSTOMER") {
+  if (
+    session.user.role !== "CUSTOMER" &&
+    session.user.role !== "BUSINESS"
+  ) {
     return NextResponse.json(
-      { error: "Only traveller accounts can make booking requests" },
+      { error: "Only customer and business accounts can make booking requests" },
       { status: 403 }
     );
   }
@@ -46,15 +49,24 @@ export async function POST(req: Request) {
   }
 
   if (!body.checkIn) {
-    return NextResponse.json({ error: "Check-in date is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Check-in date is required" },
+      { status: 400 }
+    );
   }
   if (!body.guests || body.guests < 1) {
-    return NextResponse.json({ error: "Guests must be at least 1" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Guests must be at least 1" },
+      { status: 400 }
+    );
   }
 
   const checkIn = new Date(body.checkIn);
   if (Number.isNaN(checkIn.getTime())) {
-    return NextResponse.json({ error: "Invalid check-in date" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid check-in date" },
+      { status: 400 }
+    );
   }
   if (checkIn < new Date()) {
     return NextResponse.json(
@@ -67,7 +79,10 @@ export async function POST(req: Request) {
   if (body.checkOut) {
     checkOut = new Date(body.checkOut);
     if (Number.isNaN(checkOut.getTime())) {
-      return NextResponse.json({ error: "Invalid check-out date" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid check-out date" },
+        { status: 400 }
+      );
     }
     if (checkOut <= checkIn) {
       return NextResponse.json(
@@ -77,8 +92,8 @@ export async function POST(req: Request) {
     }
   }
 
-  // Resolve the business that owns the listing, and verify the
-  // listing is public and its business is approved.
+  // Resolve the business that owns the listing, verify it can accept
+  // requests, and reject self-bookings.
   let businessId: string | null = null;
 
   if (hasAccommodation) {
@@ -88,7 +103,9 @@ export async function POST(req: Request) {
         businessId: true,
         published: true,
         business: {
-          select: { businessProfile: { select: { verificationStatus: true } } },
+          select: {
+            businessProfile: { select: { verificationStatus: true } },
+          },
         },
       },
     });
@@ -96,7 +113,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
     if (!acc.published) {
-      return NextResponse.json({ error: "Listing is not published" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Listing is not published" },
+        { status: 404 }
+      );
     }
     if (
       !acc.businessId ||
@@ -115,7 +135,9 @@ export async function POST(req: Request) {
         businessId: true,
         published: true,
         business: {
-          select: { businessProfile: { select: { verificationStatus: true } } },
+          select: {
+            businessProfile: { select: { verificationStatus: true } },
+          },
         },
       },
     });
@@ -123,7 +145,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
     if (!pkg.published) {
-      return NextResponse.json({ error: "Listing is not published" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Listing is not published" },
+        { status: 404 }
+      );
     }
     if (
       !pkg.businessId ||
@@ -135,6 +160,14 @@ export async function POST(req: Request) {
       );
     }
     businessId = pkg.businessId;
+  }
+
+  // A business can't book its own listing.
+  if (businessId === session.user.id) {
+    return NextResponse.json(
+      { error: "You can't book your own listing" },
+      { status: 400 }
+    );
   }
 
   const booking = await prisma.booking.create({
