@@ -1,6 +1,8 @@
+// app/events/[slug]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Params = Promise<{ slug: string }>;
 
@@ -17,15 +19,38 @@ export default async function EventPage({ params }: { params: Params }) {
   if (!event) notFound();
 
   const isPast = (event.endDate ?? event.startDate) < new Date();
+  const heroImage = resolveImageUrl(event.imageUrl);
 
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-4xl px-4 py-14 md:py-16">
+      {/* ─── HERO BAND — image-backed ──────────────────────── */}
+      <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <div className="hero-band absolute inset-0" aria-hidden />
+
+        {heroImage && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div
+              className="absolute inset-0 bg-cream-200/70 mix-blend-multiply dark:bg-deep-950/75 dark:mix-blend-normal"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-linear-to-r from-cream-100/60 via-transparent to-transparent dark:from-deep-950/50"
+              aria-hidden
+            />
+          </>
+        )}
+
+        <div className="relative mx-auto max-w-4xl px-4 py-14 md:py-16">
           <Link
             href="/events"
-            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+            className="text-xs font-medium text-deep-600 transition hover:text-brand-600 dark:text-cream-300 dark:hover:text-brand-400"
           >
             ← All events
           </Link>
@@ -49,7 +74,7 @@ export default async function EventPage({ params }: { params: Params }) {
 
           <dl className="mt-6 grid gap-4 sm:grid-cols-2">
             <div>
-              <dt className="text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+              <dt className="text-xs uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">
                 Dates
               </dt>
               <dd className="mt-1 font-medium text-deep-800 dark:text-cream-100">
@@ -57,7 +82,7 @@ export default async function EventPage({ params }: { params: Params }) {
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+              <dt className="text-xs uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">
                 Location
               </dt>
               <dd className="mt-1 font-medium text-deep-800 dark:text-cream-100">

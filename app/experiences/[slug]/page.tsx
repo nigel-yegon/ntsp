@@ -1,6 +1,9 @@
+// app/experiences/[slug]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { CardImage } from "@/app/components/card-image";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Params = Promise<{ slug: string }>;
 
@@ -8,7 +11,9 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
   const attraction = await prisma.attraction.findFirst({ where: { slug } });
   return {
-    title: attraction ? `${attraction.name} — NTSP` : "Experience not found — NTSP",
+    title: attraction
+      ? `${attraction.name} — NTSP`
+      : "Experience not found — NTSP",
   };
 }
 
@@ -31,14 +36,38 @@ export default async function ExperiencePage({ params }: { params: Params }) {
     take: 3,
   });
 
+  const heroImage = resolveImageUrl(attraction.imageUrl);
+
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-3xl px-4 py-14 md:py-16">
+      {/* ─── HERO BAND — image-backed ──────────────────────── */}
+      <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <div className="hero-band absolute inset-0" aria-hidden />
+
+        {heroImage && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div
+              className="absolute inset-0 bg-cream-200/70 mix-blend-multiply dark:bg-deep-950/75 dark:mix-blend-normal"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-linear-to-r from-cream-100/60 via-transparent to-transparent dark:from-deep-950/50"
+              aria-hidden
+            />
+          </>
+        )}
+
+        <div className="relative mx-auto max-w-3xl px-4 py-14 md:py-16">
           <Link
             href="/experiences"
-            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+            className="text-xs font-medium text-deep-600 transition hover:text-brand-600 dark:text-cream-300 dark:hover:text-brand-400"
           >
             ← All experiences
           </Link>
@@ -49,7 +78,7 @@ export default async function ExperiencePage({ params }: { params: Params }) {
           <h1 className="mt-3 text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
             {attraction.name}
           </h1>
-          <p className="mt-4 text-sm text-deep-500 dark:text-cream-500">
+          <p className="mt-4 text-sm text-deep-600 dark:text-cream-300">
             📍{" "}
             <Link
               href={`/destinations/${attraction.destination.slug}`}
@@ -69,7 +98,6 @@ export default async function ExperiencePage({ params }: { params: Params }) {
           {attraction.description}
         </p>
 
-        {/* ─── Nearby at same destination ──────────────────── */}
         {nearby.length > 0 && (
           <section className="mt-14 border-t border-deep-200 pt-8 dark:border-deep-800">
             <div className="mb-5 flex items-end justify-between gap-4">
@@ -94,25 +122,29 @@ export default async function ExperiencePage({ params }: { params: Params }) {
                 <Link
                   key={n.id}
                   href={`/experiences/${n.slug}`}
-                  className="group relative overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-4 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                 >
                   <span
-                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                    className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                     aria-hidden
                   />
-                  <h3 className="text-sm font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                    {n.name}
-                  </h3>
-                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-deep-600 dark:text-cream-400">
-                    {n.description}
-                  </p>
+
+                  <CardImage name={n.name} imageUrl={n.imageUrl} aspect="4:3" />
+
+                  <div className="flex flex-1 flex-col p-4">
+                    <h3 className="text-sm font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                      {n.name}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-deep-600 dark:text-cream-400">
+                      {n.description}
+                    </p>
+                  </div>
                 </Link>
               ))}
             </div>
           </section>
         )}
 
-        {/* ─── Footer link ─────────────────────────────────── */}
         <div className="mt-12 border-t border-deep-200 pt-6 dark:border-deep-800">
           <Link
             href={`/destinations/${attraction.destination.slug}`}

@@ -1,7 +1,10 @@
+// app/destinations/[slug]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import FadeIn from "@/app/components/fade-in";
+import { CardImage } from "@/app/components/card-image";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Params = Promise<{ slug: string }>;
 
@@ -25,24 +28,62 @@ export default async function DestinationPage({ params }: { params: Params }) {
 
   if (!destination) notFound();
 
+  const heroImage = resolveImageUrl(destination.imageUrl);
+
   return (
     <div>
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-4xl px-4 py-14 md:py-16">
+      {/* ─── HERO BAND — image-backed ──────────────────────── */}
+      <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        {/* Base gradient — shows through when there's no image, and
+            sits under the image so the edges blend into the theme. */}
+        <div
+          className="hero-band absolute inset-0"
+          aria-hidden
+        />
+
+        {/* Background image, if present */}
+        {heroImage && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {/* Theme-aware overlay so text stays readable in both
+                light and dark mode. The cream-warm tint matches the
+                paper texture used elsewhere; the deep tint matches
+                the dark surfaces. */}
+            <div
+              className="absolute inset-0 bg-cream-200/70 mix-blend-multiply dark:bg-deep-950/75 dark:mix-blend-normal"
+              aria-hidden
+            />
+            {/* Subtle vignette on the left so the eyebrow and title
+                sit against the darkest part of the overlay. */}
+            <div
+              className="absolute inset-0 bg-linear-to-r from-cream-100/60 via-transparent to-transparent dark:from-deep-950/50"
+              aria-hidden
+            />
+          </>
+        )}
+
+        {/* Content */}
+        <div className="relative mx-auto max-w-4xl px-4 py-14 md:py-16">
           <Link
             href="/destinations"
-            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+            className="text-xs font-medium text-deep-600 transition hover:text-brand-600 dark:text-cream-300 dark:hover:text-brand-400"
           >
             ← All destinations
           </Link>
 
-          <span className="mt-6 block text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
+          <span className="mt-6 block text-xs font-semibold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">
             {destination.county} County
           </span>
           <h1 className="mt-2 text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
             {destination.name}
           </h1>
-          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-deep-600 dark:text-cream-400">
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-deep-700 dark:text-cream-200">
             {destination.description}
           </p>
         </div>
@@ -75,24 +116,33 @@ export default async function DestinationPage({ params }: { params: Params }) {
                   <FadeIn key={a.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                     <Link
                       href={`/experiences/${a.slug}`}
-                      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                     >
                       <span
-                        className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                        className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                         aria-hidden
                       />
-                      <span className="inline-block w-fit rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-                        {a.category}
-                      </span>
-                      <h3 className="mt-2 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                        {a.name}
-                      </h3>
-                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                        {a.description}
-                      </p>
-                      <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                        Learn more →
-                      </span>
+
+                      <CardImage
+                        name={a.name}
+                        imageUrl={a.imageUrl}
+                        aspect="4:3"
+                      />
+
+                      <div className="flex flex-1 flex-col p-5">
+                        <span className="inline-block w-fit rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                          {a.category}
+                        </span>
+                        <h3 className="mt-2 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                          {a.name}
+                        </h3>
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                          {a.description}
+                        </p>
+                        <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                          Learn more →
+                        </span>
+                      </div>
                     </Link>
                   </FadeIn>
                 ))}
@@ -121,28 +171,42 @@ export default async function DestinationPage({ params }: { params: Params }) {
                 </Link>
               </div>
 
-              <div className="space-y-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 {destination.packages.map((p, i) => (
                   <FadeIn key={p.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                     <Link
                       href={`/packages/${p.slug}`}
-                      className="group relative flex flex-col justify-between gap-3 overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500 sm:flex-row sm:items-center"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                     >
                       <span
-                        className="absolute inset-y-0 left-0 w-0.5 origin-top scale-y-0 bg-brand-500 transition-transform duration-300 group-hover:scale-y-100"
+                        className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                         aria-hidden
                       />
-                      <div className="min-w-0">
+
+                      <CardImage
+                        name={p.title}
+                        imageUrl={p.imageUrl}
+                        aspect="16:9"
+                      />
+
+                      <div className="flex flex-1 flex-col p-5">
                         <h3 className="font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
                           {p.title}
                         </h3>
                         <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
-                          {p.durationDays} day{p.durationDays > 1 ? "s" : ""} · {p.summary}
+                          {p.durationDays} day{p.durationDays > 1 ? "s" : ""} ·{" "}
+                          {p.summary}
                         </p>
+                        <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-3 dark:border-deep-800">
+                          <span className="text-xs text-deep-500 dark:text-cream-500">
+                            {p.durationDays} day
+                            {p.durationDays > 1 ? "s" : ""}
+                          </span>
+                          <span className="font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
+                            KES {p.priceKes.toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      <span className="whitespace-nowrap font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
-                        KES {p.priceKes.toLocaleString()}
-                      </span>
                     </Link>
                   </FadeIn>
                 ))}
@@ -177,32 +241,41 @@ export default async function DestinationPage({ params }: { params: Params }) {
                   <FadeIn key={s.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                     <Link
                       href={`/stay/${s.slug}`}
-                      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                     >
                       <span
-                        className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                        className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                         aria-hidden
                       />
-                      <span className="inline-block w-fit rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-                        {s.type}
-                      </span>
-                      <h3 className="mt-2 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                        {s.name}
-                      </h3>
-                      <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-                        📍 {s.location}
-                      </p>
-                      <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                        {s.description}
-                      </p>
-                      {s.priceRange && (
-                        <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
-                          {s.priceRange}
+
+                      <CardImage
+                        name={s.name}
+                        imageUrl={s.imageUrl}
+                        aspect="4:3"
+                      />
+
+                      <div className="flex flex-1 flex-col p-5">
+                        <span className="inline-block w-fit rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                          {s.type}
+                        </span>
+                        <h3 className="mt-2 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                          {s.name}
+                        </h3>
+                        <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                          📍 {s.location}
                         </p>
-                      )}
-                      <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                        View →
-                      </span>
+                        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                          {s.description}
+                        </p>
+                        {s.priceRange && (
+                          <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
+                            {s.priceRange}
+                          </p>
+                        )}
+                        <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                          View →
+                        </span>
+                      </div>
                     </Link>
                   </FadeIn>
                 ))}
