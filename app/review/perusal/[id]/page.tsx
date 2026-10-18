@@ -8,6 +8,7 @@ import { EventTimeline } from "@/app/components/review/event-timeline";
 import { StatusBadge } from "@/app/components/review/status-badge";
 import { reviewDocument } from "@/app/components/review/actions";
 import { PerusalDocumentActions } from "./perusal-actions";
+import { TransitionPanel } from "@/app/components/review/transition-panel";
 
 export default async function PerusalDetailPage({
   params,
@@ -29,6 +30,10 @@ export default async function PerusalDetailPage({
   });
 
   if (!application) notFound();
+
+  const allPerused = application.documents.every(
+    (d) => d.perusalStatus !== "PENDING"
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -56,6 +61,23 @@ export default async function PerusalDetailPage({
             }
           />
         </section>
+
+        {application.status === "UNDER_PERUSAL" && (
+          <TransitionPanel
+            applicationId={application.id}
+            from={application.status}
+            to="UNDER_VERIFICATION"
+            label="Complete perusal and send to verification"
+            noteRequired
+            noteRequiredMessage="Summarise the perusal findings for the verification officer."
+            disabled={!allPerused}
+            disabledMessage={
+              allPerused
+                ? undefined
+                : "All documents must be perused before advancing to verification."
+            }
+          />
+        )}
 
         <section>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">

@@ -76,7 +76,7 @@ export default async function BlogPage() {
             From the road
           </span>
           <h1 className="mt-2 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
-            Blog
+            Blog & other Stories
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-deep-700 dark:text-cream-200">
             Guides, tips, and travel stories from across Kenya.

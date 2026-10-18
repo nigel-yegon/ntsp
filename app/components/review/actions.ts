@@ -5,8 +5,11 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { canTransition } from "@/lib/workflow";
-import { tallyVotes } from "@/lib/tally";
+import {
+  canTransition,
+  committeeQuorum,
+  NOTE_REQUIRED_FOR_TRANSITIONS,
+} from "@/lib/workflow";
 import type {
   ApplicationStatus,
   DocumentReviewStatus,
@@ -63,6 +66,14 @@ export async function reviewDocument(formData: FormData) {
   revalidatePath(`/review/verification/${doc.applicationId}`);
 }
 
+/**
+ * Cast or change the caller's vote. Does NOT transition the
+ * application — that's a separate, explicit action by a
+ * committee member once quorum is reached (see
+ * `transitionApplication` below). Auto-transitioning on vote
+ * count is what the old workflow did; Option A makes the
+ * recommendation an explicit step with its own note.
+ */
 export async function castVote(formData: FormData) {
   const user = await requireUser();
   if (user.role !== "COMMITTEE_MEMBER" && user.role !== "ADMIN") {
@@ -72,6 +83,17 @@ export async function castVote(formData: FormData) {
   const applicationId = String(formData.get("applicationId"));
   const decision = String(formData.get("decision")) as VoteDecision;
   const comment = String(formData.get("comment") ?? "").trim() || null;
+
+  // Voting only makes sense at the committee stage.
+  const application = await prisma.application.findUniqueOrThrow({
+    where: { id: applicationId },
+    select: { status: true },
+  });
+  if (application.status !== "AWAITING_COMMITTEE") {
+    throw new Error(
+      `Cannot vote: application status is ${application.status}`
+    );
+  }
 
   await prisma.committeeVote.upsert({
     where: {
@@ -91,81 +113,144 @@ export async function castVote(formData: FormData) {
     },
   });
 
-  const votes = await prisma.committeeVote.findMany({
-    where: { applicationId },
-  });
-
-  if (votes.length >= 3) {
-    const outcome = tallyVotes(votes);
-    if (outcome !== "TIE") {
-      const next: ApplicationStatus =
-        outcome === "APPROVED" ? "COMMITTEE_APPROVED" : "COMMITTEE_DECLINED";
-
-      await prisma.application.update({
-        where: { id: applicationId },
-        data: { status: next },
-      });
-
-      await prisma.applicationEvent.create({
-        data: {
-          applicationId,
-          type:
-            outcome === "APPROVED"
-              ? "COMMITTEE_APPROVED"
-              : "COMMITTEE_DECLINED",
-          actorId: user.id,
-          message: `Committee outcome: ${outcome}`,
-        },
-      });
-    }
-  }
-
   revalidatePath(`/review/committee/${applicationId}`);
+  revalidatePath("/review/committee");
 }
 
-export async function psDecision(formData: FormData) {
+/**
+ * Generic transition. Used by:
+ *   - perusal page:  UNDER_PERUSAL → UNDER_VERIFICATION
+ *   - verification:  UNDER_VERIFICATION → AWAITING_COMMITTEE
+ *   - committee:     AWAITING_COMMITTEE → AWAITING_PS_APPROVAL
+ *                    AWAITING_COMMITTEE → COMMITTEE_DECLINED
+ *   - PS page:       AWAITING_PS_APPROVAL → PS_APPROVED | PS_DECLINED
+ *                    PS_APPROVED → FORWARDED_TO_INTERIOR
+ *
+ * The transition route enforces the same guards (quorum,
+ * note requirements, role, matrix), so client and server are
+ * consistent by construction.
+ */
+export async function transitionApplication(formData: FormData) {
   const user = await requireUser();
-  if (user.role !== "PERMANENT_SECRETARY" && user.role !== "ADMIN") {
-    throw new Error("Forbidden");
-  }
 
   const applicationId = String(formData.get("applicationId"));
   const to = String(formData.get("to")) as ApplicationStatus;
-  const note = String(formData.get("note") ?? "").trim() || null;
+  const note = String(formData.get("note") ?? "").trim();
 
   const application = await prisma.application.findUniqueOrThrow({
     where: { id: applicationId },
   });
 
-  if (!canTransition(application.status, to, user.role)) {
+  // Role gate via the matrix.
+  const role = user.role as Parameters<typeof canTransition>[2];
+  if (!canTransition(application.status, to, role)) {
     throw new Error(`Transition ${application.status} → ${to} not allowed`);
+  }
+
+  // Note requirement — shared with the route via lib/workflow.
+  if (
+    NOTE_REQUIRED_FOR_TRANSITIONS.includes(to) &&
+    note.length < 5
+  ) {
+    throw new Error(
+      `A comment of at least 5 characters is required for ${to}`
+    );
+  }
+
+  // Stage-specific guards (mirrored from the route — keep them
+  // in sync if you ever change one).
+  if (to === "UNDER_VERIFICATION") {
+    const pending = await prisma.document.count({
+      where: { applicationId, perusalStatus: "PENDING" },
+    });
+    if (pending > 0) {
+      throw new Error("All documents must be perused first");
+    }
+  }
+  if (to === "AWAITING_COMMITTEE") {
+    const unverified = await prisma.document.count({
+      where: { applicationId, NOT: { verificationStatus: "ACCEPTED" } },
+    });
+    if (unverified > 0) {
+      throw new Error("All documents must be verified and accepted");
+    }
+  }
+  if (
+    application.status === "AWAITING_COMMITTEE" &&
+    (to === "AWAITING_PS_APPROVAL" || to === "COMMITTEE_DECLINED")
+  ) {
+    const votes = await prisma.committeeVote.findMany({
+      where: { applicationId },
+      select: { decision: true },
+    });
+    const quorum = committeeQuorum(votes);
+
+    if (to === "AWAITING_PS_APPROVAL" && !quorum.approved) {
+      throw new Error(
+        `Quorum not met: ${quorum.approves} approve, ${quorum.declines} decline.`
+      );
+    }
+    if (to === "COMMITTEE_DECLINED" && !quorum.declined) {
+      throw new Error(
+        `Quorum not met: ${quorum.declines} decline, ${quorum.approves} approve.`
+      );
+    }
   }
 
   await prisma.application.update({
     where: { id: applicationId },
     data: {
       status: to,
+      perusalStartedAt: to === "UNDER_PERUSAL" ? new Date() : undefined,
+      verificationStartedAt:
+        to === "UNDER_VERIFICATION" ? new Date() : undefined,
+      committeeDecidedAt:
+        to === "AWAITING_PS_APPROVAL" || to === "COMMITTEE_DECLINED"
+          ? new Date()
+          : undefined,
       psDecidedAt:
         to === "PS_APPROVED" || to === "PS_DECLINED" ? new Date() : undefined,
-      forwardedAt: to === "FORWARDED_TO_INTERIOR" ? new Date() : undefined,
+      forwardedAt:
+        to === "FORWARDED_TO_INTERIOR" ? new Date() : undefined,
     },
   });
+
+  const EVENT_FOR_TRANSITION: Partial<Record<ApplicationStatus, string>> = {
+    UNDER_PERUSAL: "PERUSAL_STARTED",
+    UNDER_VERIFICATION: "VERIFICATION_STARTED",
+    AWAITING_COMMITTEE: "ESCALATED_TO_COMMITTEE",
+    COMMITTEE_DECLINED: "COMMITTEE_DECLINED",
+    AWAITING_PS_APPROVAL: "ESCALATED_TO_PS",
+    PS_APPROVED: "PS_APPROVED",
+    PS_DECLINED: "PS_DECLINED",
+    FORWARDED_TO_INTERIOR: "FORWARDED_TO_INTERIOR",
+    WITHDRAWN: "WITHDRAWN",
+  };
 
   await prisma.applicationEvent.create({
     data: {
       applicationId,
-      type:
-        to === "PS_APPROVED"
-          ? "PS_APPROVED"
-          : to === "PS_DECLINED"
-          ? "PS_DECLINED"
-          : "FORWARDED_TO_INTERIOR",
+      type: (EVENT_FOR_TRANSITION[to] ?? "NOTE_ADDED") as any,
       actorId: user.id,
-      message: note,
+      message: note || null,
       metadata: { from: application.status, to },
     },
   });
 
-  revalidatePath("/review/ps");
+  revalidatePath(`/review/committee/${applicationId}`);
+  revalidatePath(`/review/perusal/${applicationId}`);
+  revalidatePath(`/review/verification/${applicationId}`);
   revalidatePath(`/review/ps/${applicationId}`);
+  revalidatePath("/review/committee");
+  revalidatePath("/review/perusal");
+  revalidatePath("/review/verification");
+  revalidatePath("/review/ps");
+  revalidatePath("/services/applications");
+}
+
+export async function psDecision(formData: FormData) {
+  // Alias of `transitionApplication` for PS-page backward
+  // compatibility. The PS page can keep calling `psDecision`
+  // and get the same guards, note requirement, and audit trail.
+  return transitionApplication(formData);
 }

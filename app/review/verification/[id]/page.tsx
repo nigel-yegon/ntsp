@@ -8,6 +8,7 @@ import { EventTimeline } from "@/app/components/review/event-timeline";
 import { StatusBadge } from "@/app/components/review/status-badge";
 import { reviewDocument } from "@/app/components/review/actions";
 import { VerificationDocumentActions } from "./verification-actions";
+import { TransitionPanel } from "@/app/components/review/transition-panel";
 
 export default async function VerificationDetailPage({
   params,
@@ -26,6 +27,10 @@ export default async function VerificationDetailPage({
   });
 
   if (!application) notFound();
+
+  const allVerified = application.documents.every(
+    (d) => d.verificationStatus === "ACCEPTED"
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -56,6 +61,23 @@ export default async function VerificationDetailPage({
             }
           />
         </section>
+
+        {application.status === "UNDER_VERIFICATION" && (
+          <TransitionPanel
+            applicationId={application.id}
+            from={application.status}
+            to="AWAITING_COMMITTEE"
+            label="Escalate to committee"
+            noteRequired
+            noteRequiredMessage="Summarise the verification outcome for the committee."
+            disabled={!allVerified}
+            disabledMessage={
+              allVerified
+                ? undefined
+                : "All documents must be verified and accepted before escalating to committee."
+            }
+          />
+        )}
 
         <section>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">

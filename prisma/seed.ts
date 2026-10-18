@@ -33,7 +33,7 @@ async function main() {
   await seedUsersAndCompany();
   await seedBusinessesAndCustomers();
   await seedApplications();
-  await seedIncidents();   // ← new
+  await seedIncidents();
 
   console.log("✅ Seed complete.");
 }
@@ -329,7 +329,7 @@ async function seedEvents() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BLOG POSTS — 20 records (now with coverImage)
+// BLOG POSTS — 20 records
 // ═══════════════════════════════════════════════════════════════
 
 async function seedBlogPosts() {
@@ -615,7 +615,7 @@ async function seedBusinessesAndCustomers() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// APPLICATIONS — unchanged
+// APPLICATIONS — aligned with the Option A committee quorum rule
 // ═══════════════════════════════════════════════════════════════
 
 async function seedApplications() {
@@ -632,9 +632,12 @@ async function seedApplications() {
   const verifier = await prisma.user.findUnique({
     where: { email: "verifier@test.local" },
   });
-  const committeeMember = await prisma.user.findUnique({
-    where: { email: "committee@test.local" },
+  const committeeMembers = await prisma.user.findMany({
+    where: { role: "COMMITTEE_MEMBER" },
+    select: { id: true },
+    orderBy: { email: "asc" },
   });
+  const committeeMember = committeeMembers[0] ?? null;
 
   const now = Date.now();
   const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
@@ -758,6 +761,7 @@ async function seedApplications() {
       });
     }
 
+    // ── Events ────────────────────────────────────────────
     const events: { type: string; actorId: string | null; message: string | null; daysAgo: number }[] = [];
 
     if (spec.docsStage !== "draft") {
@@ -773,8 +777,10 @@ async function seedApplications() {
       events.push({ type: "ESCALATED_TO_COMMITTEE", actorId: verifier?.id ?? null, message: "All documents verified. Escalated to committee.", daysAgo: (spec.submittedDaysAgo ?? 0) - 3 });
     }
     if (spec.docsStage === "awaiting-ps") {
-      events.push({ type: "COMMITTEE_APPROVED", actorId: committeeMember?.id ?? null, message: "Committee approved the application.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
-      events.push({ type: "ESCALATED_TO_PS", actorId: committeeMember?.id ?? null, message: "Escalated to Permanent Secretary for final approval.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
+      // Two committee votes — matches the COMMITTEE_QUORUM = 2 rule.
+      events.push({ type: "COMMITTEE_VOTE_CAST", actorId: committeeMembers[0]?.id ?? null, message: "Documents in order. Recommend approval.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
+      events.push({ type: "COMMITTEE_VOTE_CAST", actorId: committeeMembers[1]?.id ?? null, message: "Concur with recommendation.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
+      events.push({ type: "ESCALATED_TO_PS", actorId: committeeMembers[0]?.id ?? null, message: "Quorum met. Escalated to Permanent Secretary.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
     }
 
     for (const e of events) {
@@ -789,22 +795,31 @@ async function seedApplications() {
       });
     }
 
-    if (spec.docsStage === "awaiting-ps" && committeeMember) {
-      await prisma.committeeVote.upsert({
-        where: {
-          applicationId_voterId: {
-            applicationId: application.id,
-            voterId: committeeMember.id,
+    // ── Committee votes (quorum of 2) ─────────────────────
+    // Only the awaiting-ps application has reached the
+    // AWAITING_PS_APPROVAL state, and Option A requires at
+    // least 2 APPROVE votes to get there. Seed them so the
+    // dataset is internally consistent with the workflow
+    // rules introduced in lib/workflow.ts.
+    if (spec.docsStage === "awaiting-ps") {
+      const voters = committeeMembers.slice(0, 2);
+      for (const v of voters) {
+        await prisma.committeeVote.upsert({
+          where: {
+            applicationId_voterId: {
+              applicationId: application.id,
+              voterId: v.id,
+            },
           },
-        },
-        update: {},
-        create: {
-          applicationId: application.id,
-          voterId: committeeMember.id,
-          decision: "APPROVE",
-          comment: "Documents in order. Recommend approval.",
-        },
-      });
+          update: {},
+          create: {
+            applicationId: application.id,
+            voterId: v.id,
+            decision: "APPROVE",
+            comment: "Documents in order. Recommend approval.",
+          },
+        });
+      }
     }
 
     return application;
@@ -820,13 +835,11 @@ async function seedApplications() {
   console.log("✔ Seeded 6 sample applications across workflow stages");
 }
 
-
 // ═══════════════════════════════════════════════════════════════
 // INCIDENTS — 10 records across all workflow stages
 // ═══════════════════════════════════════════════════════════════
 
 async function seedIncidents() {
-  // Reuse the admin reviewer seeded in seedUsersAndCompany.
   const admin = await prisma.user.findUnique({
     where: { email: "admin@test.local" },
     select: { id: true },
@@ -1109,7 +1122,6 @@ async function seedIncidents() {
     });
 
     if (existing) {
-      // Update in place — preserves any attachments added by admins.
       await prisma.incident.update({
         where: { id: existing.id },
         data: {
@@ -1157,9 +1169,6 @@ async function seedIncidents() {
               fileName: a.fileName,
               mimeType: a.mimeType,
               sizeBytes: a.sizeBytes,
-              // Placeholder keys — no real files on disk. Downloading
-              // these attachments from the admin panel returns 404,
-              // which is intentional: seed data is metadata-only.
               storageKey: `seed/incidents/${s.referenceNo}/${a.fileName}`,
             })),
           },
@@ -1180,7 +1189,6 @@ async function seedIncidents() {
       `${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`
   );
 }
-
 
 main()
   .catch((e) => {

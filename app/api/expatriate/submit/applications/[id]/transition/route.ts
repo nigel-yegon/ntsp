@@ -1,15 +1,24 @@
-// app/api/applications/[id]/transition/route.ts
+// app/api/expatriate/submit/applications/[id]/transition/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { canTransition } from "@/lib/workflow";
-import type { ApplicationStatus, EventType } from "../../../../../../../lib/db-types";
+import {
+  canTransition,
+  committeeQuorum,
+  NOTE_REQUIRED_FOR_TRANSITIONS,
+} from "@/lib/workflow";
+import type {
+  ApplicationStatus,
+  EventType,
+} from "../../../../../../../lib/db-types";
 
 const EVENT_FOR_TRANSITION: Partial<Record<ApplicationStatus, EventType>> = {
   UNDER_PERUSAL: "PERUSAL_STARTED",
   UNDER_VERIFICATION: "VERIFICATION_STARTED",
   AWAITING_COMMITTEE: "ESCALATED_TO_COMMITTEE",
+  COMMITTEE_APPROVED: "COMMITTEE_APPROVED",
+  COMMITTEE_DECLINED: "COMMITTEE_DECLINED",
   AWAITING_PS_APPROVAL: "ESCALATED_TO_PS",
   PS_APPROVED: "PS_APPROVED",
   PS_DECLINED: "PS_DECLINED",
@@ -21,7 +30,7 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params; 
+  const { id } = await params;
 
   const session = await getServerSession(authOptions);
   if (!session?.user) {
@@ -50,7 +59,19 @@ export async function POST(
     );
   }
 
-  // ─── Stage-specific guards ───
+  // ── Required note guard ───────────────────────────────────
+  const trimmedNote = typeof note === "string" ? note.trim() : "";
+  if (
+    NOTE_REQUIRED_FOR_TRANSITIONS.includes(to) &&
+    trimmedNote.length < 5
+  ) {
+    return NextResponse.json(
+      { error: `A comment of at least 5 characters is required for ${to}` },
+      { status: 400 }
+    );
+  }
+
+  // ── Stage-specific guards ─────────────────────────────────
   if (to === "UNDER_VERIFICATION") {
     const pending = application.documents.some(
       (d) => d.perusalStatus === "PENDING"
@@ -62,6 +83,7 @@ export async function POST(
       );
     }
   }
+
   if (to === "AWAITING_COMMITTEE") {
     const unverified = application.documents.some(
       (d) => d.verificationStatus !== "ACCEPTED"
@@ -73,7 +95,44 @@ export async function POST(
       );
     }
   }
-  if (to === "AWAITING_PS_APPROVAL") {
+
+  // ── Committee quorum guards (Option A) ────────────────────
+  if (
+    application.status === "AWAITING_COMMITTEE" &&
+    (to === "AWAITING_PS_APPROVAL" || to === "COMMITTEE_DECLINED")
+  ) {
+    const votes = await prisma.committeeVote.findMany({
+      where: { applicationId: application.id },
+      select: { decision: true },
+    });
+    const quorum = committeeQuorum(votes);
+
+    if (to === "AWAITING_PS_APPROVAL" && !quorum.approved) {
+      return NextResponse.json(
+        {
+          error: `Quorum not met: ${quorum.approves} approve, ${quorum.declines} decline. Need at least ${quorum.needApprove} more approve vote(s) and more approves than declines.`,
+          quorum,
+        },
+        { status: 400 }
+      );
+    }
+
+    if (to === "COMMITTEE_DECLINED" && !quorum.declined) {
+      return NextResponse.json(
+        {
+          error: `Quorum not met: ${quorum.declines} decline, ${quorum.approves} approve. Need at least ${quorum.needDecline} more decline vote(s) and more declines than approves.`,
+          quorum,
+        },
+        { status: 400 }
+      );
+    }
+  }
+
+  // ── AWAITING_PS_APPROVAL from legacy COMMITTEE_APPROVED ───
+  if (
+    to === "AWAITING_PS_APPROVAL" &&
+    application.status === "COMMITTEE_APPROVED"
+  ) {
     const votes = await prisma.committeeVote.findMany({
       where: { applicationId: application.id },
     });
@@ -85,16 +144,18 @@ export async function POST(
     }
   }
 
+  // ── Status write ──────────────────────────────────────────
   const updated = await prisma.application.update({
     where: { id: application.id },
     data: {
       status: to,
-      perusalStartedAt:
-        to === "UNDER_PERUSAL" ? new Date() : undefined,
+      perusalStartedAt: to === "UNDER_PERUSAL" ? new Date() : undefined,
       verificationStartedAt:
         to === "UNDER_VERIFICATION" ? new Date() : undefined,
       committeeDecidedAt:
-        to === "AWAITING_PS_APPROVAL" ? new Date() : undefined,
+        to === "AWAITING_PS_APPROVAL" || to === "COMMITTEE_DECLINED"
+          ? new Date()
+          : undefined,
       psDecidedAt:
         to === "PS_APPROVED" || to === "PS_DECLINED" ? new Date() : undefined,
       forwardedAt:
@@ -102,12 +163,13 @@ export async function POST(
     },
   });
 
+  // ── Event trail ───────────────────────────────────────────
   await prisma.applicationEvent.create({
     data: {
       applicationId: application.id,
       type: EVENT_FOR_TRANSITION[to] ?? "NOTE_ADDED",
       actorId: session.user.id,
-      message: note,
+      message: trimmedNote || null,
       metadata: { from: application.status, to },
     },
   });
