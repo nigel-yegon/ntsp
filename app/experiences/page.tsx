@@ -1,4 +1,6 @@
+// app/experiences/page.tsx
 import { prisma } from "@/lib/prisma";
+import { HeroBackground } from "@/app/components/hero-background";
 import { ExperiencesGrid } from "./experiences-grid";
 
 export const metadata = {
@@ -14,16 +16,15 @@ export default async function ExperiencesPage() {
     orderBy: [{ category: "asc" }, { name: "asc" }],
   });
 
-  // Unique categories, alphabetically sorted
   const categories = Array.from(
     new Set(attractions.map((a) => a.category)),
   ).sort();
 
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+      <section className="hero-band relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <HeroBackground variant="experiences" />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
             Things to see &amp; do
           </span>
@@ -36,7 +37,6 @@ export default async function ExperiencesPage() {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <div className="mx-auto max-w-6xl px-4 py-12">
         {attractions.length === 0 ? (
           <p className="text-deep-500 dark:text-cream-500">

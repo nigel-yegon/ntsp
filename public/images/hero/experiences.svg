@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
+  <g opacity="0.7">
+    <!-- Ridge line -->
+    <path d="M-40 340 C 80 320, 200 340, 320 320 S 520 320, 640 330 S 840 320, 960 330 S 1140 320, 1240 340" />
+    <path d="M-40 360 C 100 350, 220 360, 340 350 S 540 350, 660 355 S 860 350, 980 355 S 1160 350, 1240 355" />
+    <path d="M-40 380 C 120 375, 240 380, 360 378 S 560 378, 680 380 S 880 378, 1000 380 S 1180 378, 1240 380" />
+    <!-- Acacia trunk -->
+    <path d="M760 320 L 762 200 M 758 260 L 730 220 M 764 240 L 800 210 M 758 280 L 720 260 M 766 280 L 810 270" />
+    <!-- Acacia canopy — concentric contour loops -->
+    <path d="M700 190 C 720 170, 760 160, 800 165 S 840 180, 830 200 S 790 215, 750 210 S 700 205, 700 190 Z" />
+    <path d="M712 185 C 728 172, 758 165, 792 168 S 824 180, 816 195 S 784 207, 752 203 S 712 197, 712 185 Z" />
+    <path d="M730 180 C 742 172, 764 168, 786 170 S 808 180, 802 190 S 780 198, 758 195 S 730 190, 730 180 Z" />
+  </g>
+</svg>

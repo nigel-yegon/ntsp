@@ -549,3 +549,14 @@ input:-webkit-autofill:focus {
 [data-nav-static] [data-nav-offset] {
   padding-top: 0;
 }
+/* The GSAP hero background checks for .accessibility-reduced-motion
+   on <html> and skips its timeline entirely when present. The
+   media-query block below handles CSS-level animations. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-wave-slow,
+  .animate-wave-medium,
+  .animate-wave-fast,
+  .animate-bubble-rise {
+    animation: none;
+  }
+}

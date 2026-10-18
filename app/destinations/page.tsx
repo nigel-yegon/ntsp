@@ -1,5 +1,7 @@
+// app/destinations/page.tsx
 import { prisma } from "@/lib/prisma";
-import { DestinationsGrid } from "../destinations/destination-grid";
+import { HeroBackground } from "@/app/components/hero-background";
+import { DestinationsGrid } from "./destination-grid";
 
 export const metadata = {
   title: "Destinations — NTSP",
@@ -15,9 +17,9 @@ export default async function DestinationsPage() {
 
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+      <section className="hero-band relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <HeroBackground variant="destinations" />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
             Explore Kenya
           </span>
@@ -30,7 +32,6 @@ export default async function DestinationsPage() {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <div className="mx-auto max-w-6xl px-4 py-12">
         {destinations.length === 0 ? (
           <p className="text-deep-500 dark:text-cream-500">

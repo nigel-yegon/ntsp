@@ -1,5 +1,6 @@
 // app/stay/page.tsx
 import { prisma } from "@/lib/prisma";
+import { HeroBackground } from "@/app/components/hero-background";
 import { StaysGrid } from "./stays-grid";
 
 export const metadata = {
@@ -32,8 +33,9 @@ export default async function StayPage() {
 
   return (
     <div>
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+      <section className="hero-band relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <HeroBackground variant="stay" />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
             Rest &amp; recharge
           </span>
