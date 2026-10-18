@@ -1,8 +1,10 @@
+// app/experiences/experiences-grid.tsx
 "use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import FadeIn from "@/app/components/fade-in";
+import { CardImage } from "@/app/components/card-image";
 
 type Attraction = {
   id: number;
@@ -10,6 +12,7 @@ type Attraction = {
   slug: string;
   description: string;
   category: string;
+  imageUrl: string | null;
   destination: { name: string; slug: string; county: string };
 };
 
@@ -24,10 +27,8 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-
     return attractions.filter((a) => {
       if (activeCategory && a.category !== activeCategory) return false;
-
       if (!q) return true;
       return (
         a.name.toLowerCase().includes(q) ||
@@ -56,7 +57,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
 
   return (
     <>
-      {/* Controls */}
       <div className="mb-10 space-y-4">
         <div>
           <label htmlFor="experience-search" className="sr-only">
@@ -157,24 +157,29 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
                     <FadeIn key={a.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
                       <Link
                         href={`/experiences/${a.slug}`}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                       >
                         <span
-                          className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                          className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                           aria-hidden
                         />
-                        <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                          {a.destination.name}
-                        </span>
-                        <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                          {a.name}
-                        </h3>
-                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                          {a.description}
-                        </p>
-                        <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                          Explore →
-                        </span>
+
+                        <CardImage name={a.name} imageUrl={a.imageUrl} aspect="4:3" />
+
+                        <div className="flex flex-1 flex-col p-5">
+                          <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                            {a.destination.name}
+                          </span>
+                          <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                            {a.name}
+                          </h3>
+                          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                            {a.description}
+                          </p>
+                          <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                            Explore →
+                          </span>
+                        </div>
                       </Link>
                     </FadeIn>
                   ))}
@@ -188,7 +193,6 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
   );
 }
 
-/* ─── Pill ──────────────────────────────────────────────────── */
 type PillProps = {
   label: string;
   count: number;

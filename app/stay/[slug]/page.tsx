@@ -6,6 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { ListingDetail } from "@/app/components/marketplace/listing-detail";
 import { BookingRequestForm } from "@/app/components/marketplace/booking-request-form";
 import { InquiryForm } from "@/app/components/marketplace/inquiry-form";
+import {
+  AttractionCard,
+  RelatedPackageCard,
+  AccommodationCard,
+  RelatedSection,
+} from "@/app/components/marketplace/related-cards";
 import { resolveImageUrl } from "@/lib/image-url";
 
 export default async function StayPage({
@@ -18,7 +24,7 @@ export default async function StayPage({
   const stay = await prisma.accommodation.findUnique({
     where: { slug },
     include: {
-      destination: { select: { name: true, slug: true } },
+      destination: { select: { name: true, slug: true, county: true } },
       business: {
         select: {
           businessProfile: {
@@ -41,7 +47,71 @@ export default async function StayPage({
   const businessName =
     stay.business?.businessProfile?.businessName ?? "this business";
 
-  // Fetch the signed-in user's existing thread for this accommodation.
+  // ── Related content from the stay's destination ──
+  // Attractions and other stays in the same destination, plus tour
+  // packages whose destination shares the county. All filtered to
+  // published, approved content so pending/suspended businesses
+  // never leak onto the public page.
+  const [attractions, nearbyStays, packagesInCounty] = await Promise.all([
+    prisma.attraction.findMany({
+      where: {
+        destinationId: stay.destinationId,
+        published: true,
+      },
+      orderBy: { order: "asc" },
+      take: 6,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        category: true,
+        description: true,
+        imageUrl: true,
+      },
+    }),
+
+    prisma.accommodation.findMany({
+      where: {
+        id: { not: stay.id },
+        destinationId: stay.destinationId,
+        published: true,
+        business: { businessProfile: { verificationStatus: "APPROVED" } },
+      },
+      orderBy: { name: "asc" },
+      take: 6,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        type: true,
+        location: true,
+        priceRange: true,
+        imageUrl: true,
+      },
+    }),
+
+    prisma.tourPackage.findMany({
+      where: {
+        published: true,
+        business: { businessProfile: { verificationStatus: "APPROVED" } },
+        destination: { county: stay.destination?.county ?? "" },
+      },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 6,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        priceKes: true,
+        durationDays: true,
+        imageUrl: true,
+        destination: { select: { name: true, county: true } },
+      },
+    }),
+  ]);
+
+  // ── Existing thread lookup ──
   let existingThread: {
     id: string;
     updatedAt: Date;
@@ -84,10 +154,13 @@ export default async function StayPage({
   }
 
   const heroImage = resolveImageUrl(stay.imageUrl);
+  const countyName = stay.destination?.county ?? "this region";
+  const destinationName = stay.destination?.name ?? "this destination";
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+        {/* Left column: listing + related sections */}
         <div>
           <ListingDetail
             eyebrow={stay.type}
@@ -97,14 +170,7 @@ export default async function StayPage({
             description={stay.description}
             heroImage={heroImage}
             gallery={
-              stay.imageUrl
-                ? [
-                    {
-                      url: heroImage ?? "",
-                      alt: stay.name,
-                    },
-                  ]
-                : []
+              stay.imageUrl ? [{ url: heroImage ?? "", alt: stay.name }] : []
             }
             businessName={businessName}
             details={[
@@ -114,14 +180,51 @@ export default async function StayPage({
                 label: "Price range",
                 value: stay.priceRange ?? "Contact for pricing",
               },
-              {
-                label: "Destination",
-                value: stay.destination?.name ?? "—",
-              },
+              { label: "Destination", value: stay.destination?.name ?? "—" },
             ]}
           />
+
+          {attractions.length > 0 && (
+            <RelatedSection
+              title="What you'll experience"
+              subtitle={`Attractions and activities in ${destinationName}.`}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {attractions.map((a) => (
+                  <AttractionCard key={a.id} attraction={a} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
+
+          {nearbyStays.length > 0 && (
+            <RelatedSection
+              title="Other stays in the area"
+              subtitle={`More accommodations in ${destinationName}.`}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {nearbyStays.map((s) => (
+                  <AccommodationCard key={s.id} stay={s} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
+
+          {packagesInCounty.length > 0 && (
+            <RelatedSection
+              title={`Packages in ${countyName}`}
+              subtitle="Trips that include this region."
+            >
+              <div className="grid gap-3 sm:grid-cols-2">
+                {packagesInCounty.map((p) => (
+                  <RelatedPackageCard key={p.id} pkg={p} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
         </div>
 
+        {/* Right column: sticky sidebar */}
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           {canInteract ? (
             <>
@@ -137,7 +240,9 @@ export default async function StayPage({
                   </p>
                   <div className="mt-4 flex gap-2">
                     <a
-                      href={`/login?callbackUrl=${encodeURIComponent(`/stay/${slug}`)}`}
+                      href={`/login?callbackUrl=${encodeURIComponent(
+                        `/stay/${slug}`
+                      )}`}
                       className="rounded-lg bg-brand-400 px-4 py-2 text-sm font-medium text-deep-800 hover:bg-brand-500"
                     >
                       Sign in
@@ -165,7 +270,7 @@ export default async function StayPage({
                 businessName={businessName}
                 listingBusinessId={stay.businessId}
                 isSignedIn={!!user}
-                role={role}
+                role={role ? String(role) : null}
                 currentUserId={currentUserId}
                 existingThread={existingThread}
               />

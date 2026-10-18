@@ -6,6 +6,12 @@ import { prisma } from "@/lib/prisma";
 import { ListingDetail } from "@/app/components/marketplace/listing-detail";
 import { BookingRequestForm } from "@/app/components/marketplace/booking-request-form";
 import { InquiryForm } from "@/app/components/marketplace/inquiry-form";
+import {
+  AttractionCard,
+  AccommodationCard,
+  RelatedPackageCard,
+  RelatedSection,
+} from "@/app/components/marketplace/related-cards";
 import { resolveImageUrl } from "@/lib/image-url";
 
 export default async function PackagePage({
@@ -18,7 +24,7 @@ export default async function PackagePage({
   const pkg = await prisma.tourPackage.findUnique({
     where: { slug },
     include: {
-      destination: { select: { name: true, slug: true } },
+      destination: { select: { name: true, slug: true, county: true } },
       business: {
         select: {
           businessProfile: {
@@ -41,6 +47,69 @@ export default async function PackagePage({
   const businessName =
     pkg.business?.businessProfile?.businessName ?? "this business";
 
+  // ── Related content: attractions, stays, other packages ──
+  // All filtered to approved businesses and published listings so
+  // no pending or suspended business leaks into the public page.
+  const [attractions, stays, relatedPackages] = await Promise.all([
+    prisma.attraction.findMany({
+      where: {
+        destinationId: pkg.destinationId,
+        published: true,
+      },
+      orderBy: { order: "asc" },
+      take: 6,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        category: true,
+        description: true,
+        imageUrl: true,
+      },
+    }),
+
+    prisma.accommodation.findMany({
+      where: {
+        destinationId: pkg.destinationId,
+        published: true,
+        business: { businessProfile: { verificationStatus: "APPROVED" } },
+      },
+      orderBy: { name: "asc" },
+      take: 6,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        type: true,
+        location: true,
+        priceRange: true,
+        imageUrl: true,
+      },
+    }),
+
+    prisma.tourPackage.findMany({
+      where: {
+        id: { not: pkg.id },
+        published: true,
+        business: { businessProfile: { verificationStatus: "APPROVED" } },
+        destination: { county: pkg.destination?.county ?? "" },
+      },
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      take: 6,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        priceKes: true,
+        durationDays: true,
+        imageUrl: true,
+        destination: { select: { name: true, county: true } },
+      },
+    }),
+  ]);
+
+  // ── Existing thread lookup ──
   let existingThread: {
     id: string;
     updatedAt: Date;
@@ -83,10 +152,13 @@ export default async function PackagePage({
   }
 
   const heroImage = resolveImageUrl(pkg.imageUrl);
+  const countyName = pkg.destination?.county ?? "this region";
+  const destinationName = pkg.destination?.name ?? "this destination";
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+        {/* Left column: listing + related sections */}
         <div>
           <ListingDetail
             eyebrow="Tour package"
@@ -121,8 +193,48 @@ export default async function PackagePage({
               { label: "Summary", value: pkg.summary },
             ]}
           />
+
+          {attractions.length > 0 && (
+            <RelatedSection
+              title="What you'll experience"
+              subtitle={`Attractions and activities in ${destinationName}.`}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {attractions.map((a) => (
+                  <AttractionCard key={a.id} attraction={a} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
+
+          {stays.length > 0 && (
+            <RelatedSection
+              title="Where to stay nearby"
+              subtitle={`Accommodations in ${destinationName}.`}
+            >
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {stays.map((s) => (
+                  <AccommodationCard key={s.id} stay={s} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
+
+          {relatedPackages.length > 0 && (
+            <RelatedSection
+              title={`More packages in ${countyName}`}
+              subtitle="Other trips in the same county."
+            >
+              <div className="grid gap-3 sm:grid-cols-2">
+                {relatedPackages.map((p) => (
+                  <RelatedPackageCard key={p.id} pkg={p} />
+                ))}
+              </div>
+            </RelatedSection>
+          )}
         </div>
 
+        {/* Right column: sticky sidebar */}
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           {canInteract ? (
             <>
@@ -138,7 +250,9 @@ export default async function PackagePage({
                   </p>
                   <div className="mt-4 flex gap-2">
                     <a
-                      href={`/login?callbackUrl=${encodeURIComponent(`/packages/${slug}`)}`}
+                      href={`/login?callbackUrl=${encodeURIComponent(
+                        `/packages/${slug}`
+                      )}`}
                       className="rounded-lg bg-brand-400 px-4 py-2 text-sm font-medium text-deep-800 hover:bg-brand-500"
                     >
                       Sign in
@@ -166,7 +280,7 @@ export default async function PackagePage({
                 businessName={businessName}
                 listingBusinessId={pkg.businessId}
                 isSignedIn={!!user}
-                role={role}
+                role={role ? String(role) : null}
                 currentUserId={currentUserId}
                 existingThread={existingThread}
               />

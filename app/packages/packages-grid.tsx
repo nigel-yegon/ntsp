@@ -1,8 +1,10 @@
+// app/packages/packages-grid.tsx
 "use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import FadeIn from "@/app/components/fade-in";
+import { CardImage } from "@/app/components/card-image";
 
 type Package = {
   id: number;
@@ -12,6 +14,7 @@ type Package = {
   priceKes: number;
   durationDays: number;
   featured: boolean;
+  imageUrl: string | null;
   destination: { name: string; slug: string };
 };
 
@@ -23,10 +26,10 @@ type Props = {
 type SortKey = "featured" | "price-asc" | "price-desc" | "duration";
 
 const PRICE_BANDS = [
-  { key: "all",      label: "All prices", min: 0,     max: null as number | null },
-  { key: "budget",   label: "Under 40K",  min: 0,     max: 40000 },
-  { key: "mid",      label: "40K – 70K",  min: 40000, max: 70000 },
-  { key: "premium",  label: "Over 70K",   min: 70000, max: null },
+  { key: "all", label: "All prices", min: 0, max: null as number | null },
+  { key: "budget", label: "Under 40K", min: 0, max: 40000 },
+  { key: "mid", label: "40K – 70K", min: 40000, max: 70000 },
+  { key: "premium", label: "Over 70K", min: 70000, max: null },
 ] as const;
 
 export function PackagesGrid({ packages, destinations }: Props) {
@@ -43,7 +46,6 @@ export function PackagesGrid({ packages, destinations }: Props) {
       if (activeDestination && p.destination.slug !== activeDestination) return false;
       if (p.priceKes < band.min) return false;
       if (band.max !== null && p.priceKes >= band.max) return false;
-
       if (!q) return true;
       return (
         p.title.toLowerCase().includes(q) ||
@@ -70,7 +72,6 @@ export function PackagesGrid({ packages, destinations }: Props) {
             Number(b.featured) - Number(a.featured) || a.priceKes - b.priceKes,
         );
     }
-
     return sorted;
   }, [query, activeDestination, priceBand, sort, packages]);
 
@@ -208,40 +209,44 @@ export function PackagesGrid({ packages, destinations }: Props) {
             <FadeIn key={p.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
               <Link
                 href={`/packages/${p.slug}`}
-                className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-6 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
               >
                 <span
-                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                  className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                   aria-hidden
                 />
 
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                      {p.destination.name}
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                      {p.title}
-                    </h2>
+                <CardImage name={p.title} imageUrl={p.imageUrl} aspect="16:9" />
+
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                        {p.destination.name}
+                      </p>
+                      <h2 className="mt-1 text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                        {p.title}
+                      </h2>
+                    </div>
+                    {p.featured && (
+                      <span className="shrink-0 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                        Featured
+                      </span>
+                    )}
                   </div>
-                  {p.featured && (
-                    <span className="shrink-0 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-                      Featured
+
+                  <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                    {p.summary}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-4 dark:border-deep-800">
+                    <span className="text-xs text-deep-500 dark:text-cream-500">
+                      {p.durationDays} day{p.durationDays > 1 ? "s" : ""}
                     </span>
-                  )}
-                </div>
-
-                <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                  {p.summary}
-                </p>
-
-                <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-4 dark:border-deep-800">
-                  <span className="text-xs text-deep-500 dark:text-cream-500">
-                    {p.durationDays} day{p.durationDays > 1 ? "s" : ""}
-                  </span>
-                  <span className="font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
-                    KES {p.priceKes.toLocaleString()}
-                  </span>
+                    <span className="font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
+                      KES {p.priceKes.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </Link>
             </FadeIn>
