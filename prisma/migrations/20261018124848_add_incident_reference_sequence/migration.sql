@@ -1,0 +1,1 @@
+CREATE SEQUENCE IF NOT EXISTS incident_reference_seq START 1;
