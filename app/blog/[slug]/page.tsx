@@ -1,120 +1,140 @@
+// app/blog/[slug]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
-  const post = await prisma.post.findFirst({ where: { slug } });
+  const post = await prisma.post.findUnique({ where: { slug } });
   return {
     title: post ? `${post.title} — NTSP` : "Post not found — NTSP",
     description: post?.excerpt,
   };
 }
 
-export default async function PostPage({ params }: { params: Params }) {
+export default async function BlogPostPage({ params }: { params: Params }) {
   const { slug } = await params;
 
-  const post = await prisma.post.findFirst({
-    where: { slug, published: true },
-  });
+  const post = await prisma.post.findUnique({ where: { slug } });
+  if (!post || !post.published) notFound();
 
-  if (!post) notFound();
+  const heroImage = resolveImageUrl(post.coverImage);
+  const tags = post.tags.split(",").map((t) => t.trim()).filter(Boolean);
 
+  // Two more recent posts, for the "keep reading" section
   const related = await prisma.post.findMany({
     where: { published: true, id: { not: post.id } },
     orderBy: { publishedAt: "desc" },
     take: 2,
   });
 
-  const postTags = post.tags
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
-
   return (
     <div>
-      <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-        <div className="mx-auto max-w-3xl px-4 py-14 md:py-16">
+      {/* ─── HERO BAND — image-backed ──────────────────────── */}
+      <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
+        <div className="hero-band absolute inset-0" aria-hidden />
+
+        {heroImage && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImage}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div
+              className="absolute inset-0 bg-cream-200/75 mix-blend-multiply dark:bg-deep-950/80 dark:mix-blend-normal"
+              aria-hidden
+            />
+            <div
+              className="absolute inset-0 bg-linear-to-r from-cream-100/70 via-transparent to-transparent dark:from-deep-950/60"
+              aria-hidden
+            />
+          </>
+        )}
+
+        <div className="relative mx-auto max-w-3xl px-4 py-14 md:py-20">
           <Link
             href="/blog"
-            className="text-xs font-medium text-deep-500 transition hover:text-brand-600 dark:text-cream-500 dark:hover:text-brand-400"
+            className="text-xs font-medium text-deep-600 transition hover:text-brand-600 dark:text-cream-300 dark:hover:text-brand-400"
           >
             ← All posts
           </Link>
 
-          <p className="mt-6 text-xs uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
-            {post.publishedAt?.toLocaleDateString("en-KE", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-          <h1 className="mt-3 text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
-            {post.title}
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-deep-600 dark:text-cream-400">
-            {post.excerpt}
-          </p>
-
-          {postTags.length > 0 && (
+          {tags.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-2">
-              {postTags.map((tag) => (
+              {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-brand-100 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                  className="rounded-full bg-brand-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200"
                 >
                   {tag}
                 </span>
               ))}
             </div>
           )}
+
+          <h1 className="mt-4 text-4xl font-bold leading-tight text-deep-800 md:text-5xl dark:text-cream-100">
+            {post.title}
+          </h1>
+
+          <p className="mt-4 text-sm text-deep-600 dark:text-cream-300">
+            {post.publishedAt?.toLocaleDateString("en-KE", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
       </section>
 
+      {/* ─── CONTENT ───────────────────────────────────────── */}
       <article className="mx-auto max-w-3xl px-4 py-12">
-        <div className="space-y-5 text-lg leading-relaxed text-deep-700 dark:text-cream-300">
-          {post.content.split("\n\n").map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+        <p className="text-lg font-medium leading-relaxed text-deep-700 dark:text-cream-300">
+          {post.excerpt}
+        </p>
+
+        <div className="prose prose-lg mt-8 max-w-none whitespace-pre-wrap text-deep-700 dark:prose-invert dark:text-cream-200">
+          {post.content}
         </div>
 
         {related.length > 0 && (
           <section className="mt-16 border-t border-deep-200 pt-8 dark:border-deep-800">
             <h2 className="mb-6 text-xl font-semibold text-deep-800 dark:text-cream-100">
-              More from the blog
+              Keep reading
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <ul className="grid gap-4 sm:grid-cols-2">
               {related.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/blog/${r.slug}`}
-                  className="group relative overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-                >
-                  <span
-                    className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
-                    aria-hidden
-                  />
-
-                  <p className="text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                    {r.publishedAt?.toLocaleDateString("en-KE", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </p>
-                  <h3 className="mt-1 text-sm font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                    {r.title}
-                  </h3>
-                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-deep-600 dark:text-cream-400">
-                    {r.excerpt}
-                  </p>
-                </Link>
+                <li key={r.id}>
+                  <Link
+                    href={`/blog/${r.slug}`}
+                    className="group block h-full rounded-lg border border-deep-200 bg-cream-50 p-4 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                  >
+                    <h3 className="font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                      {r.title}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
+                      {r.excerpt}
+                    </p>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
         )}
+
+        <div className="mt-12 border-t border-deep-200 pt-6 dark:border-deep-800">
+          <Link
+            href="/blog"
+            className="text-sm font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+          >
+            ← Back to all posts
+          </Link>
+        </div>
       </article>
     </div>
   );
