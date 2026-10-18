@@ -45,7 +45,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
     const role = session?.user?.role as string | undefined;
 
     const dest =
-      callbackUrl ?? (role ? ROLE_HOME[role] ?? "/services" : "/services");
+      callbackUrl ?? (role ? ROLE_HOME[role] ?? "/" : "/admin");
     router.push(dest);
     router.refresh();
   }
