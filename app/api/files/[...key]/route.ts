@@ -24,6 +24,13 @@ export async function GET(
     return NextResponse.json({ error: "Invalid path" }, { status: 400 });
   }
 
+  // ── NEW: block admin-only namespaces from the public streamer ──
+  // Incident evidence is served only through
+  // /api/admin/incidents/:id/attachments/:attachmentId.
+  if (storageKey.startsWith("incidents/private/")) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const { size, mtime } = await statObject(storageKey);
     const stream = await getObjectStream(storageKey);

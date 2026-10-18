@@ -21,21 +21,21 @@ export default async function BlogPage() {
     return (
       <div>
         <section className="hero-band border-b border-deep-200 dark:border-deep-800">
-          <div className="mx-auto max-w-4xl px-4 py-16 md:py-20">
+          <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
             <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
-              Stories &amp; guides
+              From the road
             </span>
             <h1 className="mt-2 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
-              From the Blog
+              Blog
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-deep-600 dark:text-cream-400">
-              Travel guides, seasonal tips, and stories from around Kenya.
+              Guides, tips, and travel stories.
             </p>
           </div>
         </section>
-        <div className="mx-auto max-w-4xl px-4 py-12">
+        <div className="mx-auto max-w-6xl px-4 py-12">
           <p className="text-deep-500 dark:text-cream-500">
-            No posts yet. Run the seed script to add sample posts.
+            No posts yet. Run the seed script.
           </p>
         </div>
       </div>
@@ -47,7 +47,7 @@ export default async function BlogPage() {
 
   return (
     <div>
-      {/* ─── HERO BAND — image-backed ──────────────────────── */}
+      {/* ─── HERO BAND ─────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
         <div className="hero-band absolute inset-0" aria-hidden />
 
@@ -65,33 +65,33 @@ export default async function BlogPage() {
               aria-hidden
             />
             <div
-              className="absolute inset-0 bg-gradient-to-r from-cream-100/60 via-transparent to-transparent dark:from-deep-950/50"
+              className="absolute inset-0 bg-linear-to-r from-cream-100/60 via-transparent to-transparent dark:from-deep-950/50"
               aria-hidden
             />
           </>
         )}
 
-        <div className="relative mx-auto max-w-4xl px-4 py-16 md:py-20">
+        <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">
-            Stories &amp; guides
+            From the road
           </span>
           <h1 className="mt-2 text-4xl font-bold text-deep-800 md:text-5xl dark:text-cream-100">
-            From the Blog
+            Blog
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-deep-700 dark:text-cream-200">
-            Travel guides, seasonal tips, and stories from around Kenya.
+            Guides, tips, and travel stories from across Kenya.
           </p>
         </div>
       </section>
 
-      <div className="mx-auto max-w-4xl px-4 py-12">
-        {/* ─── FEATURED POST — image on the left ───────────── */}
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        {/* ─── FEATURED POST ─────────────────────────────────── */}
         <FeaturedPost post={featured} />
 
-        {/* ─── REST OF THE POSTS ───────────────────────────── */}
-        {rest.length > 0 && (
-          <div className="mt-16">
-            <div className="mb-6">
+        {/* ─── POST GRID ─────────────────────────────────────── */}
+        <div className="mt-16">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
               <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
                 All stories
               </h2>
@@ -99,16 +99,16 @@ export default async function BlogPage() {
                 {rest.length} more {rest.length === 1 ? "post" : "posts"}
               </p>
             </div>
-
-            <BlogGrid posts={rest} />
           </div>
-        )}
+
+          <BlogGrid posts={rest} />
+        </div>
       </div>
     </div>
   );
 }
 
-/* ─── Featured post ──────────────────────────────────────── */
+/* ─── Featured post — image on the left, text on the right ──── */
 function FeaturedPost({
   post,
 }: {
@@ -134,7 +134,7 @@ function FeaturedPost({
         aria-hidden
       />
 
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-cream-100 dark:bg-deep-950 md:aspect-auto md:h-full">
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-cream-100 dark:bg-deep-950 md:aspect-auto md:h-full">
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -143,11 +143,8 @@ function FeaturedPost({
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cream-200 via-cream-100 to-brand-100 dark:from-deep-800 dark:via-deep-900 dark:to-deep-950">
-            <span
-              className="text-5xl font-bold text-brand-400/40 dark:text-brand-500/20"
-              aria-hidden
-            >
+          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-cream-200 via-cream-100 to-brand-100 dark:from-deep-800 dark:via-deep-900 dark:to-deep-950">
+            <span className="text-5xl font-bold text-brand-400/40 dark:text-brand-500/20" aria-hidden>
               {post.title.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -180,7 +177,7 @@ function FeaturedPost({
           {tags.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {tags.map((tag) => (
-                 <span
+                <span
                   key={tag}
                   className="rounded-full bg-brand-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200"
                 >
@@ -194,6 +191,6 @@ function FeaturedPost({
           </span>
         </div>
       </div>
-     </Link>
+    </Link>
   );
 }

@@ -1,4 +1,4 @@
-// lib/db-types.ts
+// lib/db-types.ts  — insert in alphabetical position
 export type {
   Account,
   Accommodation,
@@ -20,6 +20,10 @@ export type {
   DocumentReviewStatus,
   Event,
   EventType,
+  Incident,              // ← new
+  IncidentAttachment,    // ← new
+  IncidentCategory,      // ← new
+  IncidentStatus,        // ← new
   Message,
   MessageThread,
   PermitClass,

@@ -49,10 +49,12 @@ import {
   deletePost,
   type PostRow,
 } from "./actions/posts";
+import { ShieldIcon } from "lucide-react";
 
 type ModuleKey =
   | "overview"
   | "businesses"
+  | "incidents"  
   | "destinations"
   | "experiences"
   | "packages"
@@ -116,6 +118,21 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillText: "text-slate-800 dark:text-slate-200",
     icon: <BuildingIcon />,
   },
+  // inside TONES, after `businesses`
+incidents: {
+  ring: "ring-rose-500/20",
+  border: "border-rose-300 dark:border-rose-800",
+  borderHover: "hover:border-rose-500 dark:hover:border-rose-500",
+  bgSoft: "bg-rose-50 dark:bg-rose-950/40",
+  bgActive: "bg-rose-100 dark:bg-rose-950/70",
+  text: "text-rose-700 dark:text-rose-300",
+  button: "bg-rose-700",
+  buttonHover: "hover:bg-rose-800",
+  bar: "bg-rose-600",
+  pillBg: "bg-rose-100 dark:bg-rose-950",
+  pillText: "text-rose-800 dark:text-rose-200",
+  icon: <ShieldIcon />,
+},
   experiences: {
     ring: "ring-emerald-500/20",
     border: "border-emerald-300 dark:border-emerald-800",
@@ -402,6 +419,7 @@ function DashboardSidebar({
   }[] = [
     { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />    },
     { key: "businesses",   label: "Businesses",   description: "Manage businesses",    icon: TONES.businesses.icon,   tone: TONES.businesses },
+    { key: "incidents",    label: "Incidents",    description: "Manage incidents",     icon: TONES.incidents.icon,    tone: TONES.incidents },
     { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: TONES.destinations.icon, tone: TONES.destinations },
     { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: TONES.experiences.icon,  tone: TONES.experiences },
     { key: "packages",     label: "Packages",     description: "Manage packages",      icon: TONES.packages.icon,     tone: TONES.packages },
@@ -528,6 +546,7 @@ function DashboardHeader({
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
     businesses: "Businesses",
+    incidents: "Reported Incidents",
     destinations: "Destinations",
     experiences: "Experiences",
     packages: "Packages",
@@ -539,7 +558,8 @@ function DashboardHeader({
   const searchable =
     activeModule !== "overview" &&
     activeModule !== "destinations" &&
-    activeModule !== "businesses";
+    activeModule !== "businesses" &&
+    activeModule !== "incidents"; 
 
   return (
     <header className="sticky top-0 z-30 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
