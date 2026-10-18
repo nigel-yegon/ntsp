@@ -134,3 +134,25 @@ export const ThreadSubject = {
 } as const
 
 export type ThreadSubject = (typeof ThreadSubject)[keyof typeof ThreadSubject]
+
+
+export const IncidentStatus = {
+  OPEN: 'OPEN',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type IncidentStatus = (typeof IncidentStatus)[keyof typeof IncidentStatus]
+
+
+export const IncidentCategory = {
+  WILDLIFE: 'WILDLIFE',
+  SAFETY: 'SAFETY',
+  OPERATOR: 'OPERATOR',
+  FACILITY: 'FACILITY',
+  GUIDES: 'GUIDES',
+  OTHER: 'OTHER'
+} as const
+
+export type IncidentCategory = (typeof IncidentCategory)[keyof typeof IncidentCategory]

@@ -70,7 +70,9 @@ export const ModelName = {
   Attraction: 'Attraction',
   TourPackage: 'TourPackage',
   Accommodation: 'Accommodation',
-  Event: 'Event'
+  Event: 'Event',
+  Incident: 'Incident',
+  IncidentAttachment: 'IncidentAttachment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -421,6 +423,42 @@ export const EventScalarFieldEnum = {
 } as const
 
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+export const IncidentScalarFieldEnum = {
+  id: 'id',
+  referenceNo: 'referenceNo',
+  status: 'status',
+  category: 'category',
+  reporterName: 'reporterName',
+  reporterEmail: 'reporterEmail',
+  reporterPhone: 'reporterPhone',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  occurredAt: 'occurredAt',
+  reportedAt: 'reportedAt',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  reviewNotes: 'reviewNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IncidentScalarFieldEnum = (typeof IncidentScalarFieldEnum)[keyof typeof IncidentScalarFieldEnum]
+
+
+export const IncidentAttachmentScalarFieldEnum = {
+  id: 'id',
+  incidentId: 'incidentId',
+  fileName: 'fileName',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type IncidentAttachmentScalarFieldEnum = (typeof IncidentAttachmentScalarFieldEnum)[keyof typeof IncidentAttachmentScalarFieldEnum]
 
 
 export const SortOrder = {

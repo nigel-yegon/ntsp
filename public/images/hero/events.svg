@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true">
+  <g opacity="0.7">
+    <!-- Route line crossing the view -->
+    <path d="M-40 240 C 80 220, 180 260, 300 240 S 480 200, 600 230 S 780 260, 900 240 S 1100 220, 1240 240" stroke-dasharray="4 8" />
+    <path d="M-40 260 C 100 250, 200 280, 320 260 S 500 230, 620 255 S 800 280, 920 260 S 1120 245, 1240 260" stroke-dasharray="4 8" opacity="0.5" />
+    <!-- Waypoint markers along the route -->
+    <circle cx="200" cy="245" r="6" />
+    <circle cx="480" cy="240" r="6" />
+    <circle cx="720" cy="250" r="6" />
+    <!-- Jeep silhouette — bottom right -->
+    <path d="M900 320 L 900 280 L 920 280 L 940 260 L 1040 260 L 1060 280 L 1100 280 L 1100 320 Z" />
+    <!-- Wheels -->
+    <circle cx="935" cy="325" r="16" />
+    <circle cx="935" cy="325" r="6" />
+    <circle cx="1065" cy="325" r="16" />
+    <circle cx="1065" cy="325" r="6" />
+    <!-- Windows -->
+    <path d="M945 280 L 960 265 L 990 265 L 990 280 Z" />
+    <path d="M1000 280 L 1000 265 L 1035 265 L 1055 280 Z" />
+  </g>
+</svg>

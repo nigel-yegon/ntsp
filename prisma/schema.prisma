@@ -25,7 +25,7 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String
-  phone         String?  
+  phone         String?
   emailVerified DateTime?
   image         String?
   passwordHash  String?
@@ -48,16 +48,19 @@ model User {
   documentsReviewed     Document[]         @relation("DocumentReviewer")
 
   // ── Business side
-  businessProfile     BusinessProfile?
-  ownedAccommodations Accommodation[]
-  ownedTourPackages   TourPackage[]
-  bookingRequestsAsBusiness Booking[]      @relation("BookingBusiness")
-  threadsAsBusiness         MessageThread[] @relation("ThreadBusiness")
+  businessProfile           BusinessProfile?
+  ownedAccommodations       Accommodation[]
+  ownedTourPackages         TourPackage[]
+  bookingRequestsAsBusiness Booking[]        @relation("BookingBusiness")
+  threadsAsBusiness         MessageThread[]  @relation("ThreadBusiness")
 
   // ── Customer side
   bookingsAsCustomer Booking[]       @relation("BookingCustomer")
   threadsAsCustomer  MessageThread[] @relation("ThreadCustomer")
   messages           Message[]
+
+  // ── Incident review side (admin)
+  incidentsReviewed Incident[] @relation("IncidentReviewer")
 
   @@index([role])
   @@index([companyId])
@@ -108,7 +111,7 @@ model BusinessProfile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  businessName  String
+  businessName   String
   registrationNo String?
   kraPin         String?
   description    String?
@@ -274,10 +277,10 @@ model ApplicationEvent {
   applicationId String
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  type    EventType
-  actorId String?
-  actor   User?     @relation(fields: [actorId], references: [id])
-  message String?
+  type     EventType
+  actorId  String?
+  actor    User?     @relation(fields: [actorId], references: [id])
+  message  String?
   metadata Json?
 
   createdAt DateTime @default(now())
@@ -465,15 +468,15 @@ model Post {
 // ─── Destinations ──────────────────────────────────────────────
 
 model Destination {
-  id          Int             @id @default(autoincrement())
-  name        String          @unique
-  slug        String          @unique
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String  @unique
   county      String
   description String
   imageUrl    String?
-  featured    Boolean         @default(false)
-  order       Int             @default(0)
-  published   Boolean         @default(true)
+  featured    Boolean @default(false)
+  order       Int     @default(0)
+  published   Boolean @default(true)
 
   attractions Attraction[]
   packages    TourPackage[]
@@ -523,7 +526,7 @@ model TourPackage {
   // by the seed; enforced non-null at the app layer before a listing
   // is published.
   businessId String?
-  business   User?   @relation(fields: [businessId], references: [id])
+  business   User?           @relation(fields: [businessId], references: [id])
   bookings   Booking[]
   threads    MessageThread[]
 
@@ -552,7 +555,7 @@ model Accommodation {
 
   // Nullable for the same reason as TourPackage above.
   businessId String?
-  business   User?   @relation(fields: [businessId], references: [id])
+  business   User?           @relation(fields: [businessId], references: [id])
   bookings   Booking[]
   threads    MessageThread[]
 
@@ -579,4 +582,71 @@ model Event {
   published   Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+// ─── Incidents ─────────────────────────────────────────────────
+
+enum IncidentStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentCategory {
+  WILDLIFE
+  SAFETY
+  OPERATOR
+  FACILITY
+  GUIDES
+  OTHER
+}
+
+model Incident {
+  id          String           @id @default(cuid())
+  referenceNo String           @unique
+  status      IncidentStatus   @default(OPEN)
+  category    IncidentCategory @default(OTHER)
+
+  // Reporter — optional, form supports anonymous submissions
+  reporterName  String?
+  reporterEmail String?
+  reporterPhone String?
+
+  // What happened
+  title       String
+  description String
+  location    String?
+  occurredAt  DateTime?
+  reportedAt  DateTime  @default(now())
+
+  attachments IncidentAttachment[]
+
+  // Review trail
+  reviewedById String?
+  reviewedBy   User?     @relation("IncidentReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  reviewNotes  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([reportedAt])
+  @@index([category])
+  @@index([reviewedById])
+}
+
+model IncidentAttachment {
+  id         String   @id @default(cuid())
+  incidentId String
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  uploadedAt DateTime @default(now())
+
+  @@index([incidentId])
 }

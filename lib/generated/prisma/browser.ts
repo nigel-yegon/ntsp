@@ -117,3 +117,13 @@ export type Accommodation = Prisma.AccommodationModel
  * 
  */
 export type Event = Prisma.EventModel
+/**
+ * Model Incident
+ * 
+ */
+export type Incident = Prisma.IncidentModel
+/**
+ * Model IncidentAttachment
+ * 
+ */
+export type IncidentAttachment = Prisma.IncidentAttachmentModel

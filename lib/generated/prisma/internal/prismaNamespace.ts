@@ -416,7 +416,9 @@ export const ModelName = {
   Attraction: 'Attraction',
   TourPackage: 'TourPackage',
   Accommodation: 'Accommodation',
-  Event: 'Event'
+  Event: 'Event',
+  Incident: 'Incident',
+  IncidentAttachment: 'IncidentAttachment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -432,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "verificationToken" | "businessProfile" | "company" | "application" | "document" | "applicationEvent" | "committeeVote" | "assignment" | "booking" | "messageThread" | "message" | "contactSubmission" | "post" | "destination" | "attraction" | "tourPackage" | "accommodation" | "event"
+    modelProps: "user" | "account" | "verificationToken" | "businessProfile" | "company" | "application" | "document" | "applicationEvent" | "committeeVote" | "assignment" | "booking" | "messageThread" | "message" | "contactSubmission" | "post" | "destination" | "attraction" | "tourPackage" | "accommodation" | "event" | "incident" | "incidentAttachment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1916,6 +1918,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Incident: {
+      payload: Prisma.$IncidentPayload<ExtArgs>
+      fields: Prisma.IncidentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IncidentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IncidentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        findFirst: {
+          args: Prisma.IncidentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IncidentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        findMany: {
+          args: Prisma.IncidentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>[]
+        }
+        create: {
+          args: Prisma.IncidentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        createMany: {
+          args: Prisma.IncidentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IncidentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>[]
+        }
+        delete: {
+          args: Prisma.IncidentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        update: {
+          args: Prisma.IncidentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        deleteMany: {
+          args: Prisma.IncidentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IncidentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IncidentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>[]
+        }
+        upsert: {
+          args: Prisma.IncidentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentPayload>
+        }
+        aggregate: {
+          args: Prisma.IncidentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIncident>
+        }
+        groupBy: {
+          args: Prisma.IncidentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IncidentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IncidentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IncidentCountAggregateOutputType> | number
+        }
+      }
+    }
+    IncidentAttachment: {
+      payload: Prisma.$IncidentAttachmentPayload<ExtArgs>
+      fields: Prisma.IncidentAttachmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IncidentAttachmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IncidentAttachmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        findFirst: {
+          args: Prisma.IncidentAttachmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IncidentAttachmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        findMany: {
+          args: Prisma.IncidentAttachmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>[]
+        }
+        create: {
+          args: Prisma.IncidentAttachmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        createMany: {
+          args: Prisma.IncidentAttachmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IncidentAttachmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>[]
+        }
+        delete: {
+          args: Prisma.IncidentAttachmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        update: {
+          args: Prisma.IncidentAttachmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.IncidentAttachmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IncidentAttachmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IncidentAttachmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.IncidentAttachmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IncidentAttachmentPayload>
+        }
+        aggregate: {
+          args: Prisma.IncidentAttachmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIncidentAttachment>
+        }
+        groupBy: {
+          args: Prisma.IncidentAttachmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IncidentAttachmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IncidentAttachmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IncidentAttachmentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2289,6 +2439,42 @@ export const EventScalarFieldEnum = {
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
 
 
+export const IncidentScalarFieldEnum = {
+  id: 'id',
+  referenceNo: 'referenceNo',
+  status: 'status',
+  category: 'category',
+  reporterName: 'reporterName',
+  reporterEmail: 'reporterEmail',
+  reporterPhone: 'reporterPhone',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  occurredAt: 'occurredAt',
+  reportedAt: 'reportedAt',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  reviewNotes: 'reviewNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IncidentScalarFieldEnum = (typeof IncidentScalarFieldEnum)[keyof typeof IncidentScalarFieldEnum]
+
+
+export const IncidentAttachmentScalarFieldEnum = {
+  id: 'id',
+  incidentId: 'incidentId',
+  fileName: 'fileName',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  storageKey: 'storageKey',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type IncidentAttachmentScalarFieldEnum = (typeof IncidentAttachmentScalarFieldEnum)[keyof typeof IncidentAttachmentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2554,6 +2740,34 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'IncidentStatus'
+ */
+export type EnumIncidentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IncidentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'IncidentStatus[]'
+ */
+export type ListEnumIncidentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IncidentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'IncidentCategory'
+ */
+export type EnumIncidentCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IncidentCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'IncidentCategory[]'
+ */
+export type ListEnumIncidentCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IncidentCategory[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -2737,6 +2951,8 @@ export type GlobalOmitConfig = {
   tourPackage?: Prisma.TourPackageOmit
   accommodation?: Prisma.AccommodationOmit
   event?: Prisma.EventOmit
+  incident?: Prisma.IncidentOmit
+  incidentAttachment?: Prisma.IncidentAttachmentOmit
 }
 
 /* Types for Logging */
