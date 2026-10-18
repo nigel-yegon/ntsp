@@ -1,4 +1,3 @@
-// app/admin/incidents/incidents-panel.tsx
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
@@ -27,12 +26,11 @@ const CATEGORY_LABEL: Record<IncidentRow["category"], string> = {
   OTHER: "Other",
 };
 
-export function IncidentsPanel() {
+export function IncidentsPanel({ search = "" }: { search?: string }) {
   const [incidents, setIncidents] = useState<IncidentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterKey>("ACTIVE");
-  const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -77,7 +75,7 @@ export function IncidentsPanel() {
   }, [incidents]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = search.trim().toLowerCase();
     return incidents.filter((i) => {
       if (filter === "ACTIVE" && !ACTIVE_STATUSES.includes(i.status)) return false;
       if (filter !== "ACTIVE" && filter !== "ALL" && i.status !== filter)
@@ -88,7 +86,7 @@ export function IncidentsPanel() {
         .toLowerCase()
         .includes(q);
     });
-  }, [incidents, filter, query]);
+  }, [incidents, filter, search]);
 
   const editing = incidents.find((i) => i.id === editingId);
 
@@ -170,38 +168,22 @@ export function IncidentsPanel() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex items-start gap-3">
-          <span
-            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-            aria-hidden
-          >
-            <ShieldIcon />
-          </span>
-          <div>
-            <h2 className="text-xl font-bold text-rose-700 dark:text-rose-300">
-              Incidents
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-              Review incident reports submitted by the public. Advance reports
-              through review, record notes, escalate to higher authority, and
-              close resolved cases.
-            </p>
-          </div>
-        </div>
-
-        <div className="relative w-full lg:w-80">
-          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500">
-            <SearchIcon />
-          </span>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search reference, title, location…"
-            className="w-full rounded-xl border border-rose-300 bg-cream-50 py-2.5 pl-10 pr-4 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:bg-cream-100 focus:ring-2 focus:ring-rose-500/20 dark:border-rose-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500"
-          />
+      <div className="mb-6 flex items-start gap-3">
+        <span
+          className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
+          aria-hidden
+        >
+          <ShieldIcon />
+        </span>
+        <div>
+          <h2 className="text-xl font-bold text-rose-700 dark:text-rose-300">
+            Incidents
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
+            Review incident reports submitted by the public. Advance reports
+            through review, record notes, escalate to higher authority, and
+            close resolved cases.
+          </p>
         </div>
       </div>
 
@@ -211,7 +193,6 @@ export function IncidentsPanel() {
         </div>
       )}
 
-      {/* Filter chips */}
       <div className="mb-4 flex flex-wrap gap-2">
         <FilterChip
           label="Active"
@@ -243,7 +224,9 @@ export function IncidentsPanel() {
 
           {!loading && filtered.length === 0 && (
             <div className="rounded-2xl border-2 border-dashed border-deep-200 p-10 text-center text-sm text-deep-500 dark:border-deep-800 dark:text-cream-500">
-              No incidents in this view.
+              {search.trim()
+                ? `No incidents match "${search.trim()}".`
+                : "No incidents in this view."}
             </div>
           )}
 
@@ -571,7 +554,6 @@ function IncidentDetail({
             </Section>
           )}
 
-          {/* Escalated banner — read-only */}
           {incident.status === "ESCALATED" && (
             <div className="rounded-lg border border-violet-300 bg-violet-50 p-4 dark:border-violet-800 dark:bg-violet-950/30">
               <div className="flex items-start gap-3">
@@ -600,7 +582,6 @@ function IncidentDetail({
             </div>
           )}
 
-          {/* Review trail */}
           {(incident.reviewedAt || incident.reviewNotes) && (
             <Section title="Review trail">
               {incident.reviewedAt && (
@@ -620,7 +601,6 @@ function IncidentDetail({
             </Section>
           )}
 
-          {/* Actions — hidden for terminal states */}
           {!isTerminal && (
             <div className="border-t border-deep-200 pt-4 dark:border-deep-800">
               <label className="block">
@@ -640,14 +620,19 @@ function IncidentDetail({
                 <button
                   type="button"
                   onClick={handleSaveNote}
-                  disabled={savingNote || !notes.trim() || notes === (incident.reviewNotes ?? "")}
+                  disabled={
+                    savingNote ||
+                    !notes.trim() ||
+                    notes === (incident.reviewNotes ?? "")
+                  }
                   className="text-xs font-semibold text-rose-700 underline-offset-2 hover:underline disabled:opacity-40 dark:text-rose-300"
                 >
-                  {savingNote ? "Saving note…" : "Save note without changing status"}
+                  {savingNote
+                    ? "Saving note…"
+                    : "Save note without changing status"}
                 </button>
               </div>
 
-              {/* Escalation form */}
               {showEscalate ? (
                 <div className="mt-4 rounded-lg border border-violet-300 bg-violet-50 p-3 dark:border-violet-800 dark:bg-violet-950/30">
                   <label className="block">
@@ -854,15 +839,6 @@ function ArrowUpRightIcon() {
   return (
     <svg {...iconBase} className="h-3.5 w-3.5">
       <path d="M7 17 17 7M7 7h10v10" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg {...iconBase} className="h-4 w-4">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-4-4" />
     </svg>
   );
 }

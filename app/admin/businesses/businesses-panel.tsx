@@ -1,7 +1,7 @@
 // app/admin/businesses/businesses-panel.tsx
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   listBusinesses,
   setBusinessStatus,
@@ -28,7 +28,7 @@ const STATUS_TONE: Record<BusinessRow["verificationStatus"], string> = {
     "bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300",
 };
 
-export function BusinessesPanel() {
+export function BusinessesPanel({ search = "" }: { search?: string }) {
   const [rows, setRows] = useState<BusinessRow[] | null>(null);
   const [filter, setFilter] = useState<StatusFilter>("PENDING");
   const [error, setError] = useState<string | null>(null);
@@ -71,9 +71,28 @@ export function BusinessesPanel() {
     });
   }
 
-  const filtered = rows?.filter((r) =>
-    filter === "ALL" ? true : r.verificationStatus === filter
-  );
+  const filtered = useMemo(() => {
+    if (!rows) return null;
+    const q = search.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (filter !== "ALL" && r.verificationStatus !== filter) return false;
+      if (!q) return true;
+      return [
+        r.businessName,
+        r.ownerName,
+        r.ownerEmail,
+        r.contactEmail,
+        r.contactPhone ?? "",
+        r.registrationNo ?? "",
+        r.kraPin ?? "",
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(q);
+    });
+  }, [rows, filter, search]);
+
+  const trimmedSearch = search.trim();
 
   return (
     <div className="space-y-4">
@@ -112,7 +131,9 @@ export function BusinessesPanel() {
         <p className="text-sm text-deep-500 dark:text-cream-400">Loading…</p>
       ) : filtered?.length === 0 ? (
         <p className="rounded-xl border border-dashed border-cream-300 bg-cream-50 p-6 text-sm text-deep-500 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-400">
-          No businesses match this filter.
+          {trimmedSearch
+            ? `No businesses match "${trimmedSearch}".`
+            : "No businesses match this filter."}
         </p>
       ) : (
         <ul className="space-y-3">

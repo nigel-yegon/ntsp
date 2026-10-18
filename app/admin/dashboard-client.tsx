@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { BusinessesPanel } from "./businesses/businesses-panel";
 import { IncidentsPanel } from "./incidents/incidents-panel";
+import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
@@ -50,12 +51,11 @@ import {
   deletePost,
   type PostRow,
 } from "./actions/posts";
-import { ShieldIcon } from "lucide-react";
 
 type ModuleKey =
   | "overview"
   | "businesses"
-  | "incidents"  
+  | "incidents"
   | "destinations"
   | "experiences"
   | "packages"
@@ -63,18 +63,6 @@ type ModuleKey =
   | "events"
   | "blog";
 
-/**
- * A module tone bundles every color token a module needs.
- *
- * The palette is built from the site's public-facing colors:
- *   - brand (gold/ochre) — the primary accent
- *   - deep  (warm charcoal-brown) — the base dark surface
- *   - cream (warm off-white) — the base light surface
- *   - plus a small set of warm-tuned hues for variety
- *
- * Every module uses one tone so the sidebar, header, list cards,
- * and editor are all visually distinct but still siblings.
- */
 type ModuleTone = {
   ring: string;
   border: string;
@@ -119,21 +107,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillText: "text-slate-800 dark:text-slate-200",
     icon: <BuildingIcon />,
   },
-  // inside TONES, after `businesses`
-incidents: {
-  ring: "ring-rose-500/20",
-  border: "border-rose-300 dark:border-rose-800",
-  borderHover: "hover:border-rose-500 dark:hover:border-rose-500",
-  bgSoft: "bg-rose-50 dark:bg-rose-950/40",
-  bgActive: "bg-rose-100 dark:bg-rose-950/70",
-  text: "text-rose-700 dark:text-rose-300",
-  button: "bg-rose-700",
-  buttonHover: "hover:bg-rose-800",
-  bar: "bg-rose-600",
-  pillBg: "bg-rose-100 dark:bg-rose-950",
-  pillText: "text-rose-800 dark:text-rose-200",
-  icon: <ShieldIcon />,
-},
+  incidents: {
+    ring: "ring-rose-500/20",
+    border: "border-rose-300 dark:border-rose-800",
+    borderHover: "hover:border-rose-500 dark:hover:border-rose-500",
+    bgSoft: "bg-rose-50 dark:bg-rose-950/40",
+    bgActive: "bg-rose-100 dark:bg-rose-950/70",
+    text: "text-rose-700 dark:text-rose-300",
+    button: "bg-rose-700",
+    buttonHover: "hover:bg-rose-800",
+    bar: "bg-rose-600",
+    pillBg: "bg-rose-100 dark:bg-rose-950",
+    pillText: "text-rose-800 dark:text-rose-200",
+    icon: <ShieldIcon className="h-5 w-5" />,
+  },
   experiences: {
     ring: "ring-emerald-500/20",
     border: "border-emerald-300 dark:border-emerald-800",
@@ -256,6 +243,14 @@ export function DashboardClient() {
     };
   }, []);
 
+  const filteredDestinations = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return destinations;
+    return destinations.filter((d) =>
+      [d.name, d.county, d.description].join(" ").toLowerCase().includes(q),
+    );
+  }, [search, destinations]);
+
   const filteredExperiences = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return experiences;
@@ -327,19 +322,22 @@ export function DashboardClient() {
           <div className="p-6 lg:p-8">
             {error && <ErrorBanner>{error}</ErrorBanner>}
 
-            {/* Each module is keyed so that when the active module changes,
-                the fade-in replays for the new content. */}
             <div key={activeModule}>
               {activeModule === "overview" && (
                 <Overview stats={stats} onNavigate={setActiveModule} />
               )}
 
-              {activeModule === "businesses" && <BusinessesPanel />}
-              {activeModule === "incidents" && <IncidentsPanel />}
+              {activeModule === "businesses" && (
+                <BusinessesPanel search={search} />
+              )}
+
+              {activeModule === "incidents" && (
+                <IncidentsPanel search={search} />
+              )}
 
               {activeModule === "destinations" && (
                 <DestinationsModule
-                  destinations={destinations}
+                  destinations={filteredDestinations}
                   setDestinations={setDestinations}
                   loading={loading}
                   tone={TONES.destinations}
@@ -557,11 +555,7 @@ function DashboardHeader({
     blog: "Blog",
   };
 
-  const searchable =
-    activeModule !== "overview" &&
-    activeModule !== "destinations" &&
-    activeModule !== "businesses" &&
-    activeModule !== "incidents"; 
+  const searchable = activeModule !== "overview";
 
   return (
     <header className="sticky top-0 z-30 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
@@ -756,6 +750,9 @@ function DestinationsModule({
       list={
         <div className="space-y-3">
           {loading && destinations.length === 0 && <LoadingSkeletons />}
+          {!loading && destinations.length === 0 && (
+            <EmptyListState message="No destinations match your search." />
+          )}
           <Stagger delayStart={0.1} delayStep={0.05} maxDelay={0.5}>
             {destinations.map((d) => (
               <RowCard
@@ -2006,6 +2003,14 @@ function EmptyEditorState({
       <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
         {description}
       </p>
+    </div>
+  );
+}
+
+function EmptyListState({ message }: { message: string }) {
+  return (
+    <div className="rounded-2xl border-2 border-dashed border-deep-200 p-10 text-center text-sm text-deep-500 dark:border-deep-800 dark:text-cream-500">
+      {message}
     </div>
   );
 }
