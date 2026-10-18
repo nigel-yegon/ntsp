@@ -33,6 +33,7 @@ async function main() {
   await seedUsersAndCompany();
   await seedBusinessesAndCustomers();
   await seedApplications();
+  await seedIncidents();   // ← new
 
   console.log("✅ Seed complete.");
 }
@@ -818,6 +819,368 @@ async function seedApplications() {
 
   console.log("✔ Seeded 6 sample applications across workflow stages");
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// INCIDENTS — 10 records across all workflow stages
+// ═══════════════════════════════════════════════════════════════
+
+async function seedIncidents() {
+  // Reuse the admin reviewer seeded in seedUsersAndCompany.
+  const admin = await prisma.user.findUnique({
+    where: { email: "admin@test.local" },
+    select: { id: true },
+  });
+  if (!admin) {
+    console.warn("⚠ Skipping incidents — admin user not found");
+    return;
+  }
+
+  const now = Date.now();
+  const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
+
+  type IncidentSeed = {
+    referenceNo: string;
+    status: "OPEN" | "UNDER_REVIEW" | "ESCALATED" | "RESOLVED" | "CLOSED";
+    category:
+      | "WILDLIFE"
+      | "SAFETY"
+      | "OPERATOR"
+      | "FACILITY"
+      | "GUIDES"
+      | "OTHER";
+    title: string;
+    description: string;
+    location: string | null;
+    reporterName: string | null;
+    reporterEmail: string | null;
+    reporterPhone: string | null;
+    occurredDaysAgo: number | null;
+    reportedDaysAgo: number;
+    reviewedDaysAgo: number | null;
+    reviewNotes: string | null;
+    escalatedTo: string | null;
+    escalatedDaysAgo: number | null;
+    attachments: {
+      fileName: string;
+      mimeType: string;
+      sizeBytes: number;
+    }[];
+  };
+
+  const seeds: IncidentSeed[] = [
+    // ── OPEN (4) ─────────────────────────────────────────────
+    {
+      referenceNo: "INC/2026/0001",
+      status: "OPEN",
+      category: "WILDLIFE",
+      title: "Injured elephant calf near Talek River",
+      description:
+        "A juvenile elephant with an apparent snare wound on its front left leg was observed near the Talek River crossing. The herd appeared to be protecting it but it was visibly struggling. Please dispatch a KWS veterinary team with urgent priority. Coordinates approximate: 1.485° S, 35.372° E.",
+      location: "Talek River, Maasai Mara",
+      reporterName: "Daniel Kiprop",
+      reporterEmail: "d.kiprop@example.com",
+      reporterPhone: "+254 722 111 222",
+      occurredDaysAgo: 1,
+      reportedDaysAgo: 1,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [
+        { fileName: "injured-calf-01.jpg", mimeType: "image/jpeg", sizeBytes: 1_842_113 },
+        { fileName: "injured-calf-02.jpg", mimeType: "image/jpeg", sizeBytes: 2_104_556 },
+      ],
+    },
+    {
+      referenceNo: "INC/2026/0002",
+      status: "OPEN",
+      category: "SAFETY",
+      title: "Missing lifejackets on dhow cruise",
+      description:
+        "The dhow that operates from Diani Beach near the Kongo River mouth had no visible lifejackets for passengers during a sunset cruise. At least 12 tourists on board, none wearing or shown a lifejacket. Operator could not produce a safety certificate when asked. Reported by a concerned guest.",
+      location: "Kongo River mouth, Diani Beach",
+      reporterName: null,
+      reporterEmail: null,
+      reporterPhone: null,
+      occurredDaysAgo: 2,
+      reportedDaysAgo: 2,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [],
+    },
+    {
+      referenceNo: "INC/2026/0003",
+      status: "OPEN",
+      category: "OPERATOR",
+      title: "Operator driving off-road in Nairobi National Park",
+      description:
+        "Safari vehicle registration KDD 442A was observed driving off designated tracks near the Athi Basin to approach a lion pride. Guide refused to return to the track when asked by other visitors. Vehicle had no visible operator branding.",
+      location: "Nairobi National Park, Athi Basin",
+      reporterName: "Mercy Wambui",
+      reporterEmail: "mercy.w@example.com",
+      reporterPhone: "+254 733 444 555",
+      occurredDaysAgo: 3,
+      reportedDaysAgo: 3,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [
+        { fileName: "vehicle-plate.jpg", mimeType: "image/jpeg", sizeBytes: 982_114 },
+      ],
+    },
+    {
+      referenceNo: "INC/2026/0004",
+      status: "OPEN",
+      category: "GUIDES",
+      title: "Unlicensed guide at Hell's Gate",
+      description:
+        "A guide offering cycling tours from the main gate could not produce a valid KPSGA guiding licence. Was soliciting tourists at the entrance and quoting below standard rates. Suggested the matter be raised with KWS and KATO.",
+      location: "Hell's Gate National Park",
+      reporterName: "Peter Njenga",
+      reporterEmail: "pnjenga@example.com",
+      reporterPhone: null,
+      occurredDaysAgo: 4,
+      reportedDaysAgo: 3,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [],
+    },
+
+    // ── UNDER_REVIEW (2) ─────────────────────────────────────
+    {
+      referenceNo: "INC/2026/0005",
+      status: "UNDER_REVIEW",
+      category: "FACILITY",
+      title: "Unsafe staircase at Lake Nakuru lodge",
+      description:
+        "The wooden staircase leading to the dining terrace at a lodge inside Lake Nakuru NP has two missing planks and a loose handrail. A guest tripped and bruised a knee. Lodge staff acknowledged the issue but did not close the staircase.",
+      location: "Lake Nakuru National Park",
+      reporterName: "Grace Otieno",
+      reporterEmail: "grace.otieno@example.com",
+      reporterPhone: "+254 711 888 999",
+      occurredDaysAgo: 6,
+      reportedDaysAgo: 5,
+      reviewedDaysAgo: 3,
+      reviewNotes:
+        "Confirmed the lodge's public liability documents are current. Reached out to lodge management for a fix timeline. Requested KWS facility inspection report.",
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [
+        { fileName: "staircase-damage.jpg", mimeType: "image/jpeg", sizeBytes: 1_344_221 },
+        { fileName: "guest-injury-note.pdf", mimeType: "application/pdf", sizeBytes: 248_990 },
+      ],
+    },
+    {
+      referenceNo: "INC/2026/0006",
+      status: "UNDER_REVIEW",
+      category: "WILDLIFE",
+      title: "Repeated turtle nest disturbance at Watamu",
+      description:
+        "Local tour operators are repeatedly walking over a marked turtle nest near the Marine Park at night, likely disturbing hatchlings. Nest markers were found flattened on two separate occasions this week. Local conservation group has reported the same issue before.",
+      location: "Watamu Marine National Park",
+      reporterName: null,
+      reporterEmail: "turtle-watch@example.org",
+      reporterPhone: null,
+      occurredDaysAgo: 8,
+      reportedDaysAgo: 7,
+      reviewedDaysAgo: 4,
+      reviewNotes:
+        "Assigned to coast region for site visit. Requested nesting location map from Watamu Turtle Watch. Considering escalation to KWS coastal enforcement.",
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [
+        { fileName: "flattened-nest.jpg", mimeType: "image/jpeg", sizeBytes: 2_010_441 },
+      ],
+    },
+
+    // ── ESCALATED (1) ────────────────────────────────────────
+    {
+      referenceNo: "INC/2026/0007",
+      status: "ESCALATED",
+      category: "SAFETY",
+      title: "Suspected poisoning of wildlife at a waterhole",
+      description:
+        "Three dead vultures and one dead jackal were found around a waterhole in the Amboseli ecosystem. No visible wounds; suspected carbamate poisoning. Local conservancy has cordoned the waterhole. This is potentially a poaching-related incident and requires KWS forensic response.",
+      location: "Amboseli ecosystem",
+      reporterName: "Big Life Foundation field officer",
+      reporterEmail: "field@example.org",
+      reporterPhone: "+254 720 100 200",
+      occurredDaysAgo: 12,
+      reportedDaysAgo: 11,
+      reviewedDaysAgo: 10,
+      reviewNotes:
+        "Site sealed by conservancy. Carcass samples collected. Escalating to KWS wildlife forensics and the national wildlife poisoning response taskforce.",
+      escalatedTo: "Kenya Wildlife Service",
+      escalatedDaysAgo: 9,
+      attachments: [
+        { fileName: "vultures-site.jpg", mimeType: "image/jpeg", sizeBytes: 3_104_998 },
+        { fileName: "field-report.pdf", mimeType: "application/pdf", sizeBytes: 512_004 },
+      ],
+    },
+
+    // ── RESOLVED (2) ─────────────────────────────────────────
+    {
+      referenceNo: "INC/2026/0008",
+      status: "RESOLVED",
+      category: "OPERATOR",
+      title: "Abandoned safari vehicle blocking park road",
+      description:
+        "A safari vehicle (KBN 771Y) was abandoned near the Mara Serena junction after an apparent breakdown, blocking one lane for several hours. Park rangers were contacted and a recovery arranged. No casualties.",
+      location: "Maasai Mara, Mara Serena junction",
+      reporterName: "John Kamau",
+      reporterEmail: null,
+      reporterPhone: "+254 714 555 444",
+      occurredDaysAgo: 18,
+      reportedDaysAgo: 18,
+      reviewedDaysAgo: 17,
+      reviewNotes:
+        "Operator (Savannah Tours Ltd) has been contacted. Vehicle recovered. Operator issued a written warning and confirmed road-safety protocol refresh for its guides.",
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [
+        { fileName: "blocked-road.jpg", mimeType: "image/jpeg", sizeBytes: 1_540_221 },
+      ],
+    },
+    {
+      referenceNo: "INC/2026/0009",
+      status: "RESOLVED",
+      category: "FACILITY",
+      title: "Broken viewing platform at Nyahururu Falls",
+      description:
+        "A section of the lower viewing platform at Thomson's Falls had rotted through, creating a fall hazard. County works department was notified via the tourism office. Site has since been fenced off pending repair.",
+      location: "Nyahururu Falls, Laikipia",
+      reporterName: "Sarah Mwangi",
+      reporterEmail: "s.mwangi@example.com",
+      reporterPhone: null,
+      occurredDaysAgo: 24,
+      reportedDaysAgo: 22,
+      reviewedDaysAgo: 20,
+      reviewNotes:
+        "Platform closed and fenced by county works. Repair timeline confirmed for next quarter. No injuries reported.",
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [],
+    },
+
+    // ── CLOSED (1) ───────────────────────────────────────────
+    {
+      referenceNo: "INC/2026/0010",
+      status: "CLOSED",
+      category: "OTHER",
+      title: "Duplicate report — broken platform at Nyahururu Falls",
+      description:
+        "Duplicate of an earlier report about the same damaged viewing platform at Thomson's Falls. Submitter was unaware the issue had already been reported. Closing as duplicate with no further action.",
+      location: "Nyahururu Falls, Laikipia",
+      reporterName: null,
+      reporterEmail: null,
+      reporterPhone: null,
+      occurredDaysAgo: null,
+      reportedDaysAgo: 20,
+      reviewedDaysAgo: 19,
+      reviewNotes:
+        "Duplicate of INC/2026/0009. Closed. Reporter notified via the reference-number page that the issue is already being addressed.",
+      escalatedTo: null,
+      escalatedDaysAgo: null,
+      attachments: [],
+    },
+  ];
+
+  let created = 0;
+  let updated = 0;
+
+  for (const s of seeds) {
+    const reportedAt = daysAgo(s.reportedDaysAgo);
+    const occurredAt =
+      s.occurredDaysAgo !== null ? daysAgo(s.occurredDaysAgo) : null;
+    const reviewedAt =
+      s.reviewedDaysAgo !== null ? daysAgo(s.reviewedDaysAgo) : null;
+    const escalatedAt =
+      s.escalatedDaysAgo !== null ? daysAgo(s.escalatedDaysAgo) : null;
+
+    const existing = await prisma.incident.findUnique({
+      where: { referenceNo: s.referenceNo },
+      select: { id: true },
+    });
+
+    if (existing) {
+      // Update in place — preserves any attachments added by admins.
+      await prisma.incident.update({
+        where: { id: existing.id },
+        data: {
+          status: s.status,
+          category: s.category,
+          title: s.title,
+          description: s.description,
+          location: s.location,
+          reporterName: s.reporterName,
+          reporterEmail: s.reporterEmail,
+          reporterPhone: s.reporterPhone,
+          occurredAt,
+          reportedAt,
+          reviewedById: reviewedAt ? admin.id : null,
+          reviewedAt,
+          reviewNotes: s.reviewNotes,
+          escalatedTo: s.escalatedTo,
+          escalatedAt,
+          escalatedById: escalatedAt ? admin.id : null,
+        },
+      });
+      updated++;
+    } else {
+      await prisma.incident.create({
+        data: {
+          referenceNo: s.referenceNo,
+          status: s.status,
+          category: s.category,
+          title: s.title,
+          description: s.description,
+          location: s.location,
+          reporterName: s.reporterName,
+          reporterEmail: s.reporterEmail,
+          reporterPhone: s.reporterPhone,
+          occurredAt,
+          reportedAt,
+          reviewedById: reviewedAt ? admin.id : null,
+          reviewedAt,
+          reviewNotes: s.reviewNotes,
+          escalatedTo: s.escalatedTo,
+          escalatedAt,
+          escalatedById: escalatedAt ? admin.id : null,
+          attachments: {
+            create: s.attachments.map((a) => ({
+              fileName: a.fileName,
+              mimeType: a.mimeType,
+              sizeBytes: a.sizeBytes,
+              // Placeholder keys — no real files on disk. Downloading
+              // these attachments from the admin panel returns 404,
+              // which is intentional: seed data is metadata-only.
+              storageKey: `seed/incidents/${s.referenceNo}/${a.fileName}`,
+            })),
+          },
+        },
+      });
+      created++;
+    }
+  }
+
+  console.log(
+    `✔ Seeded ${seeds.length} incidents (${created} created, ${updated} updated)`
+  );
+  console.log(
+    `   ${seeds.filter((s) => s.status === "OPEN").length} OPEN, ` +
+      `${seeds.filter((s) => s.status === "UNDER_REVIEW").length} UNDER_REVIEW, ` +
+      `${seeds.filter((s) => s.status === "ESCALATED").length} ESCALATED, ` +
+      `${seeds.filter((s) => s.status === "RESOLVED").length} RESOLVED, ` +
+      `${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`
+  );
+}
+
 
 main()
   .catch((e) => {
