@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { HeroSection } from "./components/hero-section";
 import { GlobalSearch } from "./components/global-search";
+import { CardImage } from "./components/card-image";
 import FadeIn from "./components/fade-in";
 
 export const revalidate = 300;
@@ -75,20 +76,18 @@ export default async function Home() {
 
       <div className="mx-auto max-w-6xl space-y-20 px-4 py-16">
         {/* ─── GLOBAL SEARCH ─────────────────────────────────── */}
-        
-          <section className="relative z-20 mb-18">
-            <div className="mb-4">
-              <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
-                Search everything
-              </h2>
-              <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
-                Destinations, experiences, packages, stays, events, and blog
-                posts — 
-              </p>
-            </div>
-            <GlobalSearch />
-          </section>
-        
+        <section className="relative z-20 mb-18">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-deep-800 dark:text-cream-100">
+              Search everything
+            </h2>
+            <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+              Destinations, experiences, packages, stays, events, and blog
+              posts —
+            </p>
+          </div>
+          <GlobalSearch />
+        </section>
 
         {/* ─── EXPERIENCES ───────────────────────────────────── */}
         <FadeIn whenVisible>
@@ -103,20 +102,23 @@ export default async function Home() {
                 <FadeIn key={a.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                   <Link
                     href={`/experiences/${a.slug}`}
-                    className="group flex h-full flex-col rounded-lg border border-deep-200 bg-cream-50 p-4 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                      {a.category}
-                    </span>
-                    <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                      {a.name}
-                    </h3>
-                    <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-                      {a.destination.name}
-                    </p>
-                    <p className="mt-2 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
-                      {a.description}
-                    </p>
+                    <CardImage name={a.name} imageUrl={a.imageUrl} aspect="4:3" />
+                    <div className="flex flex-1 flex-col p-4">
+                      <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                        {a.category}
+                      </span>
+                      <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                        {a.name}
+                      </h3>
+                      <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                        {a.destination.name}
+                      </p>
+                      <p className="mt-2 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
+                        {a.description}
+                      </p>
+                    </div>
                   </Link>
                 </FadeIn>
               ))}
@@ -137,22 +139,25 @@ export default async function Home() {
                 <FadeIn key={d.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                   <Link
                     href={`/destinations/${d.slug}`}
-                    className="group flex h-full flex-col rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-lg font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                        {d.name}
-                      </h3>
-                      <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-950 dark:text-brand-200">
-                        Featured
-                      </span>
+                    <CardImage name={d.name} imageUrl={d.imageUrl} aspect="4:3" />
+                    <div className="flex flex-1 flex-col p-5">
+                      <div className="flex items-start justify-between">
+                        <h3 className="text-lg font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                          {d.name}
+                        </h3>
+                        <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-800 dark:bg-brand-950 dark:text-brand-200">
+                          Featured
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
+                        {d.county} County
+                      </p>
+                      <p className="mt-3 line-clamp-3 text-sm text-deep-600 dark:text-cream-400">
+                        {d.description}
+                      </p>
                     </div>
-                    <p className="mt-1 text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                      {d.county} County
-                    </p>
-                    <p className="mt-3 line-clamp-3 text-sm text-deep-600 dark:text-cream-400">
-                      {d.description}
-                    </p>
                   </Link>
                 </FadeIn>
               ))}
@@ -180,7 +185,8 @@ export default async function Home() {
                         {e.name}
                       </h3>
                       <p className="mt-1 text-xs uppercase tracking-wide text-deep-500 dark:text-cream-500">
-                        {formatDateRange(e.startDate, e.endDate)} · 📍 {e.location}
+                        {formatDateRange(e.startDate, e.endDate)} · 📍{" "}
+                        {e.location}
                       </p>
                     </div>
                   </Link>
@@ -203,24 +209,27 @@ export default async function Home() {
                 <FadeIn key={p.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                   <Link
                     href={`/packages/${p.slug}`}
-                    className="group flex h-full flex-col rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                      {p.destination.name}
-                    </span>
-                    <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                      {p.title}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
-                      {p.summary}
-                    </p>
-                    <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-3 dark:border-deep-800">
-                      <span className="text-xs text-deep-500 dark:text-cream-500">
-                        {p.durationDays} day{p.durationDays > 1 ? "s" : ""}
+                    <CardImage name={p.title} imageUrl={p.imageUrl} aspect="16:9" />
+                    <div className="flex flex-1 flex-col p-5">
+                      <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                        {p.destination.name}
                       </span>
-                      <span className="font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
-                        KES {p.priceKes.toLocaleString()}
-                      </span>
+                      <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                        {p.title}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
+                        {p.summary}
+                      </p>
+                      <div className="mt-auto flex items-center justify-between border-t border-deep-200 pt-3 dark:border-deep-800">
+                        <span className="text-xs text-deep-500 dark:text-cream-500">
+                          {p.durationDays} day{p.durationDays > 1 ? "s" : ""}
+                        </span>
+                        <span className="font-mono text-sm font-bold text-deep-800 dark:text-cream-100">
+                          KES {p.priceKes.toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </FadeIn>
@@ -242,25 +251,28 @@ export default async function Home() {
                 <FadeIn key={s.id} delay={Math.min(i * 0.06, 0.36)} whenVisible>
                   <Link
                     href={`/stay/${s.slug}`}
-                    className="group flex h-full flex-col rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                    className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                      {s.type}
-                    </span>
-                    <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                      {s.name}
-                    </h3>
-                    <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-                      📍 {s.location}
-                    </p>
-                    <p className="mt-3 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
-                      {s.description}
-                    </p>
-                    {s.priceRange && (
-                      <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
-                        {s.priceRange}
+                    <CardImage name={s.name} imageUrl={s.imageUrl} aspect="4:3" />
+                    <div className="flex flex-1 flex-col p-5">
+                      <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                        {s.type}
+                      </span>
+                      <h3 className="mt-1 font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                        {s.name}
+                      </h3>
+                      <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                        📍 {s.location}
                       </p>
-                    )}
+                      <p className="mt-3 line-clamp-2 text-sm text-deep-600 dark:text-cream-400">
+                        {s.description}
+                      </p>
+                      {s.priceRange && (
+                        <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
+                          {s.priceRange}
+                        </p>
+                      )}
+                    </div>
                   </Link>
                 </FadeIn>
               ))}
@@ -278,7 +290,11 @@ export default async function Home() {
           >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post, i) => (
-                <FadeIn key={post.slug} delay={Math.min(i * 0.06, 0.36)} whenVisible>
+                <FadeIn
+                  key={post.slug}
+                  delay={Math.min(i * 0.06, 0.36)}
+                  whenVisible
+                >
                   <Link
                     href={`/blog/${post.slug}`}
                     className="group flex h-full flex-col rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
@@ -315,8 +331,8 @@ export default async function Home() {
               Ready to plan your Kenyan adventure?
             </h2>
             <p className="mt-4 max-w-xl text-cream-300">
-              From the savannahs of the Mara to the warm waters of the Indian Ocean —
-              your journey starts here.
+              From the savannahs of the Mara to the warm waters of the Indian
+              Ocean — your journey starts here.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
