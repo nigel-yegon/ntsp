@@ -139,6 +139,7 @@ export type ThreadSubject = (typeof ThreadSubject)[keyof typeof ThreadSubject]
 export const IncidentStatus = {
   OPEN: 'OPEN',
   UNDER_REVIEW: 'UNDER_REVIEW',
+  ESCALATED: 'ESCALATED',
   RESOLVED: 'RESOLVED',
   CLOSED: 'CLOSED'
 } as const

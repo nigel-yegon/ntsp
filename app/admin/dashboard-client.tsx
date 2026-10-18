@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { BusinessesPanel } from "./businesses/businesses-panel";
+import { IncidentsPanel } from "./incidents/incidents-panel";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
@@ -334,6 +335,7 @@ export function DashboardClient() {
               )}
 
               {activeModule === "businesses" && <BusinessesPanel />}
+              {activeModule === "incidents" && <IncidentsPanel />}
 
               {activeModule === "destinations" && (
                 <DestinationsModule

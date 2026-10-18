@@ -40,6 +40,9 @@ export type IncidentMinAggregateOutputType = {
   reviewedById: string | null
   reviewedAt: Date | null
   reviewNotes: string | null
+  escalatedTo: string | null
+  escalatedAt: Date | null
+  escalatedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +63,9 @@ export type IncidentMaxAggregateOutputType = {
   reviewedById: string | null
   reviewedAt: Date | null
   reviewNotes: string | null
+  escalatedTo: string | null
+  escalatedAt: Date | null
+  escalatedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -80,6 +86,9 @@ export type IncidentCountAggregateOutputType = {
   reviewedById: number
   reviewedAt: number
   reviewNotes: number
+  escalatedTo: number
+  escalatedAt: number
+  escalatedById: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -102,6 +111,9 @@ export type IncidentMinAggregateInputType = {
   reviewedById?: true
   reviewedAt?: true
   reviewNotes?: true
+  escalatedTo?: true
+  escalatedAt?: true
+  escalatedById?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -122,6 +134,9 @@ export type IncidentMaxAggregateInputType = {
   reviewedById?: true
   reviewedAt?: true
   reviewNotes?: true
+  escalatedTo?: true
+  escalatedAt?: true
+  escalatedById?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -142,6 +157,9 @@ export type IncidentCountAggregateInputType = {
   reviewedById?: true
   reviewedAt?: true
   reviewNotes?: true
+  escalatedTo?: true
+  escalatedAt?: true
+  escalatedById?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -235,6 +253,9 @@ export type IncidentGroupByOutputType = {
   reviewedById: string | null
   reviewedAt: Date | null
   reviewNotes: string | null
+  escalatedTo: string | null
+  escalatedAt: Date | null
+  escalatedById: string | null
   createdAt: Date
   updatedAt: Date
   _count: IncidentCountAggregateOutputType | null
@@ -276,10 +297,14 @@ export type IncidentWhereInput = {
   reviewedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
   reviewNotes?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedTo?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
+  escalatedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
   attachments?: Prisma.IncidentAttachmentListRelationFilter
   reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  escalatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type IncidentOrderByWithRelationInput = {
@@ -298,10 +323,14 @@ export type IncidentOrderByWithRelationInput = {
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   attachments?: Prisma.IncidentAttachmentOrderByRelationAggregateInput
   reviewedBy?: Prisma.UserOrderByWithRelationInput
+  escalatedBy?: Prisma.UserOrderByWithRelationInput
 }
 
 export type IncidentWhereUniqueInput = Prisma.AtLeast<{
@@ -323,10 +352,14 @@ export type IncidentWhereUniqueInput = Prisma.AtLeast<{
   reviewedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
   reviewNotes?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedTo?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
+  escalatedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
   attachments?: Prisma.IncidentAttachmentListRelationFilter
   reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  escalatedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "referenceNo">
 
 export type IncidentOrderByWithAggregationInput = {
@@ -345,6 +378,9 @@ export type IncidentOrderByWithAggregationInput = {
   reviewedById?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  escalatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.IncidentCountOrderByAggregateInput
@@ -371,6 +407,9 @@ export type IncidentScalarWhereWithAggregatesInput = {
   reviewedById?: Prisma.StringNullableWithAggregatesFilter<"Incident"> | string | null
   reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
   reviewNotes?: Prisma.StringNullableWithAggregatesFilter<"Incident"> | string | null
+  escalatedTo?: Prisma.StringNullableWithAggregatesFilter<"Incident"> | string | null
+  escalatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Incident"> | Date | string | null
+  escalatedById?: Prisma.StringNullableWithAggregatesFilter<"Incident"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Incident"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Incident"> | Date | string
 }
@@ -390,10 +429,13 @@ export type IncidentCreateInput = {
   reportedAt?: Date | string
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   attachments?: Prisma.IncidentAttachmentCreateNestedManyWithoutIncidentInput
   reviewedBy?: Prisma.UserCreateNestedOneWithoutIncidentsReviewedInput
+  escalatedBy?: Prisma.UserCreateNestedOneWithoutIncidentsEscalatedInput
 }
 
 export type IncidentUncheckedCreateInput = {
@@ -412,6 +454,9 @@ export type IncidentUncheckedCreateInput = {
   reviewedById?: string | null
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  escalatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   attachments?: Prisma.IncidentAttachmentUncheckedCreateNestedManyWithoutIncidentInput
@@ -432,10 +477,13 @@ export type IncidentUpdateInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.IncidentAttachmentUpdateManyWithoutIncidentNestedInput
   reviewedBy?: Prisma.UserUpdateOneWithoutIncidentsReviewedNestedInput
+  escalatedBy?: Prisma.UserUpdateOneWithoutIncidentsEscalatedNestedInput
 }
 
 export type IncidentUncheckedUpdateInput = {
@@ -454,6 +502,9 @@ export type IncidentUncheckedUpdateInput = {
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.IncidentAttachmentUncheckedUpdateManyWithoutIncidentNestedInput
@@ -475,6 +526,9 @@ export type IncidentCreateManyInput = {
   reviewedById?: string | null
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  escalatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -494,6 +548,8 @@ export type IncidentUpdateManyMutationInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -514,6 +570,9 @@ export type IncidentUncheckedUpdateManyInput = {
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -544,6 +603,9 @@ export type IncidentCountOrderByAggregateInput = {
   reviewedById?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   reviewNotes?: Prisma.SortOrder
+  escalatedTo?: Prisma.SortOrder
+  escalatedAt?: Prisma.SortOrder
+  escalatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -564,6 +626,9 @@ export type IncidentMaxOrderByAggregateInput = {
   reviewedById?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   reviewNotes?: Prisma.SortOrder
+  escalatedTo?: Prisma.SortOrder
+  escalatedAt?: Prisma.SortOrder
+  escalatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -584,6 +649,9 @@ export type IncidentMinOrderByAggregateInput = {
   reviewedById?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
   reviewNotes?: Prisma.SortOrder
+  escalatedTo?: Prisma.SortOrder
+  escalatedAt?: Prisma.SortOrder
+  escalatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -600,10 +668,24 @@ export type IncidentCreateNestedManyWithoutReviewedByInput = {
   connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
 }
 
+export type IncidentCreateNestedManyWithoutEscalatedByInput = {
+  create?: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput> | Prisma.IncidentCreateWithoutEscalatedByInput[] | Prisma.IncidentUncheckedCreateWithoutEscalatedByInput[]
+  connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutEscalatedByInput | Prisma.IncidentCreateOrConnectWithoutEscalatedByInput[]
+  createMany?: Prisma.IncidentCreateManyEscalatedByInputEnvelope
+  connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+}
+
 export type IncidentUncheckedCreateNestedManyWithoutReviewedByInput = {
   create?: Prisma.XOR<Prisma.IncidentCreateWithoutReviewedByInput, Prisma.IncidentUncheckedCreateWithoutReviewedByInput> | Prisma.IncidentCreateWithoutReviewedByInput[] | Prisma.IncidentUncheckedCreateWithoutReviewedByInput[]
   connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutReviewedByInput | Prisma.IncidentCreateOrConnectWithoutReviewedByInput[]
   createMany?: Prisma.IncidentCreateManyReviewedByInputEnvelope
+  connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+}
+
+export type IncidentUncheckedCreateNestedManyWithoutEscalatedByInput = {
+  create?: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput> | Prisma.IncidentCreateWithoutEscalatedByInput[] | Prisma.IncidentUncheckedCreateWithoutEscalatedByInput[]
+  connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutEscalatedByInput | Prisma.IncidentCreateOrConnectWithoutEscalatedByInput[]
+  createMany?: Prisma.IncidentCreateManyEscalatedByInputEnvelope
   connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
 }
 
@@ -621,6 +703,20 @@ export type IncidentUpdateManyWithoutReviewedByNestedInput = {
   deleteMany?: Prisma.IncidentScalarWhereInput | Prisma.IncidentScalarWhereInput[]
 }
 
+export type IncidentUpdateManyWithoutEscalatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput> | Prisma.IncidentCreateWithoutEscalatedByInput[] | Prisma.IncidentUncheckedCreateWithoutEscalatedByInput[]
+  connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutEscalatedByInput | Prisma.IncidentCreateOrConnectWithoutEscalatedByInput[]
+  upsert?: Prisma.IncidentUpsertWithWhereUniqueWithoutEscalatedByInput | Prisma.IncidentUpsertWithWhereUniqueWithoutEscalatedByInput[]
+  createMany?: Prisma.IncidentCreateManyEscalatedByInputEnvelope
+  set?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  disconnect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  delete?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  update?: Prisma.IncidentUpdateWithWhereUniqueWithoutEscalatedByInput | Prisma.IncidentUpdateWithWhereUniqueWithoutEscalatedByInput[]
+  updateMany?: Prisma.IncidentUpdateManyWithWhereWithoutEscalatedByInput | Prisma.IncidentUpdateManyWithWhereWithoutEscalatedByInput[]
+  deleteMany?: Prisma.IncidentScalarWhereInput | Prisma.IncidentScalarWhereInput[]
+}
+
 export type IncidentUncheckedUpdateManyWithoutReviewedByNestedInput = {
   create?: Prisma.XOR<Prisma.IncidentCreateWithoutReviewedByInput, Prisma.IncidentUncheckedCreateWithoutReviewedByInput> | Prisma.IncidentCreateWithoutReviewedByInput[] | Prisma.IncidentUncheckedCreateWithoutReviewedByInput[]
   connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutReviewedByInput | Prisma.IncidentCreateOrConnectWithoutReviewedByInput[]
@@ -632,6 +728,20 @@ export type IncidentUncheckedUpdateManyWithoutReviewedByNestedInput = {
   connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
   update?: Prisma.IncidentUpdateWithWhereUniqueWithoutReviewedByInput | Prisma.IncidentUpdateWithWhereUniqueWithoutReviewedByInput[]
   updateMany?: Prisma.IncidentUpdateManyWithWhereWithoutReviewedByInput | Prisma.IncidentUpdateManyWithWhereWithoutReviewedByInput[]
+  deleteMany?: Prisma.IncidentScalarWhereInput | Prisma.IncidentScalarWhereInput[]
+}
+
+export type IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput> | Prisma.IncidentCreateWithoutEscalatedByInput[] | Prisma.IncidentUncheckedCreateWithoutEscalatedByInput[]
+  connectOrCreate?: Prisma.IncidentCreateOrConnectWithoutEscalatedByInput | Prisma.IncidentCreateOrConnectWithoutEscalatedByInput[]
+  upsert?: Prisma.IncidentUpsertWithWhereUniqueWithoutEscalatedByInput | Prisma.IncidentUpsertWithWhereUniqueWithoutEscalatedByInput[]
+  createMany?: Prisma.IncidentCreateManyEscalatedByInputEnvelope
+  set?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  disconnect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  delete?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  connect?: Prisma.IncidentWhereUniqueInput | Prisma.IncidentWhereUniqueInput[]
+  update?: Prisma.IncidentUpdateWithWhereUniqueWithoutEscalatedByInput | Prisma.IncidentUpdateWithWhereUniqueWithoutEscalatedByInput[]
+  updateMany?: Prisma.IncidentUpdateManyWithWhereWithoutEscalatedByInput | Prisma.IncidentUpdateManyWithWhereWithoutEscalatedByInput[]
   deleteMany?: Prisma.IncidentScalarWhereInput | Prisma.IncidentScalarWhereInput[]
 }
 
@@ -672,9 +782,12 @@ export type IncidentCreateWithoutReviewedByInput = {
   reportedAt?: Date | string
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   attachments?: Prisma.IncidentAttachmentCreateNestedManyWithoutIncidentInput
+  escalatedBy?: Prisma.UserCreateNestedOneWithoutIncidentsEscalatedInput
 }
 
 export type IncidentUncheckedCreateWithoutReviewedByInput = {
@@ -692,6 +805,9 @@ export type IncidentUncheckedCreateWithoutReviewedByInput = {
   reportedAt?: Date | string
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  escalatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   attachments?: Prisma.IncidentAttachmentUncheckedCreateNestedManyWithoutIncidentInput
@@ -704,6 +820,62 @@ export type IncidentCreateOrConnectWithoutReviewedByInput = {
 
 export type IncidentCreateManyReviewedByInputEnvelope = {
   data: Prisma.IncidentCreateManyReviewedByInput | Prisma.IncidentCreateManyReviewedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type IncidentCreateWithoutEscalatedByInput = {
+  id?: string
+  referenceNo: string
+  status?: $Enums.IncidentStatus
+  category?: $Enums.IncidentCategory
+  reporterName?: string | null
+  reporterEmail?: string | null
+  reporterPhone?: string | null
+  title: string
+  description: string
+  location?: string | null
+  occurredAt?: Date | string | null
+  reportedAt?: Date | string
+  reviewedAt?: Date | string | null
+  reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attachments?: Prisma.IncidentAttachmentCreateNestedManyWithoutIncidentInput
+  reviewedBy?: Prisma.UserCreateNestedOneWithoutIncidentsReviewedInput
+}
+
+export type IncidentUncheckedCreateWithoutEscalatedByInput = {
+  id?: string
+  referenceNo: string
+  status?: $Enums.IncidentStatus
+  category?: $Enums.IncidentCategory
+  reporterName?: string | null
+  reporterEmail?: string | null
+  reporterPhone?: string | null
+  title: string
+  description: string
+  location?: string | null
+  occurredAt?: Date | string | null
+  reportedAt?: Date | string
+  reviewedById?: string | null
+  reviewedAt?: Date | string | null
+  reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  attachments?: Prisma.IncidentAttachmentUncheckedCreateNestedManyWithoutIncidentInput
+}
+
+export type IncidentCreateOrConnectWithoutEscalatedByInput = {
+  where: Prisma.IncidentWhereUniqueInput
+  create: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput>
+}
+
+export type IncidentCreateManyEscalatedByInputEnvelope = {
+  data: Prisma.IncidentCreateManyEscalatedByInput | Prisma.IncidentCreateManyEscalatedByInput[]
   skipDuplicates?: boolean
 }
 
@@ -742,8 +914,27 @@ export type IncidentScalarWhereInput = {
   reviewedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
   reviewNotes?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedTo?: Prisma.StringNullableFilter<"Incident"> | string | null
+  escalatedAt?: Prisma.DateTimeNullableFilter<"Incident"> | Date | string | null
+  escalatedById?: Prisma.StringNullableFilter<"Incident"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Incident"> | Date | string
+}
+
+export type IncidentUpsertWithWhereUniqueWithoutEscalatedByInput = {
+  where: Prisma.IncidentWhereUniqueInput
+  update: Prisma.XOR<Prisma.IncidentUpdateWithoutEscalatedByInput, Prisma.IncidentUncheckedUpdateWithoutEscalatedByInput>
+  create: Prisma.XOR<Prisma.IncidentCreateWithoutEscalatedByInput, Prisma.IncidentUncheckedCreateWithoutEscalatedByInput>
+}
+
+export type IncidentUpdateWithWhereUniqueWithoutEscalatedByInput = {
+  where: Prisma.IncidentWhereUniqueInput
+  data: Prisma.XOR<Prisma.IncidentUpdateWithoutEscalatedByInput, Prisma.IncidentUncheckedUpdateWithoutEscalatedByInput>
+}
+
+export type IncidentUpdateManyWithWhereWithoutEscalatedByInput = {
+  where: Prisma.IncidentScalarWhereInput
+  data: Prisma.XOR<Prisma.IncidentUpdateManyMutationInput, Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByInput>
 }
 
 export type IncidentCreateWithoutAttachmentsInput = {
@@ -761,9 +952,12 @@ export type IncidentCreateWithoutAttachmentsInput = {
   reportedAt?: Date | string
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   reviewedBy?: Prisma.UserCreateNestedOneWithoutIncidentsReviewedInput
+  escalatedBy?: Prisma.UserCreateNestedOneWithoutIncidentsEscalatedInput
 }
 
 export type IncidentUncheckedCreateWithoutAttachmentsInput = {
@@ -782,6 +976,9 @@ export type IncidentUncheckedCreateWithoutAttachmentsInput = {
   reviewedById?: string | null
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  escalatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -817,9 +1014,12 @@ export type IncidentUpdateWithoutAttachmentsInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedBy?: Prisma.UserUpdateOneWithoutIncidentsReviewedNestedInput
+  escalatedBy?: Prisma.UserUpdateOneWithoutIncidentsEscalatedNestedInput
 }
 
 export type IncidentUncheckedUpdateWithoutAttachmentsInput = {
@@ -838,6 +1038,9 @@ export type IncidentUncheckedUpdateWithoutAttachmentsInput = {
   reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -857,6 +1060,31 @@ export type IncidentCreateManyReviewedByInput = {
   reportedAt?: Date | string
   reviewedAt?: Date | string | null
   reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
+  escalatedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type IncidentCreateManyEscalatedByInput = {
+  id?: string
+  referenceNo: string
+  status?: $Enums.IncidentStatus
+  category?: $Enums.IncidentCategory
+  reporterName?: string | null
+  reporterEmail?: string | null
+  reporterPhone?: string | null
+  title: string
+  description: string
+  location?: string | null
+  occurredAt?: Date | string | null
+  reportedAt?: Date | string
+  reviewedById?: string | null
+  reviewedAt?: Date | string | null
+  reviewNotes?: string | null
+  escalatedTo?: string | null
+  escalatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -876,9 +1104,12 @@ export type IncidentUpdateWithoutReviewedByInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.IncidentAttachmentUpdateManyWithoutIncidentNestedInput
+  escalatedBy?: Prisma.UserUpdateOneWithoutIncidentsEscalatedNestedInput
 }
 
 export type IncidentUncheckedUpdateWithoutReviewedByInput = {
@@ -896,6 +1127,9 @@ export type IncidentUncheckedUpdateWithoutReviewedByInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attachments?: Prisma.IncidentAttachmentUncheckedUpdateManyWithoutIncidentNestedInput
@@ -916,6 +1150,77 @@ export type IncidentUncheckedUpdateManyWithoutReviewedByInput = {
   reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  escalatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type IncidentUpdateWithoutEscalatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumIncidentStatusFieldUpdateOperationsInput | $Enums.IncidentStatus
+  category?: Prisma.EnumIncidentCategoryFieldUpdateOperationsInput | $Enums.IncidentCategory
+  reporterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachments?: Prisma.IncidentAttachmentUpdateManyWithoutIncidentNestedInput
+  reviewedBy?: Prisma.UserUpdateOneWithoutIncidentsReviewedNestedInput
+}
+
+export type IncidentUncheckedUpdateWithoutEscalatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumIncidentStatusFieldUpdateOperationsInput | $Enums.IncidentStatus
+  category?: Prisma.EnumIncidentCategoryFieldUpdateOperationsInput | $Enums.IncidentCategory
+  reporterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachments?: Prisma.IncidentAttachmentUncheckedUpdateManyWithoutIncidentNestedInput
+}
+
+export type IncidentUncheckedUpdateManyWithoutEscalatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  referenceNo?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumIncidentStatusFieldUpdateOperationsInput | $Enums.IncidentStatus
+  category?: Prisma.EnumIncidentCategoryFieldUpdateOperationsInput | $Enums.IncidentCategory
+  reporterName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reporterPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occurredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reportedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  escalatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -967,10 +1272,14 @@ export type IncidentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   reviewedById?: boolean
   reviewedAt?: boolean
   reviewNotes?: boolean
+  escalatedTo?: boolean
+  escalatedAt?: boolean
+  escalatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   attachments?: boolean | Prisma.Incident$attachmentsArgs<ExtArgs>
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
   _count?: boolean | Prisma.IncidentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["incident"]>
 
@@ -990,9 +1299,13 @@ export type IncidentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reviewedById?: boolean
   reviewedAt?: boolean
   reviewNotes?: boolean
+  escalatedTo?: boolean
+  escalatedAt?: boolean
+  escalatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
 }, ExtArgs["result"]["incident"]>
 
 export type IncidentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1011,9 +1324,13 @@ export type IncidentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reviewedById?: boolean
   reviewedAt?: boolean
   reviewNotes?: boolean
+  escalatedTo?: boolean
+  escalatedAt?: boolean
+  escalatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
 }, ExtArgs["result"]["incident"]>
 
 export type IncidentSelectScalar = {
@@ -1032,21 +1349,27 @@ export type IncidentSelectScalar = {
   reviewedById?: boolean
   reviewedAt?: boolean
   reviewNotes?: boolean
+  escalatedTo?: boolean
+  escalatedAt?: boolean
+  escalatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type IncidentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNo" | "status" | "category" | "reporterName" | "reporterEmail" | "reporterPhone" | "title" | "description" | "location" | "occurredAt" | "reportedAt" | "reviewedById" | "reviewedAt" | "reviewNotes" | "createdAt" | "updatedAt", ExtArgs["result"]["incident"]>
+export type IncidentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "referenceNo" | "status" | "category" | "reporterName" | "reporterEmail" | "reporterPhone" | "title" | "description" | "location" | "occurredAt" | "reportedAt" | "reviewedById" | "reviewedAt" | "reviewNotes" | "escalatedTo" | "escalatedAt" | "escalatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["incident"]>
 export type IncidentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attachments?: boolean | Prisma.Incident$attachmentsArgs<ExtArgs>
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
   _count?: boolean | Prisma.IncidentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type IncidentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
 }
 export type IncidentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reviewedBy?: boolean | Prisma.Incident$reviewedByArgs<ExtArgs>
+  escalatedBy?: boolean | Prisma.Incident$escalatedByArgs<ExtArgs>
 }
 
 export type $IncidentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1054,6 +1377,7 @@ export type $IncidentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     attachments: Prisma.$IncidentAttachmentPayload<ExtArgs>[]
     reviewedBy: Prisma.$UserPayload<ExtArgs> | null
+    escalatedBy: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1071,6 +1395,9 @@ export type $IncidentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     reviewedById: string | null
     reviewedAt: Date | null
     reviewNotes: string | null
+    escalatedTo: string | null
+    escalatedAt: Date | null
+    escalatedById: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["incident"]>
@@ -1469,6 +1796,7 @@ export interface Prisma__IncidentClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   attachments<T extends Prisma.Incident$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Incident$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncidentAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewedBy<T extends Prisma.Incident$reviewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Incident$reviewedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  escalatedBy<T extends Prisma.Incident$escalatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Incident$escalatedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1513,6 +1841,9 @@ export interface IncidentFieldRefs {
   readonly reviewedById: Prisma.FieldRef<"Incident", 'String'>
   readonly reviewedAt: Prisma.FieldRef<"Incident", 'DateTime'>
   readonly reviewNotes: Prisma.FieldRef<"Incident", 'String'>
+  readonly escalatedTo: Prisma.FieldRef<"Incident", 'String'>
+  readonly escalatedAt: Prisma.FieldRef<"Incident", 'DateTime'>
+  readonly escalatedById: Prisma.FieldRef<"Incident", 'String'>
   readonly createdAt: Prisma.FieldRef<"Incident", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Incident", 'DateTime'>
 }
@@ -1943,6 +2274,25 @@ export type Incident$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.In
  * Incident.reviewedBy
  */
 export type Incident$reviewedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Incident.escalatedBy
+ */
+export type Incident$escalatedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */

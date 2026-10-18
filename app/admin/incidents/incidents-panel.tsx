@@ -5,40 +5,18 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   listIncidents,
   updateIncidentStatus,
+  addIncidentNote,
   type IncidentRow,
-  type IncidentStatus,
 } from "../actions/incidents";
-
-// ── Status config ────────────────────────────────────────────
-const STATUS_META: Record<
-  IncidentStatus,
-  { label: string; pillBg: string; pillText: string; bar: string }
-> = {
-  OPEN: {
-    label: "Open",
-    pillBg: "bg-red-100 dark:bg-red-950",
-    pillText: "text-red-800 dark:text-red-200",
-    bar: "bg-red-500",
-  },
-  UNDER_REVIEW: {
-    label: "Under review",
-    pillBg: "bg-amber-100 dark:bg-amber-950",
-    pillText: "text-amber-800 dark:text-amber-200",
-    bar: "bg-amber-500",
-  },
-  RESOLVED: {
-    label: "Resolved",
-    pillBg: "bg-emerald-100 dark:bg-emerald-950",
-    pillText: "text-emerald-800 dark:text-emerald-200",
-    bar: "bg-emerald-500",
-  },
-  CLOSED: {
-    label: "Closed",
-    pillBg: "bg-slate-200 dark:bg-slate-800",
-    pillText: "text-slate-700 dark:text-slate-300",
-    bar: "bg-slate-500",
-  },
-};
+import {
+  STATUS_META,
+  TRANSITIONS,
+  INCIDENT_STATUSES,
+  ESCALATION_SUGGESTIONS,
+  ACTIVE_STATUSES,
+  type IncidentStatus,
+  type FilterKey,
+} from "@/lib/incident-workflow";
 
 const CATEGORY_LABEL: Record<IncidentRow["category"], string> = {
   WILDLIFE: "Wildlife",
@@ -49,23 +27,12 @@ const CATEGORY_LABEL: Record<IncidentRow["category"], string> = {
   OTHER: "Other",
 };
 
-// Next-step options per current status. Mirrors the server-side
-// TRANSITIONS table in actions/incidents.ts. If you change one,
-// change both — or extract to a shared lib.
-const NEXT_STEPS: Record<IncidentStatus, IncidentStatus[]> = {
-  OPEN: ["UNDER_REVIEW"],
-  UNDER_REVIEW: ["RESOLVED", "CLOSED", "OPEN"],
-  RESOLVED: ["CLOSED", "UNDER_REVIEW"],
-  CLOSED: ["UNDER_REVIEW"],
-};
-
-type Filter = "ALL" | IncidentStatus;
-
 export function IncidentsPanel() {
   const [incidents, setIncidents] = useState<IncidentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<Filter>("OPEN");
+  const [filter, setFilter] = useState<FilterKey>("ACTIVE");
+  const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -93,44 +60,64 @@ export function IncidentsPanel() {
   }, []);
 
   const counts = useMemo(() => {
-    const c: Record<Filter, number> = {
+    const c: Record<FilterKey, number> = {
+      ACTIVE: 0,
       ALL: incidents.length,
       OPEN: 0,
       UNDER_REVIEW: 0,
+      ESCALATED: 0,
       RESOLVED: 0,
       CLOSED: 0,
     };
-    for (const i of incidents) c[i.status]++;
+    for (const i of incidents) {
+      c[i.status]++;
+      if (ACTIVE_STATUSES.includes(i.status)) c.ACTIVE++;
+    }
     return c;
   }, [incidents]);
 
   const filtered = useMemo(() => {
-    if (filter === "ALL") return incidents;
-    return incidents.filter((i) => i.status === filter);
-  }, [filter, incidents]);
+    const q = query.trim().toLowerCase();
+    return incidents.filter((i) => {
+      if (filter === "ACTIVE" && !ACTIVE_STATUSES.includes(i.status)) return false;
+      if (filter !== "ACTIVE" && filter !== "ALL" && i.status !== filter)
+        return false;
+      if (!q) return true;
+      return [i.referenceNo, i.title, i.location ?? "", i.reporterEmail ?? ""]
+        .join(" ")
+        .toLowerCase()
+        .includes(q);
+    });
+  }, [incidents, filter, query]);
 
   const editing = incidents.find((i) => i.id === editingId);
 
   async function handleTransition(
     incident: IncidentRow,
     to: IncidentStatus,
-    notes: string
+    notes: string,
+    escalatedTo?: string
   ) {
     const previous = incidents;
 
-    // Optimistic update
     setIncidents((curr) =>
-      curr.map((i) =>
-        i.id === incident.id
-          ? {
-              ...i,
-              status: to,
-              reviewNotes: notes.trim() || i.reviewNotes,
-              reviewedAt: new Date(),
-              reviewerName: "You",
-            }
-          : i
-      )
+      curr.map((i) => {
+        if (i.id !== incident.id) return i;
+        return {
+          ...i,
+          status: to,
+          reviewNotes: notes.trim() || i.reviewNotes,
+          reviewedAt: new Date(),
+          reviewerName: "You",
+          ...(to === "ESCALATED"
+            ? {
+                escalatedTo: escalatedTo?.trim() || null,
+                escalatedAt: new Date(),
+                escalatedByName: "You",
+              }
+            : {}),
+        };
+      })
     );
 
     startTransition(async () => {
@@ -139,8 +126,8 @@ export function IncidentsPanel() {
           id: incident.id,
           to,
           reviewNotes: notes,
+          escalatedTo,
         });
-        // Reconcile with server truth (stamps the real reviewer name)
         setIncidents((curr) =>
           curr.map((i) => (i.id === updated.id ? updated : i))
         );
@@ -152,23 +139,69 @@ export function IncidentsPanel() {
     });
   }
 
+  async function handleAddNote(incident: IncidentRow, note: string) {
+    const previous = incidents;
+
+    setIncidents((curr) =>
+      curr.map((i) =>
+        i.id === incident.id
+          ? {
+              ...i,
+              reviewNotes: note,
+              reviewedAt: new Date(),
+              reviewerName: "You",
+            }
+          : i
+      )
+    );
+
+    startTransition(async () => {
+      try {
+        const updated = await addIncidentNote({ id: incident.id, note });
+        setIncidents((curr) =>
+          curr.map((i) => (i.id === updated.id ? updated : i))
+        );
+      } catch (err) {
+        setIncidents(previous);
+        alert(err instanceof Error ? err.message : "Failed to save note");
+      }
+    });
+  }
+
   return (
     <div className="mx-auto max-w-7xl">
-      <div className="mb-6 flex items-start gap-3">
-        <span
-          className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-          aria-hidden
-        >
-          <ShieldIcon />
-        </span>
-        <div>
-          <h2 className="text-xl font-bold text-rose-700 dark:text-rose-300">
-            Incidents
-          </h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-            Review incident reports submitted by the public. Advance reports
-            through review, record notes, and close resolved cases.
-          </p>
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex items-start gap-3">
+          <span
+            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
+            aria-hidden
+          >
+            <ShieldIcon />
+          </span>
+          <div>
+            <h2 className="text-xl font-bold text-rose-700 dark:text-rose-300">
+              Incidents
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
+              Review incident reports submitted by the public. Advance reports
+              through review, record notes, escalate to higher authority, and
+              close resolved cases.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative w-full lg:w-80">
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-deep-400 dark:text-cream-500">
+            <SearchIcon />
+          </span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search reference, title, location…"
+            className="w-full rounded-xl border border-rose-300 bg-cream-50 py-2.5 pl-10 pr-4 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:bg-cream-100 focus:ring-2 focus:ring-rose-500/20 dark:border-rose-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500"
+          />
         </div>
       </div>
 
@@ -181,12 +214,18 @@ export function IncidentsPanel() {
       {/* Filter chips */}
       <div className="mb-4 flex flex-wrap gap-2">
         <FilterChip
+          label="Active"
+          count={counts.ACTIVE}
+          active={filter === "ACTIVE"}
+          onClick={() => setFilter("ACTIVE")}
+        />
+        <FilterChip
           label="All"
           count={counts.ALL}
           active={filter === "ALL"}
           onClick={() => setFilter("ALL")}
         />
-        {(Object.keys(STATUS_META) as IncidentStatus[]).map((s) => (
+        {INCIDENT_STATUSES.map((s) => (
           <FilterChip
             key={s}
             label={STATUS_META[s].label}
@@ -198,8 +237,7 @@ export function IncidentsPanel() {
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1fr_420px]">
-        {/* List */}
+      <div className="grid gap-4 xl:grid-cols-[1fr_460px]">
         <div className="space-y-3">
           {loading && incidents.length === 0 && <LoadingSkeletons />}
 
@@ -219,29 +257,19 @@ export function IncidentsPanel() {
           ))}
         </div>
 
-        {/* Detail drawer */}
         <div>
           {editing ? (
             <IncidentDetail
               key={editing.id}
               incident={editing}
               onClose={() => setEditingId(null)}
-              onTransition={(to, notes) =>
-                handleTransition(editing, to, notes)
+              onTransition={(to, notes, escalatedTo) =>
+                handleTransition(editing, to, notes, escalatedTo)
               }
+              onAddNote={(note) => handleAddNote(editing, note)}
             />
           ) : (
-            <div className="sticky top-6 rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50 p-8 text-center dark:border-rose-800 dark:bg-rose-950/30">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">
-                <ShieldIcon />
-              </div>
-              <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">
-                Select an incident
-              </h3>
-              <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
-                Choose a report to see its details and advance its status.
-              </p>
-            </div>
+            <EmptyDrawer />
           )}
         </div>
       </div>
@@ -249,7 +277,7 @@ export function IncidentsPanel() {
   );
 }
 
-// ── Subcomponents ────────────────────────────────────────────
+// ── Subcomponents ───────────────────────────────────────────
 
 function FilterChip({
   label,
@@ -309,7 +337,7 @@ function IncidentCard({
       className={[
         "relative w-full overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left transition dark:bg-deep-900",
         active
-          ? "border-rose-300 ring-2 ring-rose-500/20 bg-rose-50 dark:border-rose-800 dark:bg-rose-950/30"
+          ? `border-rose-300 ring-2 ring-rose-500/20 ${meta.chipBg}`
           : "border-deep-200 hover:border-rose-400 dark:border-deep-800 dark:hover:border-rose-600",
       ].join(" ")}
     >
@@ -338,6 +366,12 @@ function IncidentCard({
           <p className="mt-2 line-clamp-2 text-sm leading-6 text-deep-600 dark:text-cream-400">
             {incident.description}
           </p>
+          {incident.status === "ESCALATED" && incident.escalatedTo && (
+            <p className="mt-2 inline-flex items-center gap-1 rounded-md bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-800 dark:bg-violet-950 dark:text-violet-200">
+              <ArrowUpRightIcon />
+              Escalated to {incident.escalatedTo}
+            </p>
+          )}
           <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-deep-500 dark:text-cream-500">
             <span className="inline-flex items-center gap-1">
               <TagIcon />
@@ -370,15 +404,51 @@ function IncidentDetail({
   incident,
   onClose,
   onTransition,
+  onAddNote,
 }: {
   incident: IncidentRow;
   onClose: () => void;
-  onTransition: (to: IncidentStatus, notes: string) => void;
+  onTransition: (
+    to: IncidentStatus,
+    notes: string,
+    escalatedTo?: string
+  ) => void;
+  onAddNote: (note: string) => void;
 }) {
   const [notes, setNotes] = useState(incident.reviewNotes ?? "");
-  const [target, setTarget] = useState<IncidentStatus | "">("");
+  const [escalatedTo, setEscalatedTo] = useState(incident.escalatedTo ?? "");
+  const [showEscalate, setShowEscalate] = useState(false);
+  const [savingNote, setSavingNote] = useState(false);
+  const [pendingTo, setPendingTo] = useState<IncidentStatus | "">("");
+
   const meta = STATUS_META[incident.status];
-  const nextSteps = NEXT_STEPS[incident.status];
+  const nextSteps = TRANSITIONS[incident.status];
+  const isTerminal = nextSteps.length === 0;
+
+  function handleAdvance(to: IncidentStatus) {
+    if (to === "ESCALATED") {
+      setShowEscalate(true);
+      return;
+    }
+    setPendingTo(to);
+    onTransition(to, notes);
+  }
+
+  function handleEscalateConfirm() {
+    if (!escalatedTo.trim()) return;
+    setPendingTo("ESCALATED");
+    onTransition("ESCALATED", notes, escalatedTo.trim());
+  }
+
+  async function handleSaveNote() {
+    if (!notes.trim()) return;
+    setSavingNote(true);
+    try {
+      onAddNote(notes.trim());
+    } finally {
+      setSavingNote(false);
+    }
+  }
 
   return (
     <div className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-hidden rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900">
@@ -408,7 +478,6 @@ function IncidentDetail({
 
       <div className="max-h-[calc(100vh-8rem)] overflow-y-auto p-5">
         <div className="space-y-5">
-          {/* Meta grid */}
           <dl className="grid grid-cols-2 gap-3 text-xs">
             <Meta label="Status">
               <span
@@ -428,7 +497,6 @@ function IncidentDetail({
             </Meta>
           </dl>
 
-          {/* Location */}
           {incident.location && (
             <Section title="Location">
               <p className="text-sm text-deep-700 dark:text-cream-300">
@@ -437,14 +505,12 @@ function IncidentDetail({
             </Section>
           )}
 
-          {/* Description */}
           <Section title="Description">
             <p className="whitespace-pre-wrap text-sm leading-6 text-deep-700 dark:text-cream-300">
               {incident.description}
             </p>
           </Section>
 
-          {/* Reporter */}
           <Section title="Reporter">
             {incident.reporterName ||
             incident.reporterEmail ||
@@ -479,38 +545,73 @@ function IncidentDetail({
             )}
           </Section>
 
-          {/* Attachments */}
           {incident.attachments.length > 0 && (
             <Section title={`Attachments (${incident.attachments.length})`}>
               <ul className="space-y-1.5">
                 {incident.attachments.map((a) => (
-                  <li
-                    key={a.id}
-                    className="flex items-center justify-between rounded-lg border border-deep-200 px-3 py-2 text-xs dark:border-deep-800"
-                  >
-                    <span className="inline-flex items-center gap-2 text-deep-700 dark:text-cream-300">
-                      <PaperclipIcon />
-                      {a.fileName}
-                    </span>
-                    <span className="text-deep-500 dark:text-cream-500">
-                      {(a.sizeBytes / 1024).toFixed(0)} KB
-                    </span>
+                  <li key={a.id}>
+                    <a
+                      href={`/api/admin/incidents/${incident.id}/attachments/${a.id}`}
+                      download={a.fileName}
+                      className="flex items-center justify-between rounded-lg border border-deep-200 px-3 py-2 text-xs transition hover:border-rose-400 hover:bg-rose-50 dark:border-deep-800 dark:hover:border-rose-600 dark:hover:bg-rose-950/30"
+                    >
+                      <span className="inline-flex items-center gap-2 text-deep-700 dark:text-cream-300">
+                        <PaperclipIcon />
+                        <span className="underline-offset-2 hover:underline">
+                          {a.fileName}
+                        </span>
+                      </span>
+                      <span className="text-deep-500 dark:text-cream-500">
+                        {(a.sizeBytes / 1024).toFixed(0)} KB
+                      </span>
+                    </a>
                   </li>
                 ))}
               </ul>
             </Section>
           )}
 
+          {/* Escalated banner — read-only */}
+          {incident.status === "ESCALATED" && (
+            <div className="rounded-lg border border-violet-300 bg-violet-50 p-4 dark:border-violet-800 dark:bg-violet-950/30">
+              <div className="flex items-start gap-3">
+                <span
+                  aria-hidden
+                  className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500 text-white"
+                >
+                  <ArrowUpRightIcon />
+                </span>
+                <div>
+                  <h4 className="text-sm font-semibold text-violet-900 dark:text-violet-100">
+                    Escalated to {incident.escalatedTo ?? "higher authority"}
+                  </h4>
+                  {incident.escalatedAt && (
+                    <p className="mt-1 text-xs text-violet-700 dark:text-violet-300">
+                      {incident.escalatedByName ?? "Admin"} on{" "}
+                      {new Date(incident.escalatedAt).toLocaleString()}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs text-violet-700 dark:text-violet-300">
+                    This case is out of the review queue. To bring it back,
+                    that&apos;s a separate process outside this panel.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Review trail */}
-          {incident.reviewedAt && (
+          {(incident.reviewedAt || incident.reviewNotes) && (
             <Section title="Review trail">
-              <p className="text-xs text-deep-500 dark:text-cream-500">
-                Reviewed by{" "}
-                <span className="font-medium text-deep-700 dark:text-cream-300">
-                  {incident.reviewerName ?? "Admin"}
-                </span>{" "}
-                on {new Date(incident.reviewedAt).toLocaleString()}
-              </p>
+              {incident.reviewedAt && (
+                <p className="text-xs text-deep-500 dark:text-cream-500">
+                  Last reviewed by{" "}
+                  <span className="font-medium text-deep-700 dark:text-cream-300">
+                    {incident.reviewerName ?? "Admin"}
+                  </span>{" "}
+                  on {new Date(incident.reviewedAt).toLocaleString()}
+                </p>
+              )}
               {incident.reviewNotes && (
                 <p className="mt-2 whitespace-pre-wrap rounded-lg bg-cream-100 p-3 text-sm text-deep-700 dark:bg-deep-950 dark:text-cream-300">
                   {incident.reviewNotes}
@@ -519,49 +620,143 @@ function IncidentDetail({
             </Section>
           )}
 
-          {/* Transition controls */}
-          <div className="border-t border-deep-200 pt-4 dark:border-deep-800">
-            <label className="block">
-              <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-                Review notes
-              </span>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                placeholder="Add notes for the next reviewer or for the record."
-                className="w-full rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-rose-500 focus:bg-cream-50 focus:ring-2 focus:ring-rose-500/15 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500"
-              />
-            </label>
+          {/* Actions — hidden for terminal states */}
+          {!isTerminal && (
+            <div className="border-t border-deep-200 pt-4 dark:border-deep-800">
+              <label className="block">
+                <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+                  {incident.reviewNotes ? "Update notes" : "Review notes"}
+                </span>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Add notes for the next reviewer or for the record."
+                  className="w-full rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-rose-500 focus:bg-cream-50 focus:ring-2 focus:ring-rose-500/15 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500"
+                />
+              </label>
 
-            <div className="mt-3 flex flex-wrap gap-2">
-              {nextSteps.map((s) => (
+              <div className="mt-2 flex justify-end">
                 <button
-                  key={s}
                   type="button"
-                  onClick={() => {
-                    setTarget(s);
-                    onTransition(s, notes);
-                  }}
-                  disabled={target !== ""}
-                  className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:opacity-60"
+                  onClick={handleSaveNote}
+                  disabled={savingNote || !notes.trim() || notes === (incident.reviewNotes ?? "")}
+                  className="text-xs font-semibold text-rose-700 underline-offset-2 hover:underline disabled:opacity-40 dark:text-rose-300"
                 >
-                  {s === "OPEN" && incident.status !== "OPEN"
-                    ? "Reopen"
-                    : s === "UNDER_REVIEW" && incident.status !== "OPEN"
-                      ? "Reopen review"
-                      : `Mark as ${STATUS_META[s].label.toLowerCase()}`}
+                  {savingNote ? "Saving note…" : "Save note without changing status"}
                 </button>
-              ))}
+              </div>
+
+              {/* Escalation form */}
+              {showEscalate ? (
+                <div className="mt-4 rounded-lg border border-violet-300 bg-violet-50 p-3 dark:border-violet-800 dark:bg-violet-950/30">
+                  <label className="block">
+                    <span className="text-xs font-semibold text-violet-900 dark:text-violet-100">
+                      Escalate to *
+                    </span>
+                    <input
+                      value={escalatedTo}
+                      onChange={(e) => setEscalatedTo(e.target.value)}
+                      list="escalation-suggestions"
+                      placeholder="e.g. Kenya Wildlife Service"
+                      className="mt-1 block w-full rounded-lg border border-violet-300 bg-white px-3 py-2 text-sm text-deep-800 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-violet-700 dark:bg-deep-950 dark:text-cream-100"
+                    />
+                    <datalist id="escalation-suggestions">
+                      {ESCALATION_SUGGESTIONS.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </label>
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleEscalateConfirm}
+                      disabled={pendingTo !== "" || !escalatedTo.trim()}
+                      className="rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-violet-700 disabled:opacity-60"
+                    >
+                      Confirm escalation
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowEscalate(false)}
+                      disabled={pendingTo !== ""}
+                      className="rounded-lg border border-violet-300 px-4 py-2 text-xs font-semibold text-violet-800 transition hover:bg-violet-100 dark:border-violet-700 dark:text-violet-200 dark:hover:bg-violet-900/40"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {nextSteps.map((s) => {
+                    const isEscalate = s === "ESCALATED";
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => handleAdvance(s)}
+                        disabled={pendingTo !== ""}
+                        className={[
+                          "rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-60",
+                          isEscalate
+                            ? "bg-violet-600 text-white hover:bg-violet-700"
+                            : s === "OPEN" && incident.status !== "OPEN"
+                              ? "border border-deep-300 bg-cream-100 text-deep-700 hover:bg-cream-200 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-200 dark:hover:bg-deep-800"
+                              : "bg-rose-600 text-white hover:bg-rose-700",
+                        ].join(" ")}
+                      >
+                        {buttonLabel(s, incident.status)}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// ── Small pieces ─────────────────────────────────────────────
+function buttonLabel(to: IncidentStatus, from: IncidentStatus): string {
+  if (to === "OPEN" && from !== "OPEN") return "Reopen";
+  if (to === "UNDER_REVIEW" && (from === "RESOLVED" || from === "CLOSED")) {
+    return "Reopen review";
+  }
+  if (to === "ESCALATED") return "Escalate to higher authority";
+  return `Mark as ${STATUS_META[to].label.toLowerCase()}`;
+}
+
+function EmptyDrawer() {
+  return (
+    <div className="sticky top-6 rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50 p-8 text-center dark:border-rose-800 dark:bg-rose-950/30">
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">
+        <ShieldIcon />
+      </div>
+      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">
+        Select an incident
+      </h3>
+      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
+        Choose a report to see its details, record notes, and advance its
+        status.
+      </p>
+    </div>
+  );
+}
+
+function LoadingSkeletons() {
+  return (
+    <div className="space-y-3">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="h-32 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
+        />
+      ))}
+    </div>
+  );
+}
 
 function Meta({
   label,
@@ -599,20 +794,7 @@ function Section({
   );
 }
 
-function LoadingSkeletons() {
-  return (
-    <div className="space-y-3">
-      {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          className="h-32 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
-        />
-      ))}
-    </div>
-  );
-}
-
-// ── Icons ────────────────────────────────────────────────────
+// ── Icons ───────────────────────────────────────────────────
 
 const iconBase = {
   fill: "none",
@@ -664,6 +846,23 @@ function PaperclipIcon() {
   return (
     <svg {...iconBase} className="h-3.5 w-3.5">
       <path d="m21 12-8.5 8.5a5 5 0 1 1-7-7L14 5a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-2.8-2.8L15 8.5" />
+    </svg>
+  );
+}
+
+function ArrowUpRightIcon() {
+  return (
+    <svg {...iconBase} className="h-3.5 w-3.5">
+      <path d="M7 17 17 7M7 7h10v10" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg {...iconBase} className="h-4 w-4">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-4-4" />
     </svg>
   );
 }

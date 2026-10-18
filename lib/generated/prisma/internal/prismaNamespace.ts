@@ -2455,6 +2455,9 @@ export const IncidentScalarFieldEnum = {
   reviewedById: 'reviewedById',
   reviewedAt: 'reviewedAt',
   reviewNotes: 'reviewNotes',
+  escalatedTo: 'escalatedTo',
+  escalatedAt: 'escalatedAt',
+  escalatedById: 'escalatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -61,6 +61,7 @@ model User {
 
   // ── Incident review side (admin)
   incidentsReviewed Incident[] @relation("IncidentReviewer")
+  incidentsEscalated Incident[] @relation("IncidentEscalator")   
 
   @@index([role])
   @@index([companyId])
@@ -589,6 +590,7 @@ model Event {
 enum IncidentStatus {
   OPEN
   UNDER_REVIEW
+  ESCALATED
   RESOLVED
   CLOSED
 }
@@ -628,6 +630,12 @@ model Incident {
   reviewedAt   DateTime?
   reviewNotes  String?
 
+   // Escalation trail (set when status → ESCALATED)
+  escalatedTo   String?
+  escalatedAt   DateTime?
+  escalatedById String?
+  escalatedBy   User?     @relation("IncidentEscalator", fields: [escalatedById], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -635,6 +643,7 @@ model Incident {
   @@index([reportedAt])
   @@index([category])
   @@index([reviewedById])
+  @@index([escalatedById])
 }
 
 model IncidentAttachment {
@@ -649,4 +658,5 @@ model IncidentAttachment {
   uploadedAt DateTime @default(now())
 
   @@index([incidentId])
+  
 }

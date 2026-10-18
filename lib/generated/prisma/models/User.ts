@@ -246,6 +246,7 @@ export type UserWhereInput = {
   threadsAsCustomer?: Prisma.MessageThreadListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   incidentsReviewed?: Prisma.IncidentListRelationFilter
+  incidentsEscalated?: Prisma.IncidentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -276,6 +277,7 @@ export type UserOrderByWithRelationInput = {
   threadsAsCustomer?: Prisma.MessageThreadOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
   incidentsReviewed?: Prisma.IncidentOrderByRelationAggregateInput
+  incidentsEscalated?: Prisma.IncidentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -309,6 +311,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   threadsAsCustomer?: Prisma.MessageThreadListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   incidentsReviewed?: Prisma.IncidentListRelationFilter
+  incidentsEscalated?: Prisma.IncidentListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -372,6 +375,7 @@ export type UserCreateInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -401,6 +405,7 @@ export type UserUncheckedCreateInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUpdateInput = {
@@ -430,6 +435,7 @@ export type UserUpdateInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -459,6 +465,7 @@ export type UserUncheckedUpdateInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -836,6 +843,12 @@ export type UserCreateNestedOneWithoutIncidentsReviewedInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedOneWithoutIncidentsEscalatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedCreateWithoutIncidentsEscalatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIncidentsEscalatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserUpdateOneWithoutIncidentsReviewedNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutIncidentsReviewedInput, Prisma.UserUncheckedCreateWithoutIncidentsReviewedInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutIncidentsReviewedInput
@@ -844,6 +857,16 @@ export type UserUpdateOneWithoutIncidentsReviewedNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutIncidentsReviewedInput, Prisma.UserUpdateWithoutIncidentsReviewedInput>, Prisma.UserUncheckedUpdateWithoutIncidentsReviewedInput>
+}
+
+export type UserUpdateOneWithoutIncidentsEscalatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedCreateWithoutIncidentsEscalatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutIncidentsEscalatedInput
+  upsert?: Prisma.UserUpsertWithoutIncidentsEscalatedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutIncidentsEscalatedInput, Prisma.UserUpdateWithoutIncidentsEscalatedInput>, Prisma.UserUncheckedUpdateWithoutIncidentsEscalatedInput>
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -872,6 +895,7 @@ export type UserCreateWithoutAccountsInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -900,6 +924,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -944,6 +969,7 @@ export type UserUpdateWithoutAccountsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -972,6 +998,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutBusinessProfileInput = {
@@ -1000,6 +1027,7 @@ export type UserCreateWithoutBusinessProfileInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutBusinessProfileInput = {
@@ -1028,6 +1056,7 @@ export type UserUncheckedCreateWithoutBusinessProfileInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutBusinessProfileInput = {
@@ -1072,6 +1101,7 @@ export type UserUpdateWithoutBusinessProfileInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBusinessProfileInput = {
@@ -1100,6 +1130,7 @@ export type UserUncheckedUpdateWithoutBusinessProfileInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutCompanyInput = {
@@ -1128,6 +1159,7 @@ export type UserCreateWithoutCompanyInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutCompanyInput = {
@@ -1156,6 +1188,7 @@ export type UserUncheckedCreateWithoutCompanyInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutCompanyInput = {
@@ -1227,6 +1260,7 @@ export type UserCreateWithoutApplicationsSubmittedInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutApplicationsSubmittedInput = {
@@ -1255,6 +1289,7 @@ export type UserUncheckedCreateWithoutApplicationsSubmittedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutApplicationsSubmittedInput = {
@@ -1299,6 +1334,7 @@ export type UserUpdateWithoutApplicationsSubmittedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationsSubmittedInput = {
@@ -1327,6 +1363,7 @@ export type UserUncheckedUpdateWithoutApplicationsSubmittedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutDocumentsReviewedInput = {
@@ -1355,6 +1392,7 @@ export type UserCreateWithoutDocumentsReviewedInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutDocumentsReviewedInput = {
@@ -1383,6 +1421,7 @@ export type UserUncheckedCreateWithoutDocumentsReviewedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutDocumentsReviewedInput = {
@@ -1427,6 +1466,7 @@ export type UserUpdateWithoutDocumentsReviewedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentsReviewedInput = {
@@ -1455,6 +1495,7 @@ export type UserUncheckedUpdateWithoutDocumentsReviewedInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutEventsInput = {
@@ -1483,6 +1524,7 @@ export type UserCreateWithoutEventsInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutEventsInput = {
@@ -1511,6 +1553,7 @@ export type UserUncheckedCreateWithoutEventsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutEventsInput = {
@@ -1555,6 +1598,7 @@ export type UserUpdateWithoutEventsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventsInput = {
@@ -1583,6 +1627,7 @@ export type UserUncheckedUpdateWithoutEventsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutCommitteeVotesInput = {
@@ -1611,6 +1656,7 @@ export type UserCreateWithoutCommitteeVotesInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutCommitteeVotesInput = {
@@ -1639,6 +1685,7 @@ export type UserUncheckedCreateWithoutCommitteeVotesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutCommitteeVotesInput = {
@@ -1683,6 +1730,7 @@ export type UserUpdateWithoutCommitteeVotesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommitteeVotesInput = {
@@ -1711,6 +1759,7 @@ export type UserUncheckedUpdateWithoutCommitteeVotesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutAssignmentsInput = {
@@ -1739,6 +1788,7 @@ export type UserCreateWithoutAssignmentsInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutAssignmentsInput = {
@@ -1767,6 +1817,7 @@ export type UserUncheckedCreateWithoutAssignmentsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutAssignmentsInput = {
@@ -1811,6 +1862,7 @@ export type UserUpdateWithoutAssignmentsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssignmentsInput = {
@@ -1839,6 +1891,7 @@ export type UserUncheckedUpdateWithoutAssignmentsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutBookingsAsCustomerInput = {
@@ -1867,6 +1920,7 @@ export type UserCreateWithoutBookingsAsCustomerInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutBookingsAsCustomerInput = {
@@ -1895,6 +1949,7 @@ export type UserUncheckedCreateWithoutBookingsAsCustomerInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutBookingsAsCustomerInput = {
@@ -1928,6 +1983,7 @@ export type UserCreateWithoutBookingRequestsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutBookingRequestsAsBusinessInput = {
@@ -1956,6 +2012,7 @@ export type UserUncheckedCreateWithoutBookingRequestsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutBookingRequestsAsBusinessInput = {
@@ -2000,6 +2057,7 @@ export type UserUpdateWithoutBookingsAsCustomerInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBookingsAsCustomerInput = {
@@ -2028,6 +2086,7 @@ export type UserUncheckedUpdateWithoutBookingsAsCustomerInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUpsertWithoutBookingRequestsAsBusinessInput = {
@@ -2067,6 +2126,7 @@ export type UserUpdateWithoutBookingRequestsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBookingRequestsAsBusinessInput = {
@@ -2095,6 +2155,7 @@ export type UserUncheckedUpdateWithoutBookingRequestsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutThreadsAsCustomerInput = {
@@ -2123,6 +2184,7 @@ export type UserCreateWithoutThreadsAsCustomerInput = {
   bookingsAsCustomer?: Prisma.BookingCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutThreadsAsCustomerInput = {
@@ -2151,6 +2213,7 @@ export type UserUncheckedCreateWithoutThreadsAsCustomerInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutThreadsAsCustomerInput = {
@@ -2184,6 +2247,7 @@ export type UserCreateWithoutThreadsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutThreadsAsBusinessInput = {
@@ -2212,6 +2276,7 @@ export type UserUncheckedCreateWithoutThreadsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutThreadsAsBusinessInput = {
@@ -2256,6 +2321,7 @@ export type UserUpdateWithoutThreadsAsCustomerInput = {
   bookingsAsCustomer?: Prisma.BookingUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutThreadsAsCustomerInput = {
@@ -2284,6 +2350,7 @@ export type UserUncheckedUpdateWithoutThreadsAsCustomerInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUpsertWithoutThreadsAsBusinessInput = {
@@ -2323,6 +2390,7 @@ export type UserUpdateWithoutThreadsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutThreadsAsBusinessInput = {
@@ -2351,6 +2419,7 @@ export type UserUncheckedUpdateWithoutThreadsAsBusinessInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -2379,6 +2448,7 @@ export type UserCreateWithoutMessagesInput = {
   bookingsAsCustomer?: Prisma.BookingCreateNestedManyWithoutCustomerInput
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -2407,6 +2477,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedCreateNestedManyWithoutCustomerInput
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -2451,6 +2522,7 @@ export type UserUpdateWithoutMessagesInput = {
   bookingsAsCustomer?: Prisma.BookingUpdateManyWithoutCustomerNestedInput
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -2479,6 +2551,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedUpdateManyWithoutCustomerNestedInput
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutOwnedTourPackagesInput = {
@@ -2507,6 +2580,7 @@ export type UserCreateWithoutOwnedTourPackagesInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutOwnedTourPackagesInput = {
@@ -2535,6 +2609,7 @@ export type UserUncheckedCreateWithoutOwnedTourPackagesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutOwnedTourPackagesInput = {
@@ -2579,6 +2654,7 @@ export type UserUpdateWithoutOwnedTourPackagesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedTourPackagesInput = {
@@ -2607,6 +2683,7 @@ export type UserUncheckedUpdateWithoutOwnedTourPackagesInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutOwnedAccommodationsInput = {
@@ -2635,6 +2712,7 @@ export type UserCreateWithoutOwnedAccommodationsInput = {
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutOwnedAccommodationsInput = {
@@ -2663,6 +2741,7 @@ export type UserUncheckedCreateWithoutOwnedAccommodationsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
   incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutOwnedAccommodationsInput = {
@@ -2707,6 +2786,7 @@ export type UserUpdateWithoutOwnedAccommodationsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedAccommodationsInput = {
@@ -2735,6 +2815,7 @@ export type UserUncheckedUpdateWithoutOwnedAccommodationsInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserCreateWithoutIncidentsReviewedInput = {
@@ -2763,6 +2844,7 @@ export type UserCreateWithoutIncidentsReviewedInput = {
   bookingsAsCustomer?: Prisma.BookingCreateNestedManyWithoutCustomerInput
   threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  incidentsEscalated?: Prisma.IncidentCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserUncheckedCreateWithoutIncidentsReviewedInput = {
@@ -2791,11 +2873,75 @@ export type UserUncheckedCreateWithoutIncidentsReviewedInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedCreateNestedManyWithoutCustomerInput
   threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  incidentsEscalated?: Prisma.IncidentUncheckedCreateNestedManyWithoutEscalatedByInput
 }
 
 export type UserCreateOrConnectWithoutIncidentsReviewedInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutIncidentsReviewedInput, Prisma.UserUncheckedCreateWithoutIncidentsReviewedInput>
+}
+
+export type UserCreateWithoutIncidentsEscalatedInput = {
+  id?: string
+  email: string
+  name: string
+  phone?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  company?: Prisma.CompanyCreateNestedOneWithoutUsersInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  applicationsSubmitted?: Prisma.ApplicationCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentCreateNestedManyWithoutReviewedByInput
+  businessProfile?: Prisma.BusinessProfileCreateNestedOneWithoutUserInput
+  ownedAccommodations?: Prisma.AccommodationCreateNestedManyWithoutBusinessInput
+  ownedTourPackages?: Prisma.TourPackageCreateNestedManyWithoutBusinessInput
+  bookingRequestsAsBusiness?: Prisma.BookingCreateNestedManyWithoutBusinessInput
+  threadsAsBusiness?: Prisma.MessageThreadCreateNestedManyWithoutBusinessInput
+  bookingsAsCustomer?: Prisma.BookingCreateNestedManyWithoutCustomerInput
+  threadsAsCustomer?: Prisma.MessageThreadCreateNestedManyWithoutCustomerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput
+  incidentsReviewed?: Prisma.IncidentCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserUncheckedCreateWithoutIncidentsEscalatedInput = {
+  id?: string
+  email: string
+  name: string
+  phone?: string | null
+  emailVerified?: Date | string | null
+  image?: string | null
+  passwordHash?: string | null
+  role?: $Enums.Role
+  companyId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  applicationsSubmitted?: Prisma.ApplicationUncheckedCreateNestedManyWithoutSubmittedByInput
+  events?: Prisma.ApplicationEventUncheckedCreateNestedManyWithoutActorInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedCreateNestedManyWithoutVoterInput
+  assignments?: Prisma.AssignmentUncheckedCreateNestedManyWithoutAssigneeInput
+  documentsReviewed?: Prisma.DocumentUncheckedCreateNestedManyWithoutReviewedByInput
+  businessProfile?: Prisma.BusinessProfileUncheckedCreateNestedOneWithoutUserInput
+  ownedAccommodations?: Prisma.AccommodationUncheckedCreateNestedManyWithoutBusinessInput
+  ownedTourPackages?: Prisma.TourPackageUncheckedCreateNestedManyWithoutBusinessInput
+  bookingRequestsAsBusiness?: Prisma.BookingUncheckedCreateNestedManyWithoutBusinessInput
+  threadsAsBusiness?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutBusinessInput
+  bookingsAsCustomer?: Prisma.BookingUncheckedCreateNestedManyWithoutCustomerInput
+  threadsAsCustomer?: Prisma.MessageThreadUncheckedCreateNestedManyWithoutCustomerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput
+  incidentsReviewed?: Prisma.IncidentUncheckedCreateNestedManyWithoutReviewedByInput
+}
+
+export type UserCreateOrConnectWithoutIncidentsEscalatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedCreateWithoutIncidentsEscalatedInput>
 }
 
 export type UserUpsertWithoutIncidentsReviewedInput = {
@@ -2835,6 +2981,7 @@ export type UserUpdateWithoutIncidentsReviewedInput = {
   bookingsAsCustomer?: Prisma.BookingUpdateManyWithoutCustomerNestedInput
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutIncidentsReviewedInput = {
@@ -2863,6 +3010,76 @@ export type UserUncheckedUpdateWithoutIncidentsReviewedInput = {
   bookingsAsCustomer?: Prisma.BookingUncheckedUpdateManyWithoutCustomerNestedInput
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
+}
+
+export type UserUpsertWithoutIncidentsEscalatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedUpdateWithoutIncidentsEscalatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedCreateWithoutIncidentsEscalatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutIncidentsEscalatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutIncidentsEscalatedInput, Prisma.UserUncheckedUpdateWithoutIncidentsEscalatedInput>
+}
+
+export type UserUpdateWithoutIncidentsEscalatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.CompanyUpdateOneWithoutUsersNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  applicationsSubmitted?: Prisma.ApplicationUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUpdateManyWithoutReviewedByNestedInput
+  businessProfile?: Prisma.BusinessProfileUpdateOneWithoutUserNestedInput
+  ownedAccommodations?: Prisma.AccommodationUpdateManyWithoutBusinessNestedInput
+  ownedTourPackages?: Prisma.TourPackageUpdateManyWithoutBusinessNestedInput
+  bookingRequestsAsBusiness?: Prisma.BookingUpdateManyWithoutBusinessNestedInput
+  threadsAsBusiness?: Prisma.MessageThreadUpdateManyWithoutBusinessNestedInput
+  bookingsAsCustomer?: Prisma.BookingUpdateManyWithoutCustomerNestedInput
+  threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
+  incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutIncidentsEscalatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  companyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  applicationsSubmitted?: Prisma.ApplicationUncheckedUpdateManyWithoutSubmittedByNestedInput
+  events?: Prisma.ApplicationEventUncheckedUpdateManyWithoutActorNestedInput
+  committeeVotes?: Prisma.CommitteeVoteUncheckedUpdateManyWithoutVoterNestedInput
+  assignments?: Prisma.AssignmentUncheckedUpdateManyWithoutAssigneeNestedInput
+  documentsReviewed?: Prisma.DocumentUncheckedUpdateManyWithoutReviewedByNestedInput
+  businessProfile?: Prisma.BusinessProfileUncheckedUpdateOneWithoutUserNestedInput
+  ownedAccommodations?: Prisma.AccommodationUncheckedUpdateManyWithoutBusinessNestedInput
+  ownedTourPackages?: Prisma.TourPackageUncheckedUpdateManyWithoutBusinessNestedInput
+  bookingRequestsAsBusiness?: Prisma.BookingUncheckedUpdateManyWithoutBusinessNestedInput
+  threadsAsBusiness?: Prisma.MessageThreadUncheckedUpdateManyWithoutBusinessNestedInput
+  bookingsAsCustomer?: Prisma.BookingUncheckedUpdateManyWithoutCustomerNestedInput
+  threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
+  incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
 }
 
 export type UserCreateManyCompanyInput = {
@@ -2904,6 +3121,7 @@ export type UserUpdateWithoutCompanyInput = {
   threadsAsCustomer?: Prisma.MessageThreadUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCompanyInput = {
@@ -2932,6 +3150,7 @@ export type UserUncheckedUpdateWithoutCompanyInput = {
   threadsAsCustomer?: Prisma.MessageThreadUncheckedUpdateManyWithoutCustomerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput
   incidentsReviewed?: Prisma.IncidentUncheckedUpdateManyWithoutReviewedByNestedInput
+  incidentsEscalated?: Prisma.IncidentUncheckedUpdateManyWithoutEscalatedByNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutCompanyInput = {
@@ -2967,6 +3186,7 @@ export type UserCountOutputType = {
   threadsAsCustomer: number
   messages: number
   incidentsReviewed: number
+  incidentsEscalated: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2984,6 +3204,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   threadsAsCustomer?: boolean | UserCountOutputTypeCountThreadsAsCustomerArgs
   messages?: boolean | UserCountOutputTypeCountMessagesArgs
   incidentsReviewed?: boolean | UserCountOutputTypeCountIncidentsReviewedArgs
+  incidentsEscalated?: boolean | UserCountOutputTypeCountIncidentsEscalatedArgs
 }
 
 /**
@@ -3094,6 +3315,13 @@ export type UserCountOutputTypeCountIncidentsReviewedArgs<ExtArgs extends runtim
   where?: Prisma.IncidentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountIncidentsEscalatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IncidentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3123,6 +3351,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   threadsAsCustomer?: boolean | Prisma.User$threadsAsCustomerArgs<ExtArgs>
   messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   incidentsReviewed?: boolean | Prisma.User$incidentsReviewedArgs<ExtArgs>
+  incidentsEscalated?: boolean | Prisma.User$incidentsEscalatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3188,6 +3417,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   threadsAsCustomer?: boolean | Prisma.User$threadsAsCustomerArgs<ExtArgs>
   messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   incidentsReviewed?: boolean | Prisma.User$incidentsReviewedArgs<ExtArgs>
+  incidentsEscalated?: boolean | Prisma.User$incidentsEscalatedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3216,6 +3446,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     threadsAsCustomer: Prisma.$MessageThreadPayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
     incidentsReviewed: Prisma.$IncidentPayload<ExtArgs>[]
+    incidentsEscalated: Prisma.$IncidentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3639,6 +3870,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   threadsAsCustomer<T extends Prisma.User$threadsAsCustomerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$threadsAsCustomerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   incidentsReviewed<T extends Prisma.User$incidentsReviewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$incidentsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  incidentsEscalated<T extends Prisma.User$incidentsEscalatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$incidentsEscalatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4433,6 +4665,30 @@ export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
  * User.incidentsReviewed
  */
 export type User$incidentsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Incident
+   */
+  select?: Prisma.IncidentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Incident
+   */
+  omit?: Prisma.IncidentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IncidentInclude<ExtArgs> | null
+  where?: Prisma.IncidentWhereInput
+  orderBy?: Prisma.IncidentOrderByWithRelationInput | Prisma.IncidentOrderByWithRelationInput[]
+  cursor?: Prisma.IncidentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IncidentScalarFieldEnum | Prisma.IncidentScalarFieldEnum[]
+}
+
+/**
+ * User.incidentsEscalated
+ */
+export type User$incidentsEscalatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Incident
    */
