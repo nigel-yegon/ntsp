@@ -21,12 +21,14 @@ const ROLE_PREFIXES: Record<string, string[]> = {
 };
 
 export const config = {
-  matcher: [
-    "/services/:path*",
-    "/review/:path*",
-    "/admin/:path*",
-    "/dashboard/:path*",  // ← new
-  ],
+matcher: [
+  "/services/applications/:path*",
+  "/services/expatriate/:path*",
+  "/services/profile/:path*",
+  "/review/:path*",
+  "/admin/:path*",
+  "/dashboard/:path*",
+],
 };
 
 export default withAuth(
