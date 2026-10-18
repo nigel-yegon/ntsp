@@ -1,3 +1,4 @@
+// app/stay/page.tsx
 import { prisma } from "@/lib/prisma";
 import { StaysGrid } from "./stays-grid";
 
@@ -13,11 +14,14 @@ const TYPE_ORDER = ["Hotel", "Lodge", "Resort", "Tented Camp"];
 export default async function StayPage() {
   const [stays, destinations] = await Promise.all([
     prisma.accommodation.findMany({
-      include: { destination: true },
+      where: { published: true },
       orderBy: [{ type: "asc" }, { name: "asc" }],
+      include: {
+        destination: { select: { name: true, slug: true } },
+      },
     }),
     prisma.destination.findMany({
-      where: { stays: { some: {} } },
+      where: { stays: { some: { published: true } } },
       orderBy: { name: "asc" },
       select: { name: true, slug: true },
     }),
@@ -28,7 +32,6 @@ export default async function StayPage() {
 
   return (
     <div>
-      {/* ─── HERO BAND ─────────────────────────────────────── */}
       <section className="hero-band border-b border-deep-200 dark:border-deep-800">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-400">
@@ -43,7 +46,6 @@ export default async function StayPage() {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <div className="mx-auto max-w-6xl px-4 py-12">
         {stays.length === 0 ? (
           <p className="text-deep-500 dark:text-cream-500">

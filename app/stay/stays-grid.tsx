@@ -1,8 +1,10 @@
+// app/stay/stays-grid.tsx
 "use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import FadeIn from "@/app/components/fade-in";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Stay = {
   id: number;
@@ -12,6 +14,7 @@ type Stay = {
   description: string;
   location: string;
   priceRange: string | null;
+  imageUrl: string | null;
   destination: { name: string; slug: string };
 };
 
@@ -24,14 +27,17 @@ type Props = {
 export function StaysGrid({ stays, types, destinations }: Props) {
   const [query, setQuery] = useState("");
   const [activeType, setActiveType] = useState<string | null>(null);
-  const [activeDestination, setActiveDestination] = useState<string | null>(null);
+  const [activeDestination, setActiveDestination] = useState<string | null>(
+    null
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
 
     return stays.filter((s) => {
       if (activeType && s.type !== activeType) return false;
-      if (activeDestination && s.destination.slug !== activeDestination) return false;
+      if (activeDestination && s.destination.slug !== activeDestination)
+        return false;
 
       if (!q) return true;
       return (
@@ -107,7 +113,9 @@ export function StaysGrid({ stays, types, destinations }: Props) {
                 key={type}
                 label={`${type} (${count})`}
                 active={activeType === type}
-                onClick={() => setActiveType(activeType === type ? null : type)}
+                onClick={() =>
+                  setActiveType(activeType === type ? null : type)
+                }
               />
             );
           })}
@@ -121,7 +129,7 @@ export function StaysGrid({ stays, types, destinations }: Props) {
           />
           {destinations.map((d) => {
             const count = stays.filter(
-              (s) => s.destination.slug === d.slug,
+              (s) => s.destination.slug === d.slug
             ).length;
             return (
               <Pill
@@ -130,7 +138,7 @@ export function StaysGrid({ stays, types, destinations }: Props) {
                 active={activeDestination === d.slug}
                 onClick={() =>
                   setActiveDestination(
-                    activeDestination === d.slug ? null : d.slug,
+                    activeDestination === d.slug ? null : d.slug
                   )
                 }
               />
@@ -179,35 +187,44 @@ export function StaysGrid({ stays, types, destinations }: Props) {
                 </h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {g.items.map((s, i) => (
-                    <FadeIn key={s.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
+                    <FadeIn
+                      key={s.id}
+                      delay={Math.min(i * 0.06, 0.4)}
+                      whenVisible
+                    >
                       <Link
                         href={`/stay/${s.slug}`}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 p-5 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                       >
                         <span
-                          className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
+                          className="absolute inset-x-0 top-0 z-10 h-0.5 origin-left scale-x-0 bg-brand-500 transition-transform duration-300 group-hover:scale-x-100"
                           aria-hidden
                         />
-                        <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
-                          {s.destination.name}
-                        </span>
-                        <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
-                          {s.name}
-                        </h3>
-                        <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-                          📍 {s.location}
-                        </p>
-                        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
-                          {s.description}
-                        </p>
-                        {s.priceRange && (
-                          <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
-                            {s.priceRange}
+
+                        <StayImage name={s.name} imageUrl={s.imageUrl} />
+
+                        <div className="flex flex-1 flex-col p-5">
+                          <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
+                            {s.destination.name}
+                          </span>
+                          <h3 className="mt-1 font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                            {s.name}
+                          </h3>
+                          <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                            📍 {s.location}
                           </p>
-                        )}
-                        <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
-                          View →
-                        </span>
+                          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-deep-600 dark:text-cream-400">
+                            {s.description}
+                          </p>
+                          {s.priceRange && (
+                            <p className="mt-3 font-mono text-xs font-bold text-deep-800 dark:text-cream-100">
+                              {s.priceRange}
+                            </p>
+                          )}
+                          <span className="mt-auto pt-4 text-xs font-medium text-brand-600 group-hover:underline dark:text-brand-400">
+                            View →
+                          </span>
+                        </div>
                       </Link>
                     </FadeIn>
                   ))}
@@ -218,6 +235,43 @@ export function StaysGrid({ stays, types, destinations }: Props) {
         </div>
       )}
     </>
+  );
+}
+
+function StayImage({
+  name,
+  imageUrl,
+}: {
+  name: string;
+  imageUrl: string | null;
+}) {
+  const src = resolveImageUrl(imageUrl);
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-linear-to-br from-cream-200 via-cream-100 to-brand-100 dark:from-deep-800 dark:via-deep-900 dark:to-deep-950">
+        <span
+          className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-brand-400/40 dark:text-brand-500/20"
+          aria-hidden
+        >
+          {name.charAt(0).toUpperCase()}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative aspect-4/3 w-full overflow-hidden bg-cream-100 dark:bg-deep-950">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={name}
+        loading="lazy"
+        onError={() => setFailed(true)}
+        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+      />
+    </div>
   );
 }
 
