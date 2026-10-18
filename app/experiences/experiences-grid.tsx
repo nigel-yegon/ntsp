@@ -164,7 +164,7 @@ export function ExperiencesGrid({ attractions, categories }: Props) {
                           aria-hidden
                         />
 
-                        <CardImage name={a.name} imageUrl={a.imageUrl} aspect="4:3" />
+                        <CardImage name={a.name} imageUrl={a.imageUrl} aspect="2:1" />
 
                         <div className="flex flex-1 flex-col p-5">
                           <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">

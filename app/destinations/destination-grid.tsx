@@ -105,7 +105,7 @@ export function DestinationsGrid({ destinations }: Props) {
                   aria-hidden
                 />
 
-                <CardImage name={d.name} imageUrl={d.imageUrl} aspect="4:3" />
+                <CardImage name={d.name} imageUrl={d.imageUrl} aspect="2:1" />
 
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-between gap-3">

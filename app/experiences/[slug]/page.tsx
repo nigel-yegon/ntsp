@@ -129,7 +129,7 @@ export default async function ExperiencePage({ params }: { params: Params }) {
                     aria-hidden
                   />
 
-                  <CardImage name={n.name} imageUrl={n.imageUrl} aspect="4:3" />
+                  <CardImage name={n.name} imageUrl={n.imageUrl} aspect="2:1" />
 
                   <div className="flex flex-1 flex-col p-4">
                     <h3 className="text-sm font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">

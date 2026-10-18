@@ -7,9 +7,7 @@ import { resolveImageUrl } from "@/lib/image-url";
 type Props = {
   name: string;
   imageUrl: string | null | undefined;
-  /** 4:3 for compact cards, 16:9 for wider hero-style cards. */
-  aspect?: "4:3" | "16:9" | "3:2";
-  /** Show a subtle zoom on parent hover. Requires the parent to have `group`. */
+  aspect?: "4:3" | "16:9" | "3:2" | "2:1";
   zoomOnHover?: boolean;
 };
 
@@ -17,6 +15,7 @@ const ASPECT_CLASSES = {
   "4:3": "aspect-[4/3]",
   "16:9": "aspect-video",
   "3:2": "aspect-[3/2]",
+  "2:1": "aspect-[2/1]",
 } as const;
 
 export function CardImage({

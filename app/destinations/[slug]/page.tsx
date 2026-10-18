@@ -126,7 +126,7 @@ export default async function DestinationPage({ params }: { params: Params }) {
                       <CardImage
                         name={a.name}
                         imageUrl={a.imageUrl}
-                        aspect="4:3"
+                        aspect="2:1"
                       />
 
                       <div className="flex flex-1 flex-col p-5">
@@ -186,7 +186,7 @@ export default async function DestinationPage({ params }: { params: Params }) {
                       <CardImage
                         name={p.title}
                         imageUrl={p.imageUrl}
-                        aspect="16:9"
+                        aspect="2:1"
                       />
 
                       <div className="flex flex-1 flex-col p-5">
@@ -251,7 +251,7 @@ export default async function DestinationPage({ params }: { params: Params }) {
                       <CardImage
                         name={s.name}
                         imageUrl={s.imageUrl}
-                        aspect="4:3"
+                        aspect="2:1"
                       />
 
                       <div className="flex flex-1 flex-col p-5">

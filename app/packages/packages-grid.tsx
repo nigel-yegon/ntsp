@@ -216,7 +216,7 @@ export function PackagesGrid({ packages, destinations }: Props) {
                   aria-hidden
                 />
 
-                <CardImage name={p.title} imageUrl={p.imageUrl} aspect="16:9" />
+                <CardImage name={p.title} imageUrl={p.imageUrl} aspect="2:1" />
 
                 <div className="flex flex-1 flex-col p-6">
                   <div className="flex items-start justify-between gap-3">

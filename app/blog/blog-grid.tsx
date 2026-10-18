@@ -154,7 +154,7 @@ export function BlogGrid({ posts }: Props) {
                   aria-hidden
                 />
 
-                <CardImage name={p.title} imageUrl={p.coverImage} aspect="16:9" />
+                <CardImage name={p.title} imageUrl={p.coverImage} aspect="2:1" />
 
                 <div className="flex flex-1 flex-col p-5">
                   {p.publishedAt && (

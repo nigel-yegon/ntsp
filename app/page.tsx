@@ -104,7 +104,7 @@ export default async function Home() {
                     href={`/experiences/${a.slug}`}
                     className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <CardImage name={a.name} imageUrl={a.imageUrl} aspect="4:3" />
+                    <CardImage name={a.name} imageUrl={a.imageUrl} aspect="2:1" />
                     <div className="flex flex-1 flex-col p-4">
                       <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                         {a.category}
@@ -141,7 +141,7 @@ export default async function Home() {
                     href={`/destinations/${d.slug}`}
                     className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <CardImage name={d.name} imageUrl={d.imageUrl} aspect="4:3" />
+                    <CardImage name={d.name} imageUrl={d.imageUrl} aspect="2:1" />
                     <div className="flex flex-1 flex-col p-5">
                       <div className="flex items-start justify-between">
                         <h3 className="text-lg font-semibold text-deep-800 group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
@@ -211,7 +211,7 @@ export default async function Home() {
                     href={`/packages/${p.slug}`}
                     className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <CardImage name={p.title} imageUrl={p.imageUrl} aspect="16:9" />
+                    <CardImage name={p.title} imageUrl={p.imageUrl} aspect="2:1" />
                     <div className="flex flex-1 flex-col p-5">
                       <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                         {p.destination.name}
@@ -253,7 +253,7 @@ export default async function Home() {
                     href={`/stay/${s.slug}`}
                     className="group flex h-full flex-col overflow-hidden rounded-lg border border-deep-200 bg-cream-50 transition hover:border-brand-400 hover:shadow-md dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
                   >
-                    <CardImage name={s.name} imageUrl={s.imageUrl} aspect="4:3" />
+                    <CardImage name={s.name} imageUrl={s.imageUrl} aspect="2:1" />
                     <div className="flex flex-1 flex-col p-5">
                       <span className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                         {s.type}
