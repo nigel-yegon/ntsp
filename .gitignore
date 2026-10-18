@@ -42,3 +42,6 @@ next-env.d.ts
 #storage/
 .env.local
 .env.production
+
+# Generated Prisma client — regenerate with 'npx prisma generate'
+/lib/generated/prisma/
