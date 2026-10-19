@@ -40,7 +40,13 @@ export default async function EventsPage() {
             No events yet. Run the seed script.
           </p>
         ) : (
-          <EventsGrid events={events} />
+          <EventsGrid
+            events={events.map((event) => ({
+              ...event,
+              latitude: null,
+              longitude: null,
+            }))}
+          />
         )}
       </div>
     </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { resolveImageUrl } from "@/lib/image-url";
+import { EventLocationMap } from "./event-location-map";
 
 type Params = Promise<{ slug: string }>;
 
@@ -18,8 +19,17 @@ export default async function EventPage({ params }: { params: Params }) {
   const event = await prisma.event.findFirst({ where: { slug } });
   if (!event) notFound();
 
+  type EventWithOptionalCoords = {
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+
+  const eventWithCoords = event as typeof event & EventWithOptionalCoords;
   const isPast = (event.endDate ?? event.startDate) < new Date();
   const heroImage = resolveImageUrl(event.imageUrl);
+
+  const hasCoords =
+    eventWithCoords.latitude != null && eventWithCoords.longitude != null;
 
   return (
     <div>
@@ -106,6 +116,36 @@ export default async function EventPage({ params }: { params: Params }) {
             {event.description}
           </p>
         </div>
+
+        {/* ─── LOCATION MAP ─────────────────────────────────── */}
+        {hasCoords && (
+          <div className="mt-12">
+            <h2 className="mb-3 text-lg font-semibold text-deep-800 dark:text-cream-100">
+              Where it happens
+            </h2>
+            <EventLocationMap
+              latitude={eventWithCoords.latitude as number}
+              longitude={eventWithCoords.longitude as number}
+              label={event.location}
+              featured={event.featured}
+            />
+          </div>
+        )}
+
+        {!hasCoords && (
+          <div className="mt-12">
+            <h2 className="mb-3 text-lg font-semibold text-deep-800 dark:text-cream-100">
+              Where it happens
+            </h2>
+            <div className="rounded-2xl border-2 border-dashed border-deep-200 bg-cream-50 p-6 text-sm text-deep-600 dark:border-deep-800 dark:bg-deep-900 dark:text-cream-400">
+              📍 <span className="font-medium">{event.location}</span>
+              <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
+                A map will appear here once coordinates are added for this
+                event.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="mt-12 border-t border-deep-200 pt-6 dark:border-deep-800">
           <Link

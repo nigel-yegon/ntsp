@@ -141,19 +141,19 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     icon: <InquiryIcon />,
   },
   resources: {
-  ring: "ring-brand-500/20",
-  border: "border-brand-300 dark:border-brand-800",
-  borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
-  bgSoft: "bg-brand-50 dark:bg-brand-950/40",
-  bgActive: "bg-brand-100 dark:bg-brand-950/70",
-  text: "text-brand-700 dark:text-brand-300",
-  button: "bg-brand-600",
-  buttonHover: "hover:bg-brand-700",
-  bar: "bg-brand-500",
-  pillBg: "bg-brand-100 dark:bg-brand-950",
-  pillText: "text-brand-800 dark:text-brand-200",
-  icon: <FolderIcon />,
-},
+    ring: "ring-brand-500/20",
+    border: "border-brand-300 dark:border-brand-800",
+    borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
+    bgSoft: "bg-brand-50 dark:bg-brand-950/40",
+    bgActive: "bg-brand-100 dark:bg-brand-950/70",
+    text: "text-brand-700 dark:text-brand-300",
+    button: "bg-brand-600",
+    buttonHover: "hover:bg-brand-700",
+    bar: "bg-brand-500",
+    pillBg: "bg-brand-100 dark:bg-brand-950",
+    pillText: "text-brand-800 dark:text-brand-200",
+    icon: <FolderIcon />,
+  },
   experiences: {
     ring: "ring-emerald-500/20",
     border: "border-emerald-300 dark:border-emerald-800",
@@ -339,10 +339,6 @@ export function DashboardClient() {
   }, [search, posts]);
 
   // ── Overview stat cards ─────────────────────────────────────
-  // All cards share the same shape: label, big value, hint line,
-  // module icon, "open module" footer. Hints for content modules
-  // are derived from the already-loaded arrays (no extra queries);
-  // hints for operational modules come from countModuleRows().
   const stats: {
     label: string;
     value: number;
@@ -769,9 +765,6 @@ function Overview({
                     <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
                       {stat.value}
                     </div>
-                    {/* Hint line — always reserved to keep all cards
-                        the same height, regardless of whether the hint
-                        text is present. */}
                     <div
                       className={`mt-1 h-4 truncate text-xs font-medium ${
                         tone?.text ?? "text-deep-500 dark:text-cream-500"
@@ -1797,7 +1790,18 @@ function EventsModule({
     const previous = events;
     setEvents((curr) => curr.map((e) => (e.id === updated.id ? updated : e)));
     try {
-      await updateEvent(updated.id, updated);
+      await updateEvent(updated.id, {
+        name: updated.name,
+        slug: updated.slug,
+        description: updated.description,
+        location: updated.location,
+        startDate: updated.startDate,
+        endDate: updated.endDate,
+        imageUrl: updated.imageUrl,
+        featured: updated.featured,
+        latitude: updated.latitude,
+        longitude: updated.longitude,
+      });
       setEditingId(null);
     } catch (err) {
       setEvents(previous);
@@ -1887,6 +1891,12 @@ function EventEditor({
   const [endDate, setEndDate] = useState(event.endDate ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
   const [featured, setFeatured] = useState(event.featured);
+  const [latitude, setLatitude] = useState<number | null>(
+    event.latitude ?? null
+  );
+  const [longitude, setLongitude] = useState<number | null>(
+    event.longitude ?? null
+  );
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -1898,6 +1908,8 @@ function EventEditor({
         endDate: endDate || null,
         imageUrl: imageUrl.trim() || null,
         featured,
+        latitude,
+        longitude,
       });
     });
   }
@@ -1911,15 +1923,82 @@ function EventEditor({
       onSave={handleSave}
       tone={tone}
     >
-      <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
-      <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
+      <Field label="Name">
+        <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
+      </Field>
+      <Field label="Slug">
+        <input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
+      </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Start date"><input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} /></Field>
-        <Field label="End date"><input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} /></Field>
+        <Field label="Start date">
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
+        </Field>
+        <Field label="End date">
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
+        </Field>
       </div>
-      <Field label="Location"><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} /></Field>
-      <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
-      <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
+      <Field label="Location">
+        <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} />
+      </Field>
+      <Field label="Description">
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} />
+      </Field>
+      <Field label="Image URL">
+        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} />
+      </Field>
+
+      <Field label="Location on map">
+        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
+          Paste the event&apos;s coordinates from Google Maps. The public event
+          page will render this location.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Latitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={latitude ?? ""}
+              onChange={(e) =>
+                setLatitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="-1.4850"
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Longitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={longitude ?? ""}
+              onChange={(e) =>
+                setLongitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="35.3720"
+              className={inputClass}
+            />
+          </label>
+        </div>
+
+        {latitude != null && longitude != null ? (
+          <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
+            Selected:{" "}
+            <span className="font-mono">
+              {latitude.toFixed(5)}, {longitude.toFixed(5)}
+            </span>
+          </p>
+        ) : (
+          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
+            No coordinates set yet.
+          </p>
+        )}
+      </Field>
+
       <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );

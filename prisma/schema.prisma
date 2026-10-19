@@ -585,7 +585,7 @@ model Accommodation {
 
 // ─── Events ────────────────────────────────────────────────────
 
-model Event {
+model Event{
   id          Int       @id @default(autoincrement())
   name        String
   slug        String    @unique
@@ -594,6 +594,10 @@ model Event {
   endDate     DateTime?
   location    String
   imageUrl    String?
+  // Geolocation — WGS84 decimal degrees. Nullable so existing
+  // rows don't break; set via the admin editor or geocoder.
+  latitude    Float?
+  longitude   Float?
   featured    Boolean   @default(false)
   order       Int       @default(0)
   published   Boolean   @default(true)
