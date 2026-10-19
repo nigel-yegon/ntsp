@@ -475,6 +475,11 @@ model Destination {
   county      String
   description String
   imageUrl    String?
+// Geolocation — WGS84 decimal degrees. Nullable so existing
+// rows don't break; set via the admin editor.
+  latitude    Float?
+  longitude   Float?
+
   featured    Boolean @default(false)
   order       Int     @default(0)
   published   Boolean @default(true)
@@ -496,6 +501,8 @@ model Attraction {
   description   String
   category      String
   imageUrl      String?
+  latitude      Float?
+  longitude     Float?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
   order         Int         @default(0)
@@ -517,6 +524,8 @@ model TourPackage {
   priceKes      Int
   durationDays  Int
   imageUrl      String?
+  latitude      Float?
+  longitude     Float?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id])
   order         Int         @default(0)
@@ -549,6 +558,8 @@ model Accommodation {
   location      String
   priceRange    String?
   imageUrl      String?
+  latitude      Float?
+  longitude     Float?
   destinationId Int
   destination   Destination @relation(fields: [destinationId], references: [id])
   order         Int         @default(0)

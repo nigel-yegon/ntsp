@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ListingDetail } from "@/app/components/marketplace/listing-detail";
 import { BookingRequestForm } from "@/app/components/marketplace/booking-request-form";
 import { InquiryForm } from "@/app/components/marketplace/inquiry-form";
+import { MapEmbed } from "@/app/components/map-embed";
 import {
   AttractionCard,
   AccommodationCard,
@@ -24,7 +25,15 @@ export default async function PackagePage({
   const pkg = await prisma.tourPackage.findUnique({
     where: { slug },
     include: {
-      destination: { select: { name: true, slug: true, county: true } },
+      destination: {
+        select: {
+          name: true,
+          slug: true,
+          county: true,
+          latitude: true,
+          longitude: true,
+        },
+      },
       business: {
         select: {
           businessProfile: {
@@ -47,9 +56,6 @@ export default async function PackagePage({
   const businessName =
     pkg.business?.businessProfile?.businessName ?? "this business";
 
-  // ── Related content: attractions, stays, other packages ──
-  // All filtered to approved businesses and published listings so
-  // no pending or suspended business leaks into the public page.
   const [attractions, stays, relatedPackages] = await Promise.all([
     prisma.attraction.findMany({
       where: {
@@ -109,7 +115,6 @@ export default async function PackagePage({
     }),
   ]);
 
-  // ── Existing thread lookup ──
   let existingThread: {
     id: string;
     updatedAt: Date;
@@ -154,11 +159,12 @@ export default async function PackagePage({
   const heroImage = resolveImageUrl(pkg.imageUrl);
   const countyName = pkg.destination?.county ?? "this region";
   const destinationName = pkg.destination?.name ?? "this destination";
+  const mapLat = pkg.destination?.latitude ?? null;
+  const mapLng = pkg.destination?.longitude ?? null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        {/* Left column: listing + related sections */}
         <div>
           <ListingDetail
             eyebrow="Tour package"
@@ -193,6 +199,26 @@ export default async function PackagePage({
               { label: "Summary", value: pkg.summary },
             ]}
           />
+
+          {/* ── Location map (inherited from destination) ── */}
+          {mapLat != null && mapLng != null && (
+            <section className="mt-8">
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-deep-800 dark:text-cream-100">
+                  Where this trip goes
+                </h2>
+                <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+                  Based around {destinationName}, {countyName} County.
+                </p>
+              </div>
+              <MapEmbed
+                latitude={mapLat}
+                longitude={mapLng}
+                label={`${pkg.title} — ${destinationName}`}
+                height={300}
+              />
+            </section>
+          )}
 
           {attractions.length > 0 && (
             <RelatedSection
@@ -234,7 +260,6 @@ export default async function PackagePage({
           )}
         </div>
 
-        {/* Right column: sticky sidebar */}
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           {canInteract ? (
             <>

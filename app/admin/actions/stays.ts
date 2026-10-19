@@ -16,7 +16,21 @@ export type StayRow = {
   destinationName: string;
   order: number;
   published: boolean;
+  latitude: number | null;
+  longitude: number | null;
 };
+
+function normaliseCoord(
+  value: number | null | undefined,
+  min: number,
+  max: number
+): number | null {
+  if (value == null || typeof value !== "number" || Number.isNaN(value)) {
+    return null;
+  }
+  if (value < min || value > max) return null;
+  return value;
+}
 
 export async function listStays(): Promise<StayRow[]> {
   const rows = await prisma.accommodation.findMany({
@@ -37,6 +51,8 @@ export async function listStays(): Promise<StayRow[]> {
     destinationName: r.destination.name,
     order: 0,
     published: true,
+    latitude: r.latitude,
+    longitude: r.longitude,
   }));
 }
 
@@ -54,13 +70,20 @@ export async function createStay(input?: Partial<StayRow>) {
       priceRange: input?.priceRange ?? null,
       imageUrl: input?.imageUrl ?? null,
       destinationId: input?.destinationId ?? firstDest.id,
+      latitude: normaliseCoord(input?.latitude, -90, 90),
+      longitude: normaliseCoord(input?.longitude, -180, 180),
     },
     include: { destination: { select: { name: true } } },
   });
 
   revalidatePath("/stay");
   revalidatePath("/admin");
-  return { ...created, destinationName: created.destination.name, order: 0, published: true };
+  return {
+    ...created,
+    destinationName: created.destination.name,
+    order: 0,
+    published: true,
+  };
 }
 
 export async function updateStay(id: number, patch: Partial<StayRow>) {
@@ -75,6 +98,12 @@ export async function updateStay(id: number, patch: Partial<StayRow>) {
       priceRange: patch.priceRange,
       imageUrl: patch.imageUrl,
       destinationId: patch.destinationId,
+      ...(patch.latitude !== undefined
+        ? { latitude: normaliseCoord(patch.latitude, -90, 90) }
+        : {}),
+      ...(patch.longitude !== undefined
+        ? { longitude: normaliseCoord(patch.longitude, -180, 180) }
+        : {}),
     },
     include: { destination: { select: { name: true } } },
   });
@@ -82,7 +111,12 @@ export async function updateStay(id: number, patch: Partial<StayRow>) {
   revalidatePath("/admin");
   revalidatePath("/stay");
   revalidatePath(`/stay/${updated.slug}`);
-  return { ...updated, destinationName: updated.destination.name, order: 0, published: true };
+  return {
+    ...updated,
+    destinationName: updated.destination.name,
+    order: 0,
+    published: true,
+  };
 }
 
 export async function deleteStay(id: number) {

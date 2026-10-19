@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { ListingDetail } from "@/app/components/marketplace/listing-detail";
 import { BookingRequestForm } from "@/app/components/marketplace/booking-request-form";
 import { InquiryForm } from "@/app/components/marketplace/inquiry-form";
+import { MapEmbed } from "@/app/components/map-embed";
 import {
   AttractionCard,
   RelatedPackageCard,
@@ -24,7 +25,15 @@ export default async function StayPage({
   const stay = await prisma.accommodation.findUnique({
     where: { slug },
     include: {
-      destination: { select: { name: true, slug: true, county: true } },
+      destination: {
+        select: {
+          name: true,
+          slug: true,
+          county: true,
+          latitude: true,
+          longitude: true,
+        },
+      },
       business: {
         select: {
           businessProfile: {
@@ -47,11 +56,6 @@ export default async function StayPage({
   const businessName =
     stay.business?.businessProfile?.businessName ?? "this business";
 
-  // ── Related content from the stay's destination ──
-  // Attractions and other stays in the same destination, plus tour
-  // packages whose destination shares the county. All filtered to
-  // published, approved content so pending/suspended businesses
-  // never leak onto the public page.
   const [attractions, nearbyStays, packagesInCounty] = await Promise.all([
     prisma.attraction.findMany({
       where: {
@@ -111,7 +115,6 @@ export default async function StayPage({
     }),
   ]);
 
-  // ── Existing thread lookup ──
   let existingThread: {
     id: string;
     updatedAt: Date;
@@ -157,10 +160,16 @@ export default async function StayPage({
   const countyName = stay.destination?.county ?? "this region";
   const destinationName = stay.destination?.name ?? "this destination";
 
+  // ── Inherited coordinates from the parent destination ──
+  // Stays don't have their own lat/lng (yet) — use the destination's
+  // pin as a stand-in. If a stay is materially off the destination
+  // centre, add lat/lng to Accommodation later.
+  const mapLat = stay.destination?.latitude ?? null;
+  const mapLng = stay.destination?.longitude ?? null;
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        {/* Left column: listing + related sections */}
         <div>
           <ListingDetail
             eyebrow={stay.type}
@@ -183,6 +192,28 @@ export default async function StayPage({
               { label: "Destination", value: stay.destination?.name ?? "—" },
             ]}
           />
+
+          {/* ── Location map (inherited from destination) ── */}
+          {mapLat != null && mapLng != null && (
+            <section className="mt-8">
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-deep-800 dark:text-cream-100">
+                  Location
+                </h2>
+                <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+                  {stay.destination?.name
+                    ? `Near ${stay.destination.name}, ${countyName} County`
+                    : countyName}
+                </p>
+              </div>
+              <MapEmbed
+                latitude={mapLat}
+                longitude={mapLng}
+                label={`${stay.name} — ${stay.destination?.name ?? countyName}`}
+                height={300}
+              />
+            </section>
+          )}
 
           {attractions.length > 0 && (
             <RelatedSection
@@ -224,7 +255,6 @@ export default async function StayPage({
           )}
         </div>
 
-        {/* Right column: sticky sidebar */}
         <aside className="space-y-6 lg:sticky lg:top-6 lg:self-start">
           {canInteract ? (
             <>

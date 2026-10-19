@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { CardImage } from "@/app/components/card-image";
+import { MapEmbed } from "@/app/components/map-embed";
 import { resolveImageUrl } from "@/lib/image-url";
 
 type Params = Promise<{ slug: string }>;
@@ -27,7 +28,6 @@ export default async function ExperiencePage({ params }: { params: Params }) {
 
   if (!attraction) notFound();
 
-  // Other attractions at the same destination
   const nearby = await prisma.attraction.findMany({
     where: {
       destinationId: attraction.destinationId,
@@ -37,10 +37,11 @@ export default async function ExperiencePage({ params }: { params: Params }) {
   });
 
   const heroImage = resolveImageUrl(attraction.imageUrl);
+  const mapLat = attraction.destination.latitude;
+  const mapLng = attraction.destination.longitude;
 
   return (
     <div>
-      {/* ─── HERO BAND — image-backed ──────────────────────── */}
       <section className="relative overflow-hidden border-b border-deep-200 dark:border-deep-800">
         <div className="hero-band absolute inset-0" aria-hidden />
 
@@ -92,11 +93,31 @@ export default async function ExperiencePage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* ─── CONTENT ───────────────────────────────────────── */}
       <article className="mx-auto max-w-3xl px-4 py-12">
         <p className="text-lg leading-relaxed text-deep-700 dark:text-cream-300">
           {attraction.description}
         </p>
+
+        {/* ── Getting there — inherited from destination ── */}
+        {mapLat != null && mapLng != null && (
+          <section className="mt-10">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold text-deep-800 dark:text-cream-100">
+                Getting there
+              </h2>
+              <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+                Located in {attraction.destination.name},{" "}
+                {attraction.destination.county} County.
+              </p>
+            </div>
+            <MapEmbed
+              latitude={mapLat}
+              longitude={mapLng}
+              label={`${attraction.name} — ${attraction.destination.name}`}
+              height={300}
+            />
+          </section>
+        )}
 
         {nearby.length > 0 && (
           <section className="mt-14 border-t border-deep-200 pt-8 dark:border-deep-800">

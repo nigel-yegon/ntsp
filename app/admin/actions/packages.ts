@@ -17,7 +17,21 @@ export type PackageRow = {
   destinationName: string;
   order: number;
   published: boolean;
+  latitude: number | null;
+  longitude: number | null;
 };
+
+function normaliseCoord(
+  value: number | null | undefined,
+  min: number,
+  max: number
+): number | null {
+  if (value == null || typeof value !== "number" || Number.isNaN(value)) {
+    return null;
+  }
+  if (value < min || value > max) return null;
+  return value;
+}
 
 export async function listPackages(): Promise<PackageRow[]> {
   const rows = await prisma.tourPackage.findMany({
@@ -39,6 +53,8 @@ export async function listPackages(): Promise<PackageRow[]> {
     destinationName: r.destination.name,
     order: 0,
     published: true,
+    latitude: r.latitude,
+    longitude: r.longitude,
   }));
 }
 
@@ -57,13 +73,20 @@ export async function createPackage(input?: Partial<PackageRow>) {
       imageUrl: input?.imageUrl ?? null,
       featured: input?.featured ?? false,
       destinationId: input?.destinationId ?? firstDest.id,
+      latitude: normaliseCoord(input?.latitude, -90, 90),
+      longitude: normaliseCoord(input?.longitude, -180, 180),
     },
     include: { destination: { select: { name: true } } },
   });
 
   revalidatePath("/packages");
   revalidatePath("/admin");
-  return { ...created, destinationName: created.destination.name, order: 0, published: true };
+  return {
+    ...created,
+    destinationName: created.destination.name,
+    order: 0,
+    published: true,
+  };
 }
 
 export async function updatePackage(id: number, patch: Partial<PackageRow>) {
@@ -79,6 +102,12 @@ export async function updatePackage(id: number, patch: Partial<PackageRow>) {
       imageUrl: patch.imageUrl,
       featured: patch.featured,
       destinationId: patch.destinationId,
+      ...(patch.latitude !== undefined
+        ? { latitude: normaliseCoord(patch.latitude, -90, 90) }
+        : {}),
+      ...(patch.longitude !== undefined
+        ? { longitude: normaliseCoord(patch.longitude, -180, 180) }
+        : {}),
     },
     include: { destination: { select: { name: true } } },
   });
@@ -86,7 +115,12 @@ export async function updatePackage(id: number, patch: Partial<PackageRow>) {
   revalidatePath("/admin");
   revalidatePath("/packages");
   revalidatePath(`/packages/${updated.slug}`);
-  return { ...updated, destinationName: updated.destination.name, order: 0, published: true };
+  return {
+    ...updated,
+    destinationName: updated.destination.name,
+    order: 0,
+    published: true,
+  };
 }
 
 export async function deletePackage(id: number) {
