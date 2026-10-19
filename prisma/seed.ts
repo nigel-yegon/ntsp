@@ -11,12 +11,6 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-/**
- * Unsplash CDN helper. Each photo ID is a stable Unsplash photo;
- * Unsplash's CDN serves them without an API key or rate limit for
- * moderate use. Swap these for your own CDN URLs when you have
- * real photography — everything flows through `img()` below.
- */
 function img(photoId: string, width = 1200, height = 800): string {
   return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=${width}&h=${height}&q=80`;
 }
@@ -39,7 +33,7 @@ async function main() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BUSINESS & CUSTOMER SEEDS — unchanged
+// BUSINESS & CUSTOMER SEEDS
 // ═══════════════════════════════════════════════════════════════
 
 const BUSINESS_SEEDS = [
@@ -114,32 +108,36 @@ const CUSTOMER_SEEDS = [
 
 async function seedDestinations() {
   const destinations = [
-    { name: "Maasai Mara National Reserve", slug: "maasai-mara", county: "Narok", description: "Home to the Great Migration and the Big Five, the Maasai Mara is Kenya's most iconic wildlife destination.", imageUrl: img("photo-1516426122078-c23e76319801"), featured: true },
-    { name: "Amboseli National Park", slug: "amboseli", county: "Kajiado", description: "Famous for its large elephant herds and stunning views of Mount Kilimanjaro across the border in Tanzania.", imageUrl: img("photo-1547970810-dc1eac37d174"), featured: true },
-    { name: "Diani Beach", slug: "diani-beach", county: "Kwale", description: "Award-winning white-sand beach on the Indian Ocean, perfect for relaxation, water sports, and coral reef diving.", imageUrl: img("photo-1507525428034-b723cf961d3e"), featured: true },
-    { name: "Lake Nakuru National Park", slug: "lake-nakuru", county: "Nakuru", description: "Famous for its flamingos and rhino sanctuary, set around a shallow alkaline lake in the Great Rift Valley.", imageUrl: img("photo-1518709268805-4e9042af9f23"), featured: false },
-    { name: "Nairobi", slug: "nairobi", county: "Nairobi", description: "Kenya's vibrant capital, known as the 'Green City in the Sun', home to Nairobi National Park and rich cultural experiences.", imageUrl: img("photo-1611348586804-61bf6c080437"), featured: false },
-    { name: "Tsavo East National Park", slug: "tsavo-east", county: "Taita-Taveta", description: "One of Kenya's largest and oldest parks, known for its red elephants and vast arid plains.", imageUrl: img("photo-1564760055775-d63b17a55c44"), featured: true },
-    { name: "Tsavo West National Park", slug: "tsavo-west", county: "Taita-Taveta", description: "Volcanic hills, lava flows, and the crystal-clear Mzima Springs, home to hippos and crocodiles.", imageUrl: img("photo-1549366021-9f761d450615"), featured: false },
-    { name: "Samburu National Reserve", slug: "samburu", county: "Samburu", description: "Semi-arid wilderness along the Ewaso Ng'iro river, home to the Samburu Special Five.", imageUrl: img("photo-1547471080-7cc2caa01a7e"), featured: true },
-    { name: "Lamu Old Town", slug: "lamu", county: "Lamu", description: "UNESCO World Heritage Site and the oldest continuously inhabited Swahili settlement in East Africa.", imageUrl: img("photo-1571407970349-bc81e7e96d47"), featured: true },
-    { name: "Mount Kenya National Park", slug: "mount-kenya", county: "Nyeri", description: "Africa's second-highest mountain, with glaciers, alpine meadows, and a UNESCO-listed natural landscape.", imageUrl: img("photo-1519681393784-d120267933ba"), featured: false },
-    { name: "Hell's Gate National Park", slug: "hells-gate", county: "Nakuru", description: "One of the few Kenyan parks where you can walk, cycle, and climb alongside wildlife, with dramatic geothermal scenery.", imageUrl: img("photo-1501785888041-af3ef285b470"), featured: false },
-    { name: "Lake Naivasha", slug: "lake-naivasha", county: "Nakuru", description: "Freshwater lake in the Rift Valley with abundant birdlife, hippos, and boat safaris to Crescent Island.", imageUrl: img("photo-1544551763-46a013bb70d5"), featured: false },
-    { name: "Lake Baringo", slug: "lake-baringo", county: "Baringo", description: "One of the Rift Valley's two freshwater lakes, home to over 470 bird species and crocodile-filled waters.", imageUrl: img("photo-1500375592092-40eb2168fd21"), featured: false },
-    { name: "Lake Bogoria", slug: "lake-bogoria", county: "Baringo", description: "Alkaline lake famous for its hot springs, geysers, and huge seasonal flocks of lesser flamingos.", imageUrl: img("photo-1516214104703-d870798883c5"), featured: false },
-    { name: "Nairobi National Park", slug: "nairobi-national-park", county: "Nairobi", description: "The only national park within a capital city — a unique blend of wildlife and urban skyline.", imageUrl: img("photo-1547471080-7cc2caa01a7e"), featured: true },
-    { name: "Watamu Marine National Park", slug: "watamu", county: "Kilifi", description: "Protected coral reef and turtle nesting site, part of the Malindi-Watamu Biosphere Reserve.", imageUrl: img("photo-1544551763-77ef2d0cfc6c"), featured: false },
-    { name: "Malindi", slug: "malindi", county: "Kilifi", description: "Historic coastal town with Italian influence, a marine park, and easy access to Gedi ruins.", imageUrl: img("photo-1519046904884-53103b34b206"), featured: false },
-    { name: "Kisite-Mpunguti Marine Park", slug: "kisite-mpunguti", county: "Kwale", description: "Kenya's premier marine park, famous for dolphin sightings, snorkeling, and coral gardens.", imageUrl: img("photo-1583212292454-1fe6229603b7"), featured: true },
-    { name: "Nyahururu Falls", slug: "nyahururu-falls", county: "Laikipia", description: "Also known as Thomson's Falls — a 74-metre waterfall on the Ewaso Ng'iro river, a popular stopover.", imageUrl: img("photo-1432405972618-c60b0225b8f9"), featured: false },
-    { name: "Kakamega Forest", slug: "kakamega-forest", county: "Kakamega", description: "Kenya's only remaining tropical rainforest, with over 400 butterfly species and 300 bird species.", imageUrl: img("photo-1441974231531-c6227db76b6e"), featured: false },
+    { name: "Maasai Mara National Reserve", slug: "maasai-mara", county: "Narok", description: "Home to the Great Migration and the Big Five, the Maasai Mara is Kenya's most iconic wildlife destination.", imageUrl: img("photo-1516426122078-c23e76319801"), latitude: -1.4850, longitude: 35.3720, featured: true },
+    { name: "Amboseli National Park", slug: "amboseli", county: "Kajiado", description: "Famous for its large elephant herds and stunning views of Mount Kilimanjaro across the border in Tanzania.", imageUrl: img("photo-1547970810-dc1eac37d174"), latitude: -2.6527, longitude: 37.2606, featured: true },
+    { name: "Diani Beach", slug: "diani-beach", county: "Kwale", description: "Award-winning white-sand beach on the Indian Ocean, perfect for relaxation, water sports, and coral reef diving.", imageUrl: img("photo-1507525428034-b723cf961d3e"), latitude: -4.2927, longitude: 39.5794, featured: true },
+    { name: "Lake Nakuru National Park", slug: "lake-nakuru", county: "Nakuru", description: "Famous for its flamingos and rhino sanctuary, set around a shallow alkaline lake in the Great Rift Valley.", imageUrl: img("photo-1518709268805-4e9042af9f23"), latitude: -0.3667, longitude: 36.0833, featured: false },
+    { name: "Nairobi", slug: "nairobi", county: "Nairobi", description: "Kenya's vibrant capital, known as the 'Green City in the Sun', home to Nairobi National Park and rich cultural experiences.", imageUrl: img("photo-1611348586804-61bf6c080437"), latitude: -1.2921, longitude: 36.8219, featured: false },
+    { name: "Tsavo East National Park", slug: "tsavo-east", county: "Taita-Taveta", description: "One of Kenya's largest and oldest parks, known for its red elephants and vast arid plains.", imageUrl: img("photo-1564760055775-d63b17a55c44"), latitude: -3.0000, longitude: 38.5000, featured: true },
+    { name: "Tsavo West National Park", slug: "tsavo-west", county: "Taita-Taveta", description: "Volcanic hills, lava flows, and the crystal-clear Mzima Springs, home to hippos and crocodiles.", imageUrl: img("photo-1549366021-9f761d450615"), latitude: -3.4167, longitude: 38.0000, featured: false },
+    { name: "Samburu National Reserve", slug: "samburu", county: "Samburu", description: "Semi-arid wilderness along the Ewaso Ng'iro river, home to the Samburu Special Five.", imageUrl: img("photo-1547471080-7cc2caa01a7e"), latitude: 0.5833, longitude: 37.5333, featured: true },
+    { name: "Lamu Old Town", slug: "lamu", county: "Lamu", description: "UNESCO World Heritage Site and the oldest continuously inhabited Swahili settlement in East Africa.", imageUrl: img("photo-1571407970349-bc81e7e96d47"), latitude: -2.2717, longitude: 40.9020, featured: true },
+    { name: "Mount Kenya National Park", slug: "mount-kenya", county: "Nyeri", description: "Africa's second-highest mountain, with glaciers, alpine meadows, and a UNESCO-listed natural landscape.", imageUrl: img("photo-1519681393784-d120267933ba"), latitude: -0.1521, longitude: 37.3084, featured: false },
+    { name: "Hell's Gate National Park", slug: "hells-gate", county: "Nakuru", description: "One of the few Kenyan parks where you can walk, cycle, and climb alongside wildlife, with dramatic geothermal scenery.", imageUrl: img("photo-1501785888041-af3ef285b470"), latitude: -0.9167, longitude: 36.3167, featured: false },
+    { name: "Lake Naivasha", slug: "lake-naivasha", county: "Nakuru", description: "Freshwater lake in the Rift Valley with abundant birdlife, hippos, and boat safaris to Crescent Island.", imageUrl: img("photo-1544551763-46a013bb70d5"), latitude: -0.7667, longitude: 36.3667, featured: false },
+    { name: "Lake Baringo", slug: "lake-baringo", county: "Baringo", description: "One of the Rift Valley's two freshwater lakes, home to over 470 bird species and crocodile-filled waters.", imageUrl: img("photo-1500375592092-40eb2168fd21"), latitude: 0.4667, longitude: 36.1000, featured: false },
+    { name: "Lake Bogoria", slug: "lake-bogoria", county: "Baringo", description: "Alkaline lake famous for its hot springs, geysers, and huge seasonal flocks of lesser flamingos.", imageUrl: img("photo-1516214104703-d870798883c5"), latitude: 0.2500, longitude: 36.1000, featured: false },
+    { name: "Nairobi National Park", slug: "nairobi-national-park", county: "Nairobi", description: "The only national park within a capital city — a unique blend of wildlife and urban skyline.", imageUrl: img("photo-1547471080-7cc2caa01a7e"), latitude: -1.3733, longitude: 36.8583, featured: true },
+    { name: "Watamu Marine National Park", slug: "watamu", county: "Kilifi", description: "Protected coral reef and turtle nesting site, part of the Malindi-Watamu Biosphere Reserve.", imageUrl: img("photo-1544551763-77ef2d0cfc6c"), latitude: -3.3667, longitude: 40.0167, featured: false },
+    { name: "Malindi", slug: "malindi", county: "Kilifi", description: "Historic coastal town with Italian influence, a marine park, and easy access to Gedi ruins.", imageUrl: img("photo-1519046904884-53103b34b206"), latitude: -3.2192, longitude: 40.1169, featured: false },
+    { name: "Kisite-Mpunguti Marine Park", slug: "kisite-mpunguti", county: "Kwale", description: "Kenya's premier marine park, famous for dolphin sightings, snorkeling, and coral gardens.", imageUrl: img("photo-1583212292454-1fe6229603b7"), latitude: -4.7167, longitude: 39.3667, featured: true },
+    { name: "Nyahururu Falls", slug: "nyahururu-falls", county: "Laikipia", description: "Also known as Thomson's Falls — a 74-metre waterfall on the Ewaso Ng'iro river, a popular stopover.", imageUrl: img("photo-1432405972618-c60b0225b8f9"), latitude: 0.0333, longitude: 36.3667, featured: false },
+    { name: "Kakamega Forest", slug: "kakamega-forest", county: "Kakamega", description: "Kenya's only remaining tropical rainforest, with over 400 butterfly species and 300 bird species.", imageUrl: img("photo-1441974231531-c6227db76b6e"), latitude: 0.2500, longitude: 34.8667, featured: false },
   ];
 
   for (const d of destinations) {
     await prisma.destination.upsert({
       where: { slug: d.slug },
-      update: { imageUrl: d.imageUrl },
+      update: {
+        imageUrl: d.imageUrl,
+        latitude: d.latitude,
+        longitude: d.longitude,
+      },
       create: d,
     });
   }
@@ -165,35 +163,39 @@ async function seedAttractions() {
   const destinationMap = await getDestinationMap();
 
   const attractions = [
-    { name: "Great Wildebeest Migration", slug: "great-migration", description: "Witness over 1.5 million wildebeest and zebras cross the Mara River — one of nature's greatest spectacles.", category: "Wildlife", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1534177616072-ef7dc120449d") },
-    { name: "Maasai Cultural Village Visit", slug: "maasai-cultural-village", description: "Immerse yourself in Maasai traditions, music, dance, and beadwork at an authentic manyatta.", category: "Cultural", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1516450360452-9312f5e86fc7") },
-    { name: "Hot Air Balloon Safari", slug: "mara-balloon-safari", description: "Drift over the Mara plains at dawn and land to a champagne bush breakfast.", category: "Adventure", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1521405924368-64c5b84bec60") },
-    { name: "Elephant Research Camp", slug: "amboseli-elephants", description: "Visit the Amboseli Trust for Elephants and learn about the world's longest-running elephant study.", category: "Wildlife", destinationId: destinationMap["amboseli"].id, imageUrl: img("photo-1564760055775-d63b17a55c44") },
-    { name: "Mount Kilimanjaro Views", slug: "kilimanjaro-views", description: "Enjoy spectacular views of Africa's highest peak at sunrise and sunset from Observation Hill.", category: "Adventure", destinationId: destinationMap["amboseli"].id, imageUrl: img("photo-1589553416260-f586c8f1514f") },
-    { name: "Diani Beach Snorkeling", slug: "diani-snorkeling", description: "Explore vibrant coral reefs and swim with tropical fish at Kisite-Mpunguti Marine Park.", category: "Beach", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1544551763-46a013bb70d5") },
-    { name: "Sunset Dhow Cruise", slug: "diani-dhow-cruise", description: "Sail a traditional Swahili dhow along the coast as the sun sinks into the Indian Ocean.", category: "Beach", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1502680390469-be75c86b636f") },
-    { name: "Skydiving over Diani", slug: "diani-skydiving", description: "Tandem skydive from 12,000 feet with views of the reef, coastline, and inland savannah.", category: "Adventure", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1521673461164-de4def04bb98") },
-    { name: "Flamingo Watching", slug: "nakuru-flamingos", description: "See thousands of flamingos and over 400 bird species along the shores of Lake Nakuru.", category: "Wildlife", destinationId: destinationMap["lake-nakuru"].id, imageUrl: img("photo-1518709268805-4e9042af9f23") },
-    { name: "Rhino Tracking", slug: "nakuru-rhino-tracking", description: "Track both black and white rhinos in one of Kenya's most successful sanctuaries.", category: "Wildlife", destinationId: destinationMap["lake-nakuru"].id, imageUrl: img("photo-1549366021-9f761d450615") },
-    { name: "Nairobi National Park Safari", slug: "nairobi-safari", description: "The only national park within a capital city — spot rhinos and lions with skyscrapers on the horizon.", category: "Wildlife", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1547471080-7cc2caa01a7e") },
-    { name: "Giraffe Centre", slug: "giraffe-centre", description: "Hand-feed endangered Rothschild giraffes at this world-famous conservation centre.", category: "Cultural", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1547721064-da6cfb341d50") },
-    { name: "David Sheldrick Elephant Orphanage", slug: "sheldrick-elephants", description: "Meet orphaned baby elephants and learn about their rehabilitation before release into the wild.", category: "Wildlife", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1564760055775-d63b17a55c44") },
-    { name: "Karen Blixen Museum", slug: "karen-blixen-museum", description: "Step into the world of Out of Africa at the former home of the Danish author.", category: "Cultural", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1518709268805-4e9042af9f23") },
-    { name: "Red Elephant Safari", slug: "tsavo-red-elephants", description: "Spot the famous red-dusted elephants of Tsavo, colored by the park's iron-rich soil.", category: "Wildlife", destinationId: destinationMap["tsavo-east"].id, imageUrl: img("photo-1564760055775-d63b17a55c44") },
-    { name: "Lugard Falls", slug: "lugard-falls", description: "Rocky rapids on the Galana River, surrounded by dramatic black lava formations.", category: "Adventure", destinationId: destinationMap["tsavo-east"].id, imageUrl: img("photo-1432405972618-c60b0225b8f9") },
-    { name: "Mzima Springs", slug: "mzima-springs", description: "Crystal-clear springs producing 250 million litres of water a day, with an underwater viewing chamber.", category: "Wildlife", destinationId: destinationMap["tsavo-west"].id, imageUrl: img("photo-1544551763-77ef2d0cfc6c") },
-    { name: "Chyulu Hills", slug: "chyulu-hills", description: "Volcanic hills with lava tube caves and panoramic views toward Kilimanjaro.", category: "Adventure", destinationId: destinationMap["tsavo-west"].id, imageUrl: img("photo-1501785888041-af3ef285b470") },
-    { name: "Samburu Special Five", slug: "samburu-special-five", description: "See the Grevy's zebra, reticulated giraffe, Beisa oryx, gerenuk, and Somali ostrich — all unique to northern Kenya.", category: "Wildlife", destinationId: destinationMap["samburu"].id, imageUrl: img("photo-1547471080-7cc2caa01a7e") },
-    { name: "Lamu Old Town Walking Tour", slug: "lamu-walking-tour", description: "Wander the narrow streets of the UNESCO-listed Swahili settlement, visiting historic mosques and houses.", category: "Cultural", destinationId: destinationMap["lamu"].id, imageUrl: img("photo-1571407970349-bc81e7e96d47") },
-    { name: "Dhow Sailing to Shela", slug: "lamu-dhow-shela", description: "Sail by traditional dhow to the tranquil beaches of Shela and enjoy a Swahili seafood lunch.", category: "Beach", destinationId: destinationMap["lamu"].id, imageUrl: img("photo-1502680390469-be75c86b636f") },
-    { name: "Point Lenana Trek", slug: "point-lenana-trek", description: "A four-day trek to Point Lenana (4,985m), the highest point reachable without technical climbing.", category: "Adventure", destinationId: destinationMap["mount-kenya"].id, imageUrl: img("photo-1519681393784-d120267933ba") },
-    { name: "Turtle Watching at Watamu", slug: "watamu-turtles", description: "Watch green and hawksbill turtles nest on Watamu's beaches — one of Kenya's oldest marine conservation efforts.", category: "Wildlife", destinationId: destinationMap["watamu"].id, imageUrl: img("photo-1518467166778-b88f373ffec7") },
+    { name: "Great Wildebeest Migration", slug: "great-migration", description: "Witness over 1.5 million wildebeest and zebras cross the Mara River — one of nature's greatest spectacles.", category: "Wildlife", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1534177616072-ef7dc120449d"), latitude: -1.5000, longitude: 35.0000 },
+    { name: "Maasai Cultural Village Visit", slug: "maasai-cultural-village", description: "Immerse yourself in Maasai traditions, music, dance, and beadwork at an authentic manyatta.", category: "Cultural", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1516450360452-9312f5e86fc7"), latitude: -1.4300, longitude: 35.3600 },
+    { name: "Hot Air Balloon Safari", slug: "mara-balloon-safari", description: "Drift over the Mara plains at dawn and land to a champagne bush breakfast.", category: "Adventure", destinationId: destinationMap["maasai-mara"].id, imageUrl: img("photo-1521405924368-64c5b84bec60"), latitude: -1.4500, longitude: 35.4000 },
+    { name: "Elephant Research Camp", slug: "amboseli-elephants", description: "Visit the Amboseli Trust for Elephants and learn about the world's longest-running elephant study.", category: "Wildlife", destinationId: destinationMap["amboseli"].id, imageUrl: img("photo-1564760055775-d63b17a55c44"), latitude: -2.6500, longitude: 37.2700 },
+    { name: "Mount Kilimanjaro Views", slug: "kilimanjaro-views", description: "Enjoy spectacular views of Africa's highest peak at sunrise and sunset from Observation Hill.", category: "Adventure", destinationId: destinationMap["amboseli"].id, imageUrl: img("photo-1589553416260-f586c8f1514f"), latitude: -2.6600, longitude: 37.3000 },
+    { name: "Diani Beach Snorkeling", slug: "diani-snorkeling", description: "Explore vibrant coral reefs and swim with tropical fish at Kisite-Mpunguti Marine Park.", category: "Beach", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1544551763-46a013bb70d5"), latitude: -4.7100, longitude: 39.3700 },
+    { name: "Sunset Dhow Cruise", slug: "diani-dhow-cruise", description: "Sail a traditional Swahili dhow along the coast as the sun sinks into the Indian Ocean.", category: "Beach", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1502680390469-be75c86b636f"), latitude: -4.3000, longitude: 39.5800 },
+    { name: "Skydiving over Diani", slug: "diani-skydiving", description: "Tandem skydive from 12,000 feet with views of the reef, coastline, and inland savannah.", category: "Adventure", destinationId: destinationMap["diani-beach"].id, imageUrl: img("photo-1521673461164-de4def04bb98"), latitude: -4.2900, longitude: 39.5900 },
+    { name: "Flamingo Watching", slug: "nakuru-flamingos", description: "See thousands of flamingos and over 400 bird species along the shores of Lake Nakuru.", category: "Wildlife", destinationId: destinationMap["lake-nakuru"].id, imageUrl: img("photo-1518709268805-4e9042af9f23"), latitude: -0.3700, longitude: 36.0900 },
+    { name: "Rhino Tracking", slug: "nakuru-rhino-tracking", description: "Track both black and white rhinos in one of Kenya's most successful sanctuaries.", category: "Wildlife", destinationId: destinationMap["lake-nakuru"].id, imageUrl: img("photo-1549366021-9f761d450615"), latitude: -0.3800, longitude: 36.0800 },
+    { name: "Nairobi National Park Safari", slug: "nairobi-safari", description: "The only national park within a capital city — spot rhinos and lions with skyscrapers on the horizon.", category: "Wildlife", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1547471080-7cc2caa01a7e"), latitude: -1.3700, longitude: 36.8400 },
+    { name: "Giraffe Centre", slug: "giraffe-centre", description: "Hand-feed endangered Rothschild giraffes at this world-famous conservation centre.", category: "Cultural", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1547721064-da6cfb341d50"), latitude: -1.3765, longitude: 36.7426 },
+    { name: "David Sheldrick Elephant Orphanage", slug: "sheldrick-elephants", description: "Meet orphaned baby elephants and learn about their rehabilitation before release into the wild.", category: "Wildlife", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1564760055775-d63b17a55c44"), latitude: -1.3800, longitude: 36.8300 },
+    { name: "Karen Blixen Museum", slug: "karen-blixen-museum", description: "Step into the world of Out of Africa at the former home of the Danish author.", category: "Cultural", destinationId: destinationMap["nairobi"].id, imageUrl: img("photo-1518709268805-4e9042af9f23"), latitude: -1.3500, longitude: 36.7100 },
+    { name: "Red Elephant Safari", slug: "tsavo-red-elephants", description: "Spot the famous red-dusted elephants of Tsavo, colored by the park's iron-rich soil.", category: "Wildlife", destinationId: destinationMap["tsavo-east"].id, imageUrl: img("photo-1564760055775-d63b17a55c44"), latitude: -3.0000, longitude: 38.5000 },
+    { name: "Lugard Falls", slug: "lugard-falls", description: "Rocky rapids on the Galana River, surrounded by dramatic black lava formations.", category: "Adventure", destinationId: destinationMap["tsavo-east"].id, imageUrl: img("photo-1432405972618-c60b0225b8f9"), latitude: -2.9800, longitude: 38.5300 },
+    { name: "Mzima Springs", slug: "mzima-springs", description: "Crystal-clear springs producing 250 million litres of water a day, with an underwater viewing chamber.", category: "Wildlife", destinationId: destinationMap["tsavo-west"].id, imageUrl: img("photo-1544551763-77ef2d0cfc6c"), latitude: -3.4300, longitude: 37.9900 },
+    { name: "Chyulu Hills", slug: "chyulu-hills", description: "Volcanic hills with lava tube caves and panoramic views toward Kilimanjaro.", category: "Adventure", destinationId: destinationMap["tsavo-west"].id, imageUrl: img("photo-1501785888041-af3ef285b470"), latitude: -3.4500, longitude: 38.0100 },
+    { name: "Samburu Special Five", slug: "samburu-special-five", description: "See the Grevy's zebra, reticulated giraffe, Beisa oryx, gerenuk, and Somali ostrich — all unique to northern Kenya.", category: "Wildlife", destinationId: destinationMap["samburu"].id, imageUrl: img("photo-1547471080-7cc2caa01a7e"), latitude: 0.5800, longitude: 37.5300 },
+    { name: "Lamu Old Town Walking Tour", slug: "lamu-walking-tour", description: "Wander the narrow streets of the UNESCO-listed Swahili settlement, visiting historic mosques and houses.", category: "Cultural", destinationId: destinationMap["lamu"].id, imageUrl: img("photo-1571407970349-bc81e7e96d47"), latitude: -2.2710, longitude: 40.9020 },
+    { name: "Dhow Sailing to Shela", slug: "lamu-dhow-shela", description: "Sail by traditional dhow to the tranquil beaches of Shela and enjoy a Swahili seafood lunch.", category: "Beach", destinationId: destinationMap["lamu"].id, imageUrl: img("photo-1502680390469-be75c86b636f"), latitude: -2.2760, longitude: 40.9100 },
+    { name: "Point Lenana Trek", slug: "point-lenana-trek", description: "A four-day trek to Point Lenana (4,985m), the highest point reachable without technical climbing.", category: "Adventure", destinationId: destinationMap["mount-kenya"].id, imageUrl: img("photo-1519681393784-d120267933ba"), latitude: -0.1600, longitude: 37.3100 },
+    { name: "Turtle Watching at Watamu", slug: "watamu-turtles", description: "Watch green and hawksbill turtles nest on Watamu's beaches — one of Kenya's oldest marine conservation efforts.", category: "Wildlife", destinationId: destinationMap["watamu"].id, imageUrl: img("photo-1518467166778-b88f373ffec7"), latitude: -3.3700, longitude: 40.0200 },
   ];
 
   for (const a of attractions) {
     await prisma.attraction.upsert({
       where: { slug: a.slug },
-      update: { imageUrl: a.imageUrl },
+      update: {
+        imageUrl: a.imageUrl,
+        latitude: a.latitude,
+        longitude: a.longitude,
+      },
       create: a,
     });
   }
@@ -209,34 +211,38 @@ async function seedTourPackages() {
   const destinationMap = await getDestinationMap();
 
   const packages = [
-    { title: "3-Day Maasai Mara Safari", slug: "3-day-maasai-mara", summary: "Game drives in the world's most famous wildlife reserve.", description: "Enjoy three days of thrilling game drives in the Maasai Mara, with chances to see lions, elephants, and the Big Five. Includes full-board accommodation in a safari lodge, park fees, and a professional guide.", priceKes: 37060, durationDays: 3, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, featured: true },
-    { title: "12-Hour Amboseli Day Trip", slug: "amboseli-day-trip", summary: "A quick escape to see elephants against Mount Kilimanjaro.", description: "Perfect for travellers short on time. Fly from Nairobi to Amboseli, enjoy a full-day game drive, lunch, and return the same evening.", priceKes: 65500, durationDays: 1, imageUrl: img("photo-1547970810-dc1eac37d174"), destinationId: destinationMap["amboseli"].id, featured: true },
-    { title: "5-Day Diani Beach Retreat", slug: "5-day-diani-retreat", summary: "Relax on Kenya's best beach with snorkeling and dhow cruises.", description: "Five days of sun, sand, and sea at Diani Beach. Includes snorkeling at Kisite Marine Park, a sunset dhow cruise, and beachfront resort accommodation.", priceKes: 89999, durationDays: 5, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, featured: false },
-    { title: "Nairobi City & Safari Experience", slug: "nairobi-city-safari", summary: "Explore Nairobi's culture, wildlife, and cuisine in 2 days.", description: "Visit Nairobi National Park, the Giraffe Centre, the David Sheldrick Elephant Orphanage, and the Maasai Market. Includes city hotel accommodation and meals.", priceKes: 28500, durationDays: 2, imageUrl: img("photo-1611348586804-61bf6c080437"), destinationId: destinationMap["nairobi"].id, featured: false },
-    { title: "Lake Nakuru & Rift Valley Explorer", slug: "nakuru-rift-valley", summary: "Flamingos, rhinos, and stunning Rift Valley scenery.", description: "A 2-day safari to Lake Nakuru National Park, known for its flamingo flocks and rhino sanctuary. Includes a stop at the Great Rift Valley viewpoint.", priceKes: 32000, durationDays: 2, imageUrl: img("photo-1518709268805-4e9042af9f23"), destinationId: destinationMap["lake-nakuru"].id, featured: false },
-    { title: "7-Day Kenya Highlights Safari", slug: "7-day-kenya-highlights", summary: "Mara, Nakuru, and Amboseli in one classic week-long trip.", description: "The perfect introduction to Kenya's safari circuit. Seven days visiting Maasai Mara, Lake Nakuru, and Amboseli, with all park fees, full-board lodging, and a professional driver-guide.", priceKes: 189000, durationDays: 7, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, featured: true },
-    { title: "10-Day Bush & Beach", slug: "10-day-bush-and-beach", summary: "Safari, then sand — the classic Kenyan honeymoon.", description: "Four days of game drives in the Mara and Amboseli, followed by five days of beachside relaxation at Diani. Includes internal flights and all transfers.", priceKes: 245000, durationDays: 10, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, featured: true },
-    { title: "4-Day Tsavo East & West", slug: "4-day-tsavo", summary: "Red elephants, lava flows, and Mzima Springs.", description: "Explore both halves of Tsavo — from the red elephants of Tsavo East to the volcanic landscapes and Mzima Springs of Tsavo West.", priceKes: 78000, durationDays: 4, imageUrl: img("photo-1564760055775-d63b17a55c44"), destinationId: destinationMap["tsavo-east"].id, featured: false },
-    { title: "5-Day Samburu & Laikipia", slug: "5-day-samburu-laikipia", summary: "Northern Kenya's Special Five and community conservancies.", description: "Discover the arid beauty of Samburu and the community-run conservancies of Laikipia, home to the Samburu Special Five and Kenya's largest elephant populations.", priceKes: 132000, durationDays: 5, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["samburu"].id, featured: true },
-    { title: "4-Day Lamu Cultural Escape", slug: "4-day-lamu", summary: "Swahili history, dhow sailing, and quiet beaches.", description: "Explore the UNESCO-listed Lamu Old Town, sail by traditional dhow to Shela, and unwind on untouched Indian Ocean beaches.", priceKes: 68000, durationDays: 4, imageUrl: img("photo-1571407970349-bc81e7e96d47"), destinationId: destinationMap["lamu"].id, featured: false },
-    { title: "6-Day Mount Kenya Trek", slug: "6-day-mount-kenya-trek", summary: "Summit Point Lenana via the Sirimon and Chogoria routes.", description: "A six-day trek through alpine meadows and glacial valleys, summiting Point Lenana (4,985m) at sunrise. Includes mountain huts, guides, and porters.", priceKes: 95000, durationDays: 6, imageUrl: img("photo-1519681393784-d120267933ba"), destinationId: destinationMap["mount-kenya"].id, featured: false },
-    { title: "3-Day Hell's Gate & Naivasha", slug: "3-day-hells-gate-naivasha", summary: "Cycle among wildlife and boat past hippos.", description: "Cycle through Hell's Gate National Park alongside zebras and giraffes, then take a boat safari on Lake Naivasha to see hippos and fish eagles.", priceKes: 42000, durationDays: 3, imageUrl: img("photo-1501785888041-af3ef285b470"), destinationId: destinationMap["hells-gate"].id, featured: false },
-    { title: "5-Day Watamu Beach & Marine Park", slug: "5-day-watamu", summary: "Snorkeling, turtles, and the Italian-inflected coast.", description: "Explore the protected coral gardens of Watamu Marine National Park, watch turtles nest, and enjoy the laid-back coastal town of Watamu.", priceKes: 82000, durationDays: 5, imageUrl: img("photo-1544551763-77ef2d0cfc6c"), destinationId: destinationMap["watamu"].id, featured: false },
-    { title: "2-Day Lake Naivasha Weekend", slug: "2-day-naivasha-weekend", summary: "The perfect weekend escape from Nairobi.", description: "A quick escape to the Rift Valley — boat safaris, Crescent Island walks, and sundowners overlooking the lake.", priceKes: 34000, durationDays: 2, imageUrl: img("photo-1544551763-46a013bb70d5"), destinationId: destinationMap["lake-naivasha"].id, featured: false },
-    { title: "3-Day Kakamega Forest Explorer", slug: "3-day-kakamega-forest", summary: "Kenya's only tropical rainforest.", description: "Three days in Kenya's last remaining tropical rainforest, with guided nature walks, birdwatching, and butterfly spotting.", priceKes: 45000, durationDays: 3, imageUrl: img("photo-1441974231531-c6227db76b6e"), destinationId: destinationMap["kakamega-forest"].id, featured: false },
-    { title: "4-Day Lake Baringo & Bogoria", slug: "4-day-baringo-bogoria", summary: "Freshwater and alkaline lakes of the northern Rift.", description: "Visit two contrasting Rift Valley lakes — Baringo's birdlife and crocodiles, and Bogoria's hot springs and flamingos.", priceKes: 62000, durationDays: 4, imageUrl: img("photo-1500375592092-40eb2168fd21"), destinationId: destinationMap["lake-baringo"].id, featured: false },
-    { title: "8-Day Best of Southern Kenya", slug: "8-day-southern-kenya", summary: "Nairobi, Amboseli, Tsavo, and Diani in one trip.", description: "A comprehensive southern circuit — Nairobi's cultural sites, Amboseli's elephants, Tsavo's red landscapes, and Diani's beaches.", priceKes: 198000, durationDays: 8, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, featured: true },
-    { title: "3-Day Malindi & Gedi Ruins", slug: "3-day-malindi-gedi", summary: "Historic Swahili coast and marine park.", description: "Discover Malindi's Italian-Swahili culture, the ancient Gedi ruins, and the coral gardens of Malindi Marine National Park.", priceKes: 52000, durationDays: 3, imageUrl: img("photo-1519046904884-53103b34b206"), destinationId: destinationMap["malindi"].id, featured: false },
-    { title: "5-Day Samburu Flying Safari", slug: "5-day-samburu-flying", summary: "Fly-in luxury safari to northern Kenya.", description: "Skip the long drive — fly directly from Nairobi to Samburu for a luxury tented-camp experience with guided game drives.", priceKes: 225000, durationDays: 5, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["samburu"].id, featured: false },
-    { title: "2-Day Nairobi National Park & City", slug: "2-day-nairobi-park-city", summary: "Wildlife and culture in a weekend.", description: "A compact weekend pairing Nairobi National Park's lions and rhinos with the Giraffe Centre, Karen Blixen Museum, and Maasai Market.", priceKes: 26000, durationDays: 2, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["nairobi-national-park"].id, featured: false },
-    { title: "4-Day Maasai Mara Budget Camping", slug: "4-day-mara-camping", summary: "The Mara experience on a budget.", description: "Four days in the Mara staying at a comfortable tented camp, with shared game drives and all park fees included.", priceKes: 58000, durationDays: 4, imageUrl: img("photo-1521405924368-64c5b84bec60"), destinationId: destinationMap["maasai-mara"].id, featured: false },
-    { title: "6-Day Honeymoon Safari & Diani", slug: "6-day-honeymoon", summary: "Intimate safari nights and ocean days.", description: "Three nights in a private safari camp in the Mara, then three nights at a luxury beachfront resort on Diani. Includes private guide and romantic dinners.", priceKes: 320000, durationDays: 6, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, featured: false },
+    { title: "3-Day Maasai Mara Safari", slug: "3-day-maasai-mara", summary: "Game drives in the world's most famous wildlife reserve.", description: "Enjoy three days of thrilling game drives in the Maasai Mara, with chances to see lions, elephants, and the Big Five. Includes full-board accommodation in a safari lodge, park fees, and a professional guide.", priceKes: 37060, durationDays: 3, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4850, longitude: 35.3720, featured: true },
+    { title: "12-Hour Amboseli Day Trip", slug: "amboseli-day-trip", summary: "A quick escape to see elephants against Mount Kilimanjaro.", description: "Perfect for travellers short on time. Fly from Nairobi to Amboseli, enjoy a full-day game drive, lunch, and return the same evening.", priceKes: 65500, durationDays: 1, imageUrl: img("photo-1547970810-dc1eac37d174"), destinationId: destinationMap["amboseli"].id, latitude: -2.6527, longitude: 37.2606, featured: true },
+    { title: "5-Day Diani Beach Retreat", slug: "5-day-diani-retreat", summary: "Relax on Kenya's best beach with snorkeling and dhow cruises.", description: "Five days of sun, sand, and sea at Diani Beach. Includes snorkeling at Kisite Marine Park, a sunset dhow cruise, and beachfront resort accommodation.", priceKes: 89999, durationDays: 5, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, latitude: -4.2927, longitude: 39.5794, featured: false },
+    { title: "Nairobi City & Safari Experience", slug: "nairobi-city-safari", summary: "Explore Nairobi's culture, wildlife, and cuisine in 2 days.", description: "Visit Nairobi National Park, the Giraffe Centre, the David Sheldrick Elephant Orphanage, and the Maasai Market. Includes city hotel accommodation and meals.", priceKes: 28500, durationDays: 2, imageUrl: img("photo-1611348586804-61bf6c080437"), destinationId: destinationMap["nairobi"].id, latitude: -1.2921, longitude: 36.8219, featured: false },
+    { title: "Lake Nakuru & Rift Valley Explorer", slug: "nakuru-rift-valley", summary: "Flamingos, rhinos, and stunning Rift Valley scenery.", description: "A 2-day safari to Lake Nakuru National Park, known for its flamingo flocks and rhino sanctuary. Includes a stop at the Great Rift Valley viewpoint.", priceKes: 32000, durationDays: 2, imageUrl: img("photo-1518709268805-4e9042af9f23"), destinationId: destinationMap["lake-nakuru"].id, latitude: -0.3667, longitude: 36.0833, featured: false },
+    { title: "7-Day Kenya Highlights Safari", slug: "7-day-kenya-highlights", summary: "Mara, Nakuru, and Amboseli in one classic week-long trip.", description: "The perfect introduction to Kenya's safari circuit. Seven days visiting Maasai Mara, Lake Nakuru, and Amboseli, with all park fees, full-board lodging, and a professional driver-guide.", priceKes: 189000, durationDays: 7, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4850, longitude: 35.3720, featured: true },
+    { title: "10-Day Bush & Beach", slug: "10-day-bush-and-beach", summary: "Safari, then sand — the classic Kenyan honeymoon.", description: "Four days of game drives in the Mara and Amboseli, followed by five days of beachside relaxation at Diani. Includes internal flights and all transfers.", priceKes: 245000, durationDays: 10, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, latitude: -4.2927, longitude: 39.5794, featured: true },
+    { title: "4-Day Tsavo East & West", slug: "4-day-tsavo", summary: "Red elephants, lava flows, and Mzima Springs.", description: "Explore both halves of Tsavo — from the red elephants of Tsavo East to the volcanic landscapes and Mzima Springs of Tsavo West.", priceKes: 78000, durationDays: 4, imageUrl: img("photo-1564760055775-d63b17a55c44"), destinationId: destinationMap["tsavo-east"].id, latitude: -3.0000, longitude: 38.5000, featured: false },
+    { title: "5-Day Samburu & Laikipia", slug: "5-day-samburu-laikipia", summary: "Northern Kenya's Special Five and community conservancies.", description: "Discover the arid beauty of Samburu and the community-run conservancies of Laikipia, home to the Samburu Special Five and Kenya's largest elephant populations.", priceKes: 132000, durationDays: 5, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["samburu"].id, latitude: 0.5833, longitude: 37.5333, featured: true },
+    { title: "4-Day Lamu Cultural Escape", slug: "4-day-lamu", summary: "Swahili history, dhow sailing, and quiet beaches.", description: "Explore the UNESCO-listed Lamu Old Town, sail by traditional dhow to Shela, and unwind on untouched Indian Ocean beaches.", priceKes: 68000, durationDays: 4, imageUrl: img("photo-1571407970349-bc81e7e96d47"), destinationId: destinationMap["lamu"].id, latitude: -2.2717, longitude: 40.9020, featured: false },
+    { title: "6-Day Mount Kenya Trek", slug: "6-day-mount-kenya-trek", summary: "Summit Point Lenana via the Sirimon and Chogoria routes.", description: "A six-day trek through alpine meadows and glacial valleys, summiting Point Lenana (4,985m) at sunrise. Includes mountain huts, guides, and porters.", priceKes: 95000, durationDays: 6, imageUrl: img("photo-1519681393784-d120267933ba"), destinationId: destinationMap["mount-kenya"].id, latitude: -0.1521, longitude: 37.3084, featured: false },
+    { title: "3-Day Hell's Gate & Naivasha", slug: "3-day-hells-gate-naivasha", summary: "Cycle among wildlife and boat past hippos.", description: "Cycle through Hell's Gate National Park alongside zebras and giraffes, then take a boat safari on Lake Naivasha to see hippos and fish eagles.", priceKes: 42000, durationDays: 3, imageUrl: img("photo-1501785888041-af3ef285b470"), destinationId: destinationMap["hells-gate"].id, latitude: -0.9167, longitude: 36.3167, featured: false },
+    { title: "5-Day Watamu Beach & Marine Park", slug: "5-day-watamu", summary: "Snorkeling, turtles, and the Italian-inflected coast.", description: "Explore the protected coral gardens of Watamu Marine National Park, watch turtles nest, and enjoy the laid-back coastal town of Watamu.", priceKes: 82000, durationDays: 5, imageUrl: img("photo-1544551763-77ef2d0cfc6c"), destinationId: destinationMap["watamu"].id, latitude: -3.3667, longitude: 40.0167, featured: false },
+    { title: "2-Day Lake Naivasha Weekend", slug: "2-day-naivasha-weekend", summary: "The perfect weekend escape from Nairobi.", description: "A quick escape to the Rift Valley — boat safaris, Crescent Island walks, and sundowners overlooking the lake.", priceKes: 34000, durationDays: 2, imageUrl: img("photo-1544551763-46a013bb70d5"), destinationId: destinationMap["lake-naivasha"].id, latitude: -0.7667, longitude: 36.3667, featured: false },
+    { title: "3-Day Kakamega Forest Explorer", slug: "3-day-kakamega-forest", summary: "Kenya's only tropical rainforest.", description: "Three days in Kenya's last remaining tropical rainforest, with guided nature walks, birdwatching, and butterfly spotting.", priceKes: 45000, durationDays: 3, imageUrl: img("photo-1441974231531-c6227db76b6e"), destinationId: destinationMap["kakamega-forest"].id, latitude: 0.2500, longitude: 34.8667, featured: false },
+    { title: "4-Day Lake Baringo & Bogoria", slug: "4-day-baringo-bogoria", summary: "Freshwater and alkaline lakes of the northern Rift.", description: "Visit two contrasting Rift Valley lakes — Baringo's birdlife and crocodiles, and Bogoria's hot springs and flamingos.", priceKes: 62000, durationDays: 4, imageUrl: img("photo-1500375592092-40eb2168fd21"), destinationId: destinationMap["lake-baringo"].id, latitude: 0.4667, longitude: 36.1000, featured: false },
+    { title: "8-Day Best of Southern Kenya", slug: "8-day-southern-kenya", summary: "Nairobi, Amboseli, Tsavo, and Diani in one trip.", description: "A comprehensive southern circuit — Nairobi's cultural sites, Amboseli's elephants, Tsavo's red landscapes, and Diani's beaches.", priceKes: 198000, durationDays: 8, imageUrl: img("photo-1507525428034-b723cf961d3e"), destinationId: destinationMap["diani-beach"].id, latitude: -4.2927, longitude: 39.5794, featured: true },
+    { title: "3-Day Malindi & Gedi Ruins", slug: "3-day-malindi-gedi", summary: "Historic Swahili coast and marine park.", description: "Discover Malindi's Italian-Swahili culture, the ancient Gedi ruins, and the coral gardens of Malindi Marine National Park.", priceKes: 52000, durationDays: 3, imageUrl: img("photo-1519046904884-53103b34b206"), destinationId: destinationMap["malindi"].id, latitude: -3.2192, longitude: 40.1169, featured: false },
+    { title: "5-Day Samburu Flying Safari", slug: "5-day-samburu-flying", summary: "Fly-in luxury safari to northern Kenya.", description: "Skip the long drive — fly directly from Nairobi to Samburu for a luxury tented-camp experience with guided game drives.", priceKes: 225000, durationDays: 5, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["samburu"].id, latitude: 0.5833, longitude: 37.5333, featured: false },
+    { title: "2-Day Nairobi National Park & City", slug: "2-day-nairobi-park-city", summary: "Wildlife and culture in a weekend.", description: "A compact weekend pairing Nairobi National Park's lions and rhinos with the Giraffe Centre, Karen Blixen Museum, and Maasai Market.", priceKes: 26000, durationDays: 2, imageUrl: img("photo-1547471080-7cc2caa01a7e"), destinationId: destinationMap["nairobi-national-park"].id, latitude: -1.3733, longitude: 36.8583, featured: false },
+    { title: "4-Day Maasai Mara Budget Camping", slug: "4-day-mara-camping", summary: "The Mara experience on a budget.", description: "Four days in the Mara staying at a comfortable tented camp, with shared game drives and all park fees included.", priceKes: 58000, durationDays: 4, imageUrl: img("photo-1521405924368-64c5b84bec60"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4850, longitude: 35.3720, featured: false },
+    { title: "6-Day Honeymoon Safari & Diani", slug: "6-day-honeymoon", summary: "Intimate safari nights and ocean days.", description: "Three nights in a private safari camp in the Mara, then three nights at a luxury beachfront resort on Diani. Includes private guide and romantic dinners.", priceKes: 320000, durationDays: 6, imageUrl: img("photo-1516426122078-c23e76319801"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4850, longitude: 35.3720, featured: false },
   ];
 
   for (const p of packages) {
     await prisma.tourPackage.upsert({
       where: { slug: p.slug },
-      update: { imageUrl: p.imageUrl },
+      update: {
+        imageUrl: p.imageUrl,
+        latitude: p.latitude,
+        longitude: p.longitude,
+      },
       create: p,
     });
   }
@@ -252,36 +258,40 @@ async function seedAccommodations() {
   const destinationMap = await getDestinationMap();
 
   const accommodations = [
-    { name: "Mara Serena Safari Lodge", slug: "mara-serena", type: "Lodge", description: "Luxury lodge perched on a hill with panoramic views of the Mara plains.", location: "Maasai Mara, Narok", priceRange: "KES 25,000 - 55,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["maasai-mara"].id },
-    { name: "Angama Mara", slug: "angama-mara", type: "Lodge", description: "Award-winning tented suites suspended above the Great Rift Valley with views over the Mara Triangle.", location: "Maasai Mara, Narok", priceRange: "KES 90,000 - 180,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["maasai-mara"].id },
-    { name: "Governors' Camp", slug: "governors-camp", type: "Tented Camp", description: "One of the original Mara camps, on the banks of the Mara River, famous for its colonial-era charm.", location: "Maasai Mara, Narok", priceRange: "KES 60,000 - 120,000", imageUrl: img("photo-1520250497591-112f2f40a3f4"), destinationId: destinationMap["maasai-mara"].id },
-    { name: "Mara Sopa Lodge", slug: "mara-sopa", type: "Lodge", description: "Rustic lodge with individual cottages spread across landscaped grounds, ideal for families.", location: "Maasai Mara, Narok", priceRange: "KES 18,000 - 35,000", imageUrl: img("photo-1582719508461-905c673771fd"), destinationId: destinationMap["maasai-mara"].id },
-    { name: "Amboseli Serena Safari Lodge", slug: "amboseli-serena", type: "Lodge", description: "Nestled in a grove of acacia trees with uninterrupted views of Mount Kilimanjaro.", location: "Amboseli, Kajiado", priceRange: "KES 22,000 - 48,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["amboseli"].id },
-    { name: "Tortilis Camp", slug: "tortilis-camp", type: "Tented Camp", description: "Eco-friendly tented camp on the edge of Amboseli, overlooking Mount Kilimanjaro.", location: "Amboseli, Kajiado", priceRange: "KES 40,000 - 75,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["amboseli"].id },
-    { name: "Ol Tukai Lodge", slug: "ol-tukai", type: "Lodge", description: "Classic Amboseli lodge surrounded by fever trees, with a hippo pool nearby.", location: "Amboseli, Kajiado", priceRange: "KES 26,000 - 52,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["amboseli"].id },
-    { name: "Diani Sea Resort", slug: "diani-sea-resort", type: "Resort", description: "Beachfront resort with pools, water sports, and all-inclusive dining options.", location: "Diani Beach, Kwale", priceRange: "KES 18,000 - 40,000", imageUrl: img("photo-1582719478250-c89cae4dc85b"), destinationId: destinationMap["diani-beach"].id },
-    { name: "Almanara Luxury Villas", slug: "almanara-villas", type: "Resort", description: "Private beachfront villas with dedicated staff, perfect for families and small groups.", location: "Diani Beach, Kwale", priceRange: "KES 80,000 - 150,000", imageUrl: img("photo-1613490493576-7fde63acd811"), destinationId: destinationMap["diani-beach"].id },
-    { name: "The Sands at Nomad", slug: "sands-nomad", type: "Resort", description: "Boutique beach resort with colonial-style architecture and an award-winning restaurant.", location: "Diani Beach, Kwale", priceRange: "KES 30,000 - 65,000", imageUrl: img("photo-1520250497591-112f2f40a3f4"), destinationId: destinationMap["diani-beach"].id },
-    { name: "Sarova Lion Hill Lodge", slug: "sarova-lion-hill", type: "Lodge", description: "Set on a plateau overlooking Lake Nakuru, ideal for birdwatchers and rhino spotting.", location: "Lake Nakuru, Nakuru", priceRange: "KES 20,000 - 45,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["lake-nakuru"].id },
-    { name: "Lake Nakuru Lodge", slug: "lake-nakuru-lodge", type: "Lodge", description: "Family-run lodge inside the park, with views of the lake and easy access to game drives.", location: "Lake Nakuru, Nakuru", priceRange: "KES 16,000 - 32,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["lake-nakuru"].id },
-    { name: "The Norfolk Hotel", slug: "norfolk-hotel", type: "Hotel", description: "Historic 5-star hotel in the heart of Nairobi, founded in 1904.", location: "Nairobi CBD", priceRange: "KES 15,000 - 35,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["nairobi"].id },
-    { name: "Giraffe Manor", slug: "giraffe-manor", type: "Hotel", description: "Iconic boutique hotel where endangered Rothschild giraffes poke their heads through the windows at breakfast.", location: "Langata, Nairobi", priceRange: "KES 120,000 - 220,000", imageUrl: img("photo-1547721064-da6cfb341d50"), destinationId: destinationMap["nairobi"].id },
-    { name: "Hemingways Nairobi", slug: "hemingways-nairobi", type: "Hotel", description: "Luxury suites in the leafy suburb of Karen, with butler service and a renowned spa.", location: "Karen, Nairobi", priceRange: "KES 55,000 - 95,000", imageUrl: img("photo-1582719478250-c89cae4dc85b"), destinationId: destinationMap["nairobi"].id },
-    { name: "Ashnil Aruba Lodge", slug: "ashnil-aruba", type: "Lodge", description: "Comfortable lodge overlooking an active waterhole in Tsavo East, popular with elephant herds.", location: "Tsavo East, Taita-Taveta", priceRange: "KES 22,000 - 45,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["tsavo-east"].id },
-    { name: "Satao Camp", slug: "satao-camp", type: "Tented Camp", description: "Classic tented camp in Tsavo East with a waterhole in front of the restaurant.", location: "Tsavo East, Taita-Taveta", priceRange: "KES 28,000 - 55,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["tsavo-east"].id },
-    { name: "Kilaguni Serena Safari Lodge", slug: "kilaguni-serena", type: "Lodge", description: "Tsavo West's oldest lodge, with a waterhole visible from the restaurant and views of Kilimanjaro.", location: "Tsavo West, Taita-Taveta", priceRange: "KES 24,000 - 48,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["tsavo-west"].id },
-    { name: "Samburu Sopa Lodge", slug: "samburu-sopa", type: "Lodge", description: "Rondavel-style lodge on a hilltop in Samburu, with views over the river valley.", location: "Samburu National Reserve", priceRange: "KES 20,000 - 40,000", imageUrl: img("photo-1582719508461-905c673771fd"), destinationId: destinationMap["samburu"].id },
-    { name: "Elephant Bedroom Camp", slug: "elephant-bedroom-camp", type: "Tented Camp", description: "Intimate luxury camp on the Ewaso Ng'iro river, frequently visited by elephants at the camp's edge.", location: "Samburu National Reserve", priceRange: "KES 65,000 - 125,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["samburu"].id },
-    { name: "The Majlis Resort", slug: "majlis-lamu", type: "Resort", description: "Beachfront boutique resort on Manda Island, with views across the channel to Lamu Old Town.", location: "Manda Island, Lamu", priceRange: "KES 45,000 - 95,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["lamu"].id },
-    { name: "Peponi Hotel", slug: "peponi-hotel", type: "Hotel", description: "Legendary Swahili-style hotel on Shela beach, run by the Korschen family since 1967.", location: "Shela, Lamu", priceRange: "KES 28,000 - 55,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["lamu"].id },
-    { name: "Fairmont Mount Kenya Safari Club", slug: "fairmont-mt-kenya", type: "Hotel", description: "Historic resort at the foot of Mount Kenya, once owned by William Holden and frequented by celebrities.", location: "Nanyuki, Laikipia", priceRange: "KES 35,000 - 75,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["mount-kenya"].id },
-    { name: "Medina Palms", slug: "medina-palms", type: "Resort", description: "Contemporary suites and rooftop pools on Watamu's Turtle Bay, a short walk from the marine park.", location: "Watamu, Kilifi", priceRange: "KES 32,000 - 65,000", imageUrl: img("photo-1613490493576-7fde63acd811"), destinationId: destinationMap["watamu"].id },
+    { name: "Mara Serena Safari Lodge", slug: "mara-serena", type: "Lodge", description: "Luxury lodge perched on a hill with panoramic views of the Mara plains.", location: "Maasai Mara, Narok", priceRange: "KES 25,000 - 55,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4900, longitude: 35.3600 },
+    { name: "Angama Mara", slug: "angama-mara", type: "Lodge", description: "Award-winning tented suites suspended above the Great Rift Valley with views over the Mara Triangle.", location: "Maasai Mara, Narok", priceRange: "KES 90,000 - 180,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.4500, longitude: 35.2500 },
+    { name: "Governors' Camp", slug: "governors-camp", type: "Tented Camp", description: "One of the original Mara camps, on the banks of the Mara River, famous for its colonial-era charm.", location: "Maasai Mara, Narok", priceRange: "KES 60,000 - 120,000", imageUrl: img("photo-1520250497591-112f2f40a3f4"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.5000, longitude: 35.3300 },
+    { name: "Mara Sopa Lodge", slug: "mara-sopa", type: "Lodge", description: "Rustic lodge with individual cottages spread across landscaped grounds, ideal for families.", location: "Maasai Mara, Narok", priceRange: "KES 18,000 - 35,000", imageUrl: img("photo-1582719508461-905c673771fd"), destinationId: destinationMap["maasai-mara"].id, latitude: -1.5000, longitude: 35.4000 },
+    { name: "Amboseli Serena Safari Lodge", slug: "amboseli-serena", type: "Lodge", description: "Nestled in a grove of acacia trees with uninterrupted views of Mount Kilimanjaro.", location: "Amboseli, Kajiado", priceRange: "KES 22,000 - 48,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["amboseli"].id, latitude: -2.6600, longitude: 37.2700 },
+    { name: "Tortilis Camp", slug: "tortilis-camp", type: "Tented Camp", description: "Eco-friendly tented camp on the edge of Amboseli, overlooking Mount Kilimanjaro.", location: "Amboseli, Kajiado", priceRange: "KES 40,000 - 75,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["amboseli"].id, latitude: -2.7000, longitude: 37.2500 },
+    { name: "Ol Tukai Lodge", slug: "ol-tukai", type: "Lodge", description: "Classic Amboseli lodge surrounded by fever trees, with a hippo pool nearby.", location: "Amboseli, Kajiado", priceRange: "KES 26,000 - 52,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["amboseli"].id, latitude: -2.6800, longitude: 37.3000 },
+    { name: "Diani Sea Resort", slug: "diani-sea-resort", type: "Resort", description: "Beachfront resort with pools, water sports, and all-inclusive dining options.", location: "Diani Beach, Kwale", priceRange: "KES 18,000 - 40,000", imageUrl: img("photo-1582719478250-c89cae4dc85b"), destinationId: destinationMap["diani-beach"].id, latitude: -4.2900, longitude: 39.5800 },
+    { name: "Almanara Luxury Villas", slug: "almanara-villas", type: "Resort", description: "Private beachfront villas with dedicated staff, perfect for families and small groups.", location: "Diani Beach, Kwale", priceRange: "KES 80,000 - 150,000", imageUrl: img("photo-1613490493576-7fde63acd811"), destinationId: destinationMap["diani-beach"].id, latitude: -4.3100, longitude: 39.5700 },
+    { name: "The Sands at Nomad", slug: "sands-nomad", type: "Resort", description: "Boutique beach resort with colonial-style architecture and an award-winning restaurant.", location: "Diani Beach, Kwale", priceRange: "KES 30,000 - 65,000", imageUrl: img("photo-1520250497591-112f2f40a3f4"), destinationId: destinationMap["diani-beach"].id, latitude: -4.2800, longitude: 39.5900 },
+    { name: "Sarova Lion Hill Lodge", slug: "sarova-lion-hill", type: "Lodge", description: "Set on a plateau overlooking Lake Nakuru, ideal for birdwatchers and rhino spotting.", location: "Lake Nakuru, Nakuru", priceRange: "KES 20,000 - 45,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["lake-nakuru"].id, latitude: -0.3700, longitude: 36.0800 },
+    { name: "Lake Nakuru Lodge", slug: "lake-nakuru-lodge", type: "Lodge", description: "Family-run lodge inside the park, with views of the lake and easy access to game drives.", location: "Lake Nakuru, Nakuru", priceRange: "KES 16,000 - 32,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["lake-nakuru"].id, latitude: -0.3600, longitude: 36.0900 },
+    { name: "The Norfolk Hotel", slug: "norfolk-hotel", type: "Hotel", description: "Historic 5-star hotel in the heart of Nairobi, founded in 1904.", location: "Nairobi CBD", priceRange: "KES 15,000 - 35,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["nairobi"].id, latitude: -1.2860, longitude: 36.8200 },
+    { name: "Giraffe Manor", slug: "giraffe-manor", type: "Hotel", description: "Iconic boutique hotel where endangered Rothschild giraffes poke their heads through the windows at breakfast.", location: "Langata, Nairobi", priceRange: "KES 120,000 - 220,000", imageUrl: img("photo-1547721064-da6cfb341d50"), destinationId: destinationMap["nairobi"].id, latitude: -1.3700, longitude: 36.7500 },
+    { name: "Hemingways Nairobi", slug: "hemingways-nairobi", type: "Hotel", description: "Luxury suites in the leafy suburb of Karen, with butler service and a renowned spa.", location: "Karen, Nairobi", priceRange: "KES 55,000 - 95,000", imageUrl: img("photo-1582719478250-c89cae4dc85b"), destinationId: destinationMap["nairobi"].id, latitude: -1.3500, longitude: 36.7100 },
+    { name: "Ashnil Aruba Lodge", slug: "ashnil-aruba", type: "Lodge", description: "Comfortable lodge overlooking an active waterhole in Tsavo East, popular with elephant herds.", location: "Tsavo East, Taita-Taveta", priceRange: "KES 22,000 - 45,000", imageUrl: img("photo-1566073771259-6a8506099945"), destinationId: destinationMap["tsavo-east"].id, latitude: -3.0100, longitude: 38.4900 },
+    { name: "Satao Camp", slug: "satao-camp", type: "Tented Camp", description: "Classic tented camp in Tsavo East with a waterhole in front of the restaurant.", location: "Tsavo East, Taita-Taveta", priceRange: "KES 28,000 - 55,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["tsavo-east"].id, latitude: -2.9900, longitude: 38.5100 },
+    { name: "Kilaguni Serena Safari Lodge", slug: "kilaguni-serena", type: "Lodge", description: "Tsavo West's oldest lodge, with a waterhole visible from the restaurant and views of Kilimanjaro.", location: "Tsavo West, Taita-Taveta", priceRange: "KES 24,000 - 48,000", imageUrl: img("photo-1571896349842-33c89424de2d"), destinationId: destinationMap["tsavo-west"].id, latitude: -3.4200, longitude: 38.0000 },
+    { name: "Samburu Sopa Lodge", slug: "samburu-sopa", type: "Lodge", description: "Rondavel-style lodge on a hilltop in Samburu, with views over the river valley.", location: "Samburu National Reserve", priceRange: "KES 20,000 - 40,000", imageUrl: img("photo-1582719508461-905c673771fd"), destinationId: destinationMap["samburu"].id, latitude: 0.5900, longitude: 37.5400 },
+    { name: "Elephant Bedroom Camp", slug: "elephant-bedroom-camp", type: "Tented Camp", description: "Intimate luxury camp on the Ewaso Ng'iro river, frequently visited by elephants at the camp's edge.", location: "Samburu National Reserve", priceRange: "KES 65,000 - 125,000", imageUrl: img("photo-1517824806704-9040b037703b"), destinationId: destinationMap["samburu"].id, latitude: 0.6000, longitude: 37.5200 },
+    { name: "The Majlis Resort", slug: "majlis-lamu", type: "Resort", description: "Beachfront boutique resort on Manda Island, with views across the channel to Lamu Old Town.", location: "Manda Island, Lamu", priceRange: "KES 45,000 - 95,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["lamu"].id, latitude: -2.2700, longitude: 40.9000 },
+    { name: "Peponi Hotel", slug: "peponi-hotel", type: "Hotel", description: "Legendary Swahili-style hotel on Shela beach, run by the Korschen family since 1967.", location: "Shela, Lamu", priceRange: "KES 28,000 - 55,000", imageUrl: img("photo-1564501049412-61c2a3083791"), destinationId: destinationMap["lamu"].id, latitude: -2.2800, longitude: 40.9200 },
+    { name: "Fairmont Mount Kenya Safari Club", slug: "fairmont-mt-kenya", type: "Hotel", description: "Historic resort at the foot of Mount Kenya, once owned by William Holden and frequented by celebrities.", location: "Nanyuki, Laikipia", priceRange: "KES 35,000 - 75,000", imageUrl: img("photo-1571003123894-1f0594d2b5d9"), destinationId: destinationMap["mount-kenya"].id, latitude: -0.0500, longitude: 37.0800 },
+    { name: "Medina Palms", slug: "medina-palms", type: "Resort", description: "Contemporary suites and rooftop pools on Watamu's Turtle Bay, a short walk from the marine park.", location: "Watamu, Kilifi", priceRange: "KES 32,000 - 65,000", imageUrl: img("photo-1613490493576-7fde63acd811"), destinationId: destinationMap["watamu"].id, latitude: -3.3700, longitude: 40.0200 },
   ];
 
   for (const a of accommodations) {
     await prisma.accommodation.upsert({
       where: { slug: a.slug },
-      update: { imageUrl: a.imageUrl },
+      update: {
+        imageUrl: a.imageUrl,
+        latitude: a.latitude,
+        longitude: a.longitude,
+      },
       create: a,
     });
   }
@@ -368,7 +378,7 @@ async function seedBlogPosts() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// USERS & COMPANY — unchanged
+// USERS & COMPANY
 // ═══════════════════════════════════════════════════════════════
 
 async function seedUsersAndCompany() {
@@ -424,7 +434,7 @@ async function seedUsersAndCompany() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BUSINESSES & CUSTOMERS — unchanged
+// BUSINESSES & CUSTOMERS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedBusinessesAndCustomers() {
@@ -615,7 +625,7 @@ async function seedBusinessesAndCustomers() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// APPLICATIONS — aligned with the Option A committee quorum rule
+// APPLICATIONS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedApplications() {
@@ -761,7 +771,6 @@ async function seedApplications() {
       });
     }
 
-    // ── Events ────────────────────────────────────────────
     const events: { type: string; actorId: string | null; message: string | null; daysAgo: number }[] = [];
 
     if (spec.docsStage !== "draft") {
@@ -777,7 +786,6 @@ async function seedApplications() {
       events.push({ type: "ESCALATED_TO_COMMITTEE", actorId: verifier?.id ?? null, message: "All documents verified. Escalated to committee.", daysAgo: (spec.submittedDaysAgo ?? 0) - 3 });
     }
     if (spec.docsStage === "awaiting-ps") {
-      // Two committee votes — matches the COMMITTEE_QUORUM = 2 rule.
       events.push({ type: "COMMITTEE_VOTE_CAST", actorId: committeeMembers[0]?.id ?? null, message: "Documents in order. Recommend approval.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
       events.push({ type: "COMMITTEE_VOTE_CAST", actorId: committeeMembers[1]?.id ?? null, message: "Concur with recommendation.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
       events.push({ type: "ESCALATED_TO_PS", actorId: committeeMembers[0]?.id ?? null, message: "Quorum met. Escalated to Permanent Secretary.", daysAgo: (spec.submittedDaysAgo ?? 0) - 4 });
@@ -795,12 +803,6 @@ async function seedApplications() {
       });
     }
 
-    // ── Committee votes (quorum of 2) ─────────────────────
-    // Only the awaiting-ps application has reached the
-    // AWAITING_PS_APPROVAL state, and Option A requires at
-    // least 2 APPROVE votes to get there. Seed them so the
-    // dataset is internally consistent with the workflow
-    // rules introduced in lib/workflow.ts.
     if (spec.docsStage === "awaiting-ps") {
       const voters = committeeMembers.slice(0, 2);
       for (const v of voters) {
@@ -836,7 +838,7 @@ async function seedApplications() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// INCIDENTS — 10 records across all workflow stages
+// INCIDENTS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedIncidents() {
@@ -882,226 +884,16 @@ async function seedIncidents() {
   };
 
   const seeds: IncidentSeed[] = [
-    // ── OPEN (4) ─────────────────────────────────────────────
-    {
-      referenceNo: "INC/2026/0001",
-      status: "OPEN",
-      category: "WILDLIFE",
-      title: "Injured elephant calf near Talek River",
-      description:
-        "A juvenile elephant with an apparent snare wound on its front left leg was observed near the Talek River crossing. The herd appeared to be protecting it but it was visibly struggling. Please dispatch a KWS veterinary team with urgent priority. Coordinates approximate: 1.485° S, 35.372° E.",
-      location: "Talek River, Maasai Mara",
-      reporterName: "Daniel Kiprop",
-      reporterEmail: "d.kiprop@example.com",
-      reporterPhone: "+254 722 111 222",
-      occurredDaysAgo: 1,
-      reportedDaysAgo: 1,
-      reviewedDaysAgo: null,
-      reviewNotes: null,
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [
-        { fileName: "injured-calf-01.jpg", mimeType: "image/jpeg", sizeBytes: 1_842_113 },
-        { fileName: "injured-calf-02.jpg", mimeType: "image/jpeg", sizeBytes: 2_104_556 },
-      ],
-    },
-    {
-      referenceNo: "INC/2026/0002",
-      status: "OPEN",
-      category: "SAFETY",
-      title: "Missing lifejackets on dhow cruise",
-      description:
-        "The dhow that operates from Diani Beach near the Kongo River mouth had no visible lifejackets for passengers during a sunset cruise. At least 12 tourists on board, none wearing or shown a lifejacket. Operator could not produce a safety certificate when asked. Reported by a concerned guest.",
-      location: "Kongo River mouth, Diani Beach",
-      reporterName: null,
-      reporterEmail: null,
-      reporterPhone: null,
-      occurredDaysAgo: 2,
-      reportedDaysAgo: 2,
-      reviewedDaysAgo: null,
-      reviewNotes: null,
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [],
-    },
-    {
-      referenceNo: "INC/2026/0003",
-      status: "OPEN",
-      category: "OPERATOR",
-      title: "Operator driving off-road in Nairobi National Park",
-      description:
-        "Safari vehicle registration KDD 442A was observed driving off designated tracks near the Athi Basin to approach a lion pride. Guide refused to return to the track when asked by other visitors. Vehicle had no visible operator branding.",
-      location: "Nairobi National Park, Athi Basin",
-      reporterName: "Mercy Wambui",
-      reporterEmail: "mercy.w@example.com",
-      reporterPhone: "+254 733 444 555",
-      occurredDaysAgo: 3,
-      reportedDaysAgo: 3,
-      reviewedDaysAgo: null,
-      reviewNotes: null,
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [
-        { fileName: "vehicle-plate.jpg", mimeType: "image/jpeg", sizeBytes: 982_114 },
-      ],
-    },
-    {
-      referenceNo: "INC/2026/0004",
-      status: "OPEN",
-      category: "GUIDES",
-      title: "Unlicensed guide at Hell's Gate",
-      description:
-        "A guide offering cycling tours from the main gate could not produce a valid KPSGA guiding licence. Was soliciting tourists at the entrance and quoting below standard rates. Suggested the matter be raised with KWS and KATO.",
-      location: "Hell's Gate National Park",
-      reporterName: "Peter Njenga",
-      reporterEmail: "pnjenga@example.com",
-      reporterPhone: null,
-      occurredDaysAgo: 4,
-      reportedDaysAgo: 3,
-      reviewedDaysAgo: null,
-      reviewNotes: null,
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [],
-    },
-
-    // ── UNDER_REVIEW (2) ─────────────────────────────────────
-    {
-      referenceNo: "INC/2026/0005",
-      status: "UNDER_REVIEW",
-      category: "FACILITY",
-      title: "Unsafe staircase at Lake Nakuru lodge",
-      description:
-        "The wooden staircase leading to the dining terrace at a lodge inside Lake Nakuru NP has two missing planks and a loose handrail. A guest tripped and bruised a knee. Lodge staff acknowledged the issue but did not close the staircase.",
-      location: "Lake Nakuru National Park",
-      reporterName: "Grace Otieno",
-      reporterEmail: "grace.otieno@example.com",
-      reporterPhone: "+254 711 888 999",
-      occurredDaysAgo: 6,
-      reportedDaysAgo: 5,
-      reviewedDaysAgo: 3,
-      reviewNotes:
-        "Confirmed the lodge's public liability documents are current. Reached out to lodge management for a fix timeline. Requested KWS facility inspection report.",
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [
-        { fileName: "staircase-damage.jpg", mimeType: "image/jpeg", sizeBytes: 1_344_221 },
-        { fileName: "guest-injury-note.pdf", mimeType: "application/pdf", sizeBytes: 248_990 },
-      ],
-    },
-    {
-      referenceNo: "INC/2026/0006",
-      status: "UNDER_REVIEW",
-      category: "WILDLIFE",
-      title: "Repeated turtle nest disturbance at Watamu",
-      description:
-        "Local tour operators are repeatedly walking over a marked turtle nest near the Marine Park at night, likely disturbing hatchlings. Nest markers were found flattened on two separate occasions this week. Local conservation group has reported the same issue before.",
-      location: "Watamu Marine National Park",
-      reporterName: null,
-      reporterEmail: "turtle-watch@example.org",
-      reporterPhone: null,
-      occurredDaysAgo: 8,
-      reportedDaysAgo: 7,
-      reviewedDaysAgo: 4,
-      reviewNotes:
-        "Assigned to coast region for site visit. Requested nesting location map from Watamu Turtle Watch. Considering escalation to KWS coastal enforcement.",
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [
-        { fileName: "flattened-nest.jpg", mimeType: "image/jpeg", sizeBytes: 2_010_441 },
-      ],
-    },
-
-    // ── ESCALATED (1) ────────────────────────────────────────
-    {
-      referenceNo: "INC/2026/0007",
-      status: "ESCALATED",
-      category: "SAFETY",
-      title: "Suspected poisoning of wildlife at a waterhole",
-      description:
-        "Three dead vultures and one dead jackal were found around a waterhole in the Amboseli ecosystem. No visible wounds; suspected carbamate poisoning. Local conservancy has cordoned the waterhole. This is potentially a poaching-related incident and requires KWS forensic response.",
-      location: "Amboseli ecosystem",
-      reporterName: "Big Life Foundation field officer",
-      reporterEmail: "field@example.org",
-      reporterPhone: "+254 720 100 200",
-      occurredDaysAgo: 12,
-      reportedDaysAgo: 11,
-      reviewedDaysAgo: 10,
-      reviewNotes:
-        "Site sealed by conservancy. Carcass samples collected. Escalating to KWS wildlife forensics and the national wildlife poisoning response taskforce.",
-      escalatedTo: "Kenya Wildlife Service",
-      escalatedDaysAgo: 9,
-      attachments: [
-        { fileName: "vultures-site.jpg", mimeType: "image/jpeg", sizeBytes: 3_104_998 },
-        { fileName: "field-report.pdf", mimeType: "application/pdf", sizeBytes: 512_004 },
-      ],
-    },
-
-    // ── RESOLVED (2) ─────────────────────────────────────────
-    {
-      referenceNo: "INC/2026/0008",
-      status: "RESOLVED",
-      category: "OPERATOR",
-      title: "Abandoned safari vehicle blocking park road",
-      description:
-        "A safari vehicle (KBN 771Y) was abandoned near the Mara Serena junction after an apparent breakdown, blocking one lane for several hours. Park rangers were contacted and a recovery arranged. No casualties.",
-      location: "Maasai Mara, Mara Serena junction",
-      reporterName: "John Kamau",
-      reporterEmail: null,
-      reporterPhone: "+254 714 555 444",
-      occurredDaysAgo: 18,
-      reportedDaysAgo: 18,
-      reviewedDaysAgo: 17,
-      reviewNotes:
-        "Operator (Savannah Tours Ltd) has been contacted. Vehicle recovered. Operator issued a written warning and confirmed road-safety protocol refresh for its guides.",
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [
-        { fileName: "blocked-road.jpg", mimeType: "image/jpeg", sizeBytes: 1_540_221 },
-      ],
-    },
-    {
-      referenceNo: "INC/2026/0009",
-      status: "RESOLVED",
-      category: "FACILITY",
-      title: "Broken viewing platform at Nyahururu Falls",
-      description:
-        "A section of the lower viewing platform at Thomson's Falls had rotted through, creating a fall hazard. County works department was notified via the tourism office. Site has since been fenced off pending repair.",
-      location: "Nyahururu Falls, Laikipia",
-      reporterName: "Sarah Mwangi",
-      reporterEmail: "s.mwangi@example.com",
-      reporterPhone: null,
-      occurredDaysAgo: 24,
-      reportedDaysAgo: 22,
-      reviewedDaysAgo: 20,
-      reviewNotes:
-        "Platform closed and fenced by county works. Repair timeline confirmed for next quarter. No injuries reported.",
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [],
-    },
-
-    // ── CLOSED (1) ───────────────────────────────────────────
-    {
-      referenceNo: "INC/2026/0010",
-      status: "CLOSED",
-      category: "OTHER",
-      title: "Duplicate report — broken platform at Nyahururu Falls",
-      description:
-        "Duplicate of an earlier report about the same damaged viewing platform at Thomson's Falls. Submitter was unaware the issue had already been reported. Closing as duplicate with no further action.",
-      location: "Nyahururu Falls, Laikipia",
-      reporterName: null,
-      reporterEmail: null,
-      reporterPhone: null,
-      occurredDaysAgo: null,
-      reportedDaysAgo: 20,
-      reviewedDaysAgo: 19,
-      reviewNotes:
-        "Duplicate of INC/2026/0009. Closed. Reporter notified via the reference-number page that the issue is already being addressed.",
-      escalatedTo: null,
-      escalatedDaysAgo: null,
-      attachments: [],
-    },
+    { referenceNo: "INC/2026/0001", status: "OPEN", category: "WILDLIFE", title: "Injured elephant calf near Talek River", description: "A juvenile elephant with an apparent snare wound on its front left leg was observed near the Talek River crossing. The herd appeared to be protecting it but it was visibly struggling. Please dispatch a KWS veterinary team with urgent priority. Coordinates approximate: 1.485° S, 35.372° E.", location: "Talek River, Maasai Mara", reporterName: "Daniel Kiprop", reporterEmail: "d.kiprop@example.com", reporterPhone: "+254 722 111 222", occurredDaysAgo: 1, reportedDaysAgo: 1, reviewedDaysAgo: null, reviewNotes: null, escalatedTo: null, escalatedDaysAgo: null, attachments: [{ fileName: "injured-calf-01.jpg", mimeType: "image/jpeg", sizeBytes: 1_842_113 }, { fileName: "injured-calf-02.jpg", mimeType: "image/jpeg", sizeBytes: 2_104_556 }] },
+    { referenceNo: "INC/2026/0002", status: "OPEN", category: "SAFETY", title: "Missing lifejackets on dhow cruise", description: "The dhow that operates from Diani Beach near the Kongo River mouth had no visible lifejackets for passengers during a sunset cruise. At least 12 tourists on board, none wearing or shown a lifejacket. Operator could not produce a safety certificate when asked. Reported by a concerned guest.", location: "Kongo River mouth, Diani Beach", reporterName: null, reporterEmail: null, reporterPhone: null, occurredDaysAgo: 2, reportedDaysAgo: 2, reviewedDaysAgo: null, reviewNotes: null, escalatedTo: null, escalatedDaysAgo: null, attachments: [] },
+    { referenceNo: "INC/2026/0003", status: "OPEN", category: "OPERATOR", title: "Operator driving off-road in Nairobi National Park", description: "Safari vehicle registration KDD 442A was observed driving off designated tracks near the Athi Basin to approach a lion pride. Guide refused to return to the track when asked by other visitors. Vehicle had no visible operator branding.", location: "Nairobi National Park, Athi Basin", reporterName: "Mercy Wambui", reporterEmail: "mercy.w@example.com", reporterPhone: "+254 733 444 555", occurredDaysAgo: 3, reportedDaysAgo: 3, reviewedDaysAgo: null, reviewNotes: null, escalatedTo: null, escalatedDaysAgo: null, attachments: [{ fileName: "vehicle-plate.jpg", mimeType: "image/jpeg", sizeBytes: 982_114 }] },
+    { referenceNo: "INC/2026/0004", status: "OPEN", category: "GUIDES", title: "Unlicensed guide at Hell's Gate", description: "A guide offering cycling tours from the main gate could not produce a valid KPSGA guiding licence. Was soliciting tourists at the entrance and quoting below standard rates. Suggested the matter be raised with KWS and KATO.", location: "Hell's Gate National Park", reporterName: "Peter Njenga", reporterEmail: "pnjenga@example.com", reporterPhone: null, occurredDaysAgo: 4, reportedDaysAgo: 3, reviewedDaysAgo: null, reviewNotes: null, escalatedTo: null, escalatedDaysAgo: null, attachments: [] },
+    { referenceNo: "INC/2026/0005", status: "UNDER_REVIEW", category: "FACILITY", title: "Unsafe staircase at Lake Nakuru lodge", description: "The wooden staircase leading to the dining terrace at a lodge inside Lake Nakuru NP has two missing planks and a loose handrail. A guest tripped and bruised a knee. Lodge staff acknowledged the issue but did not close the staircase.", location: "Lake Nakuru National Park", reporterName: "Grace Otieno", reporterEmail: "grace.otieno@example.com", reporterPhone: "+254 711 888 999", occurredDaysAgo: 6, reportedDaysAgo: 5, reviewedDaysAgo: 3, reviewNotes: "Confirmed the lodge's public liability documents are current. Reached out to lodge management for a fix timeline. Requested KWS facility inspection report.", escalatedTo: null, escalatedDaysAgo: null, attachments: [{ fileName: "staircase-damage.jpg", mimeType: "image/jpeg", sizeBytes: 1_344_221 }, { fileName: "guest-injury-note.pdf", mimeType: "application/pdf", sizeBytes: 248_990 }] },
+    { referenceNo: "INC/2026/0006", status: "UNDER_REVIEW", category: "WILDLIFE", title: "Repeated turtle nest disturbance at Watamu", description: "Local tour operators are repeatedly walking over a marked turtle nest near the Marine Park at night, likely disturbing hatchlings. Nest markers were found flattened on two separate occasions this week. Local conservation group has reported the same issue before.", location: "Watamu Marine National Park", reporterName: null, reporterEmail: "turtle-watch@example.org", reporterPhone: null, occurredDaysAgo: 8, reportedDaysAgo: 7, reviewedDaysAgo: 4, reviewNotes: "Assigned to coast region for site visit. Requested nesting location map from Watamu Turtle Watch. Considering escalation to KWS coastal enforcement.", escalatedTo: null, escalatedDaysAgo: null, attachments: [{ fileName: "flattened-nest.jpg", mimeType: "image/jpeg", sizeBytes: 2_010_441 }] },
+    { referenceNo: "INC/2026/0007", status: "ESCALATED", category: "SAFETY", title: "Suspected poisoning of wildlife at a waterhole", description: "Three dead vultures and one dead jackal were found around a waterhole in the Amboseli ecosystem. No visible wounds; suspected carbamate poisoning. Local conservancy has cordoned the waterhole. This is potentially a poaching-related incident and requires KWS forensic response.", location: "Amboseli ecosystem", reporterName: "Big Life Foundation field officer", reporterEmail: "field@example.org", reporterPhone: "+254 720 100 200", occurredDaysAgo: 12, reportedDaysAgo: 11, reviewedDaysAgo: 10, reviewNotes: "Site sealed by conservancy. Carcass samples collected. Escalating to KWS wildlife forensics and the national wildlife poisoning response taskforce.", escalatedTo: "Kenya Wildlife Service", escalatedDaysAgo: 9, attachments: [{ fileName: "vultures-site.jpg", mimeType: "image/jpeg", sizeBytes: 3_104_998 }, { fileName: "field-report.pdf", mimeType: "application/pdf", sizeBytes: 512_004 }] },
+    { referenceNo: "INC/2026/0008", status: "RESOLVED", category: "OPERATOR", title: "Abandoned safari vehicle blocking park road", description: "A safari vehicle (KBN 771Y) was abandoned near the Mara Serena junction after an apparent breakdown, blocking one lane for several hours. Park rangers were contacted and a recovery arranged. No casualties.", location: "Maasai Mara, Mara Serena junction", reporterName: "John Kamau", reporterEmail: null, reporterPhone: "+254 714 555 444", occurredDaysAgo: 18, reportedDaysAgo: 18, reviewedDaysAgo: 17, reviewNotes: "Operator (Savannah Tours Ltd) has been contacted. Vehicle recovered. Operator issued a written warning and confirmed road-safety protocol refresh for its guides.", escalatedTo: null, escalatedDaysAgo: null, attachments: [{ fileName: "blocked-road.jpg", mimeType: "image/jpeg", sizeBytes: 1_540_221 }] },
+    { referenceNo: "INC/2026/0009", status: "RESOLVED", category: "FACILITY", title: "Broken viewing platform at Nyahururu Falls", description: "A section of the lower viewing platform at Thomson's Falls had rotted through, creating a fall hazard. County works department was notified via the tourism office. Site has since been fenced off pending repair.", location: "Nyahururu Falls, Laikipia", reporterName: "Sarah Mwangi", reporterEmail: "s.mwangi@example.com", reporterPhone: null, occurredDaysAgo: 24, reportedDaysAgo: 22, reviewedDaysAgo: 20, reviewNotes: "Platform closed and fenced by county works. Repair timeline confirmed for next quarter. No injuries reported.", escalatedTo: null, escalatedDaysAgo: null, attachments: [] },
+    { referenceNo: "INC/2026/0010", status: "CLOSED", category: "OTHER", title: "Duplicate report — broken platform at Nyahururu Falls", description: "Duplicate of an earlier report about the same damaged viewing platform at Thomson's Falls. Submitter was unaware the issue had already been reported. Closing as duplicate with no further action.", location: "Nyahururu Falls, Laikipia", reporterName: null, reporterEmail: null, reporterPhone: null, occurredDaysAgo: null, reportedDaysAgo: 20, reviewedDaysAgo: 19, reviewNotes: "Duplicate of INC/2026/0009. Closed. Reporter notified via the reference-number page that the issue is already being addressed.", escalatedTo: null, escalatedDaysAgo: null, attachments: [] },
   ];
 
   let created = 0;
@@ -1109,12 +901,9 @@ async function seedIncidents() {
 
   for (const s of seeds) {
     const reportedAt = daysAgo(s.reportedDaysAgo);
-    const occurredAt =
-      s.occurredDaysAgo !== null ? daysAgo(s.occurredDaysAgo) : null;
-    const reviewedAt =
-      s.reviewedDaysAgo !== null ? daysAgo(s.reviewedDaysAgo) : null;
-    const escalatedAt =
-      s.escalatedDaysAgo !== null ? daysAgo(s.escalatedDaysAgo) : null;
+    const occurredAt = s.occurredDaysAgo !== null ? daysAgo(s.occurredDaysAgo) : null;
+    const reviewedAt = s.reviewedDaysAgo !== null ? daysAgo(s.reviewedDaysAgo) : null;
+    const escalatedAt = s.escalatedDaysAgo !== null ? daysAgo(s.escalatedDaysAgo) : null;
 
     const existing = await prisma.incident.findUnique({
       where: { referenceNo: s.referenceNo },
@@ -1125,50 +914,25 @@ async function seedIncidents() {
       await prisma.incident.update({
         where: { id: existing.id },
         data: {
-          status: s.status,
-          category: s.category,
-          title: s.title,
-          description: s.description,
-          location: s.location,
-          reporterName: s.reporterName,
-          reporterEmail: s.reporterEmail,
-          reporterPhone: s.reporterPhone,
-          occurredAt,
-          reportedAt,
-          reviewedById: reviewedAt ? admin.id : null,
-          reviewedAt,
-          reviewNotes: s.reviewNotes,
-          escalatedTo: s.escalatedTo,
-          escalatedAt,
-          escalatedById: escalatedAt ? admin.id : null,
+          status: s.status, category: s.category, title: s.title, description: s.description,
+          location: s.location, reporterName: s.reporterName, reporterEmail: s.reporterEmail, reporterPhone: s.reporterPhone,
+          occurredAt, reportedAt,
+          reviewedById: reviewedAt ? admin.id : null, reviewedAt, reviewNotes: s.reviewNotes,
+          escalatedTo: s.escalatedTo, escalatedAt, escalatedById: escalatedAt ? admin.id : null,
         },
       });
       updated++;
     } else {
       await prisma.incident.create({
         data: {
-          referenceNo: s.referenceNo,
-          status: s.status,
-          category: s.category,
-          title: s.title,
-          description: s.description,
-          location: s.location,
-          reporterName: s.reporterName,
-          reporterEmail: s.reporterEmail,
-          reporterPhone: s.reporterPhone,
-          occurredAt,
-          reportedAt,
-          reviewedById: reviewedAt ? admin.id : null,
-          reviewedAt,
-          reviewNotes: s.reviewNotes,
-          escalatedTo: s.escalatedTo,
-          escalatedAt,
-          escalatedById: escalatedAt ? admin.id : null,
+          referenceNo: s.referenceNo, status: s.status, category: s.category, title: s.title, description: s.description,
+          location: s.location, reporterName: s.reporterName, reporterEmail: s.reporterEmail, reporterPhone: s.reporterPhone,
+          occurredAt, reportedAt,
+          reviewedById: reviewedAt ? admin.id : null, reviewedAt, reviewNotes: s.reviewNotes,
+          escalatedTo: s.escalatedTo, escalatedAt, escalatedById: escalatedAt ? admin.id : null,
           attachments: {
             create: s.attachments.map((a) => ({
-              fileName: a.fileName,
-              mimeType: a.mimeType,
-              sizeBytes: a.sizeBytes,
+              fileName: a.fileName, mimeType: a.mimeType, sizeBytes: a.sizeBytes,
               storageKey: `seed/incidents/${s.referenceNo}/${a.fileName}`,
             })),
           },
@@ -1178,16 +942,8 @@ async function seedIncidents() {
     }
   }
 
-  console.log(
-    `✔ Seeded ${seeds.length} incidents (${created} created, ${updated} updated)`
-  );
-  console.log(
-    `   ${seeds.filter((s) => s.status === "OPEN").length} OPEN, ` +
-      `${seeds.filter((s) => s.status === "UNDER_REVIEW").length} UNDER_REVIEW, ` +
-      `${seeds.filter((s) => s.status === "ESCALATED").length} ESCALATED, ` +
-      `${seeds.filter((s) => s.status === "RESOLVED").length} RESOLVED, ` +
-      `${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`
-  );
+  console.log(`✔ Seeded ${seeds.length} incidents (${created} created, ${updated} updated)`);
+  console.log(`   ${seeds.filter((s) => s.status === "OPEN").length} OPEN, ${seeds.filter((s) => s.status === "UNDER_REVIEW").length} UNDER_REVIEW, ${seeds.filter((s) => s.status === "ESCALATED").length} ESCALATED, ${seeds.filter((s) => s.status === "RESOLVED").length} RESOLVED, ${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`);
 }
 
 main()
