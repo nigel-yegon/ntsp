@@ -11,6 +11,7 @@ import {
 import FadeIn from "@/app/components/fade-in";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { resolveImageUrl } from "@/lib/image-url";
 
 type Event = {
   id: number;
@@ -23,6 +24,7 @@ type Event = {
   featured: boolean;
   latitude: number | null;
   longitude: number | null;
+  imageUrl: string | null;
 };
 
 type DateFilter = "all" | "upcoming" | "this-month" | "next-3-months" | "past";
@@ -636,6 +638,20 @@ function MapView({ events }: { events: Event[] }) {
               background: selectedEvent.featured ? "#e3b23c" : "#4f46e5",
             }}
           />
+
+          {/* ── ADDED: Event Image ── */}
+          {selectedEvent.imageUrl && (
+            <div className="relative h-40 w-full shrink-0 overflow-hidden bg-deep-100 dark:bg-deep-800">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolveImageUrl(selectedEvent.imageUrl) || ""}
+                alt={selectedEvent.name}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            </div>
+          )}
+
           <div className="flex shrink-0 items-start justify-between gap-3 border-b border-deep-200 px-5 py-4 dark:border-deep-800">
             <div>
               <div
