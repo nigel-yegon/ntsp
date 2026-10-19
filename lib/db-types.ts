@@ -20,10 +20,15 @@ export type {
   DocumentReviewStatus,
   Event,
   EventType,
-  Incident,              // ← new
-  IncidentAttachment,    // ← new
-  IncidentCategory,      // ← new
-  IncidentStatus,        // ← new
+  Incident,              
+  IncidentAttachment,    
+  IncidentCategory,      
+  IncidentStatus, 
+  InvestorInquiry, 
+  InvestorType,
+  InvestmentInterest,
+  InvestmentScale,
+  InquiryStatus,       
   Message,
   MessageThread,
   PermitClass,

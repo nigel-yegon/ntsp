@@ -1,0 +1,1 @@
+CREATE SEQUENCE IF NOT EXISTS investor_inquiry_reference_seq START 10;

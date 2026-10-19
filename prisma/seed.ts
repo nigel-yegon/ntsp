@@ -28,6 +28,7 @@ async function main() {
   await seedBusinessesAndCustomers();
   await seedApplications();
   await seedIncidents();
+  await seedInvestorInquiries();   // ← new
 
   console.log("✅ Seed complete.");
 }
@@ -363,7 +364,7 @@ async function seedBlogPosts() {
     { title: "Lake Naivasha: The Weekend Escape", slug: "lake-naivasha-weekend", excerpt: "Boat safaris, hippos, and Crescent Island — the perfect weekend from Nairobi.", content: `Lake Naivasha is 90 minutes from Nairobi and one of the easiest weekend escapes in Kenya.\n\nThe lake: A freshwater lake in the Rift Valley, home to hippos, over 400 bird species, and a thriving flower-farming industry.\n\nCrescent Island: A private island in the lake where you can walk among giraffes, zebras, and wildebeest — no fences, no vehicles. It's one of the few places in Kenya where you can walk freely among large mammals.\n\nBoat safaris: Take a boat to see hippos up close (from a safe distance), fish eagles, and the lake's resident pelicans.\n\nWhere to stay: Lake Naivasha Sopa Resort, Enashipai, or one of the many boutique lodges on the shore.`, coverImage: img("photo-1544551763-46a013bb70d5"), tags: "Nakuru,Weekend,Wildlife", published: true, publishedAt: new Date("2025-12-20") },
     { title: "The Truth About Kenyan Roads", slug: "kenyan-roads-truth", excerpt: "What to expect when driving in Kenya — road conditions, driving culture, and why most visitors shouldn't self-drive.", content: `Kenya drives on the left, uses a mix of tarmac and rough gravel, and has one of the more chaotic driving cultures in East Africa. Here's what to know.\n\nMain highways: The Mombasa Road, the Nairobi-Nakuru highway, and the Thika Superhighway are all in good condition. Speed bumps are frequent and often unmarked.\n\nRural roads: Variable. The road to the Mara is 5–6 hours from Nairobi, mostly tarmac with some rough sections near the park. The road to Amboseli is 4 hours, mostly tarmac.\n\nTraffic: Nairobi traffic is notorious. Avoid driving during rush hour (7–9am, 5–7pm) if you can.\n\nBetter option: Hire a driver-guide. They know the roads, the shortcuts, and the parks. The cost is worth every shilling.`, coverImage: img("photo-1449965408869-eaa3f722e40d"), tags: "Planning,Transport", published: true, publishedAt: new Date("2025-12-03") },
     { title: "Kenya's Best Time to Visit for Birdwatching", slug: "kenyas-birdwatching", excerpt: "Over 1,100 species, two rainy seasons, and the migratory window — here's when to go.", content: `Kenya has over 1,100 recorded bird species — one of the richest avifaunas in Africa.\n\nResident species: Common year-round. The Rift Valley lakes, Kakamega Forest, and the coastal forests have the highest diversity.\n\nPalearctic migrants: Arrive from Europe and Asia from October to March. The Rift Valley lakes are the single best place to see them — Nakuru, Naivasha, Baringo, and Bogoria.\n\nIntra-African migrants: Arrive with the rains. April to May and November are the peak periods.\n\nBest overall months: November to March for migratory species and pleasant weather. The Rift Valley lake circuit is at its best.`, coverImage: img("photo-1444464666168-49d633b86797"), tags: "Wildlife,Birdwatching,Planning", published: true, publishedAt: new Date("2025-11-18") },
-    { title: "Ethical Wildlife Tourism in Kenya", slug: "ethical-wildlife-tourism", excerpt: "How to travel in a way that supports conservation and respects wildlife — not exploits it.", content: `Kenya's wildlife is under pressure from poaching, habitat loss, and climate change. Ethical tourism can be part of the solution — or part of the problem.\n\nChoose the right operators: Look for camps and lodges that are members of the Kenya Association of Tour Operators (KATO) or that partner with conservancies. Many are actively involved in anti-poaching and community work.\n\nAvoid: Elephant rides, lion walks, and any "sanctuary" that allows cub-petting. These are exploitative operations dressed up as conservation.\n\nSupport: Community conservancies like Lewa, Ol Pejeta, and Mara North. These pay local landowners, employ local staff, and protect wildlife corridors.\n\nPhotography: Never pressure your guide to move off-road for a better shot. It damages habitat and stresses animals.`, coverImage: img("photo-1564760055775-d63b17a55c44"), tags: "Wildlife,Conservation,Ethics", published: true, publishedAt: new Date("2025-10-30") },
+    { title: "Ethical Wildlife Tourism in Kenya", slug: "ethical-wildlife-tourism", excerpt: "How to travel in a way that supports conservation and respects wildlife — not exploits it.", content: `Kenya's wildlife is under pressure from poaching, habitat loss, and climate change. Ethical tourism can be part of the solution — or part of the problem.\n\nChoose the right operators: Look for camps and lodges that are members of the Kenya Association of Tour Operators (KATO) or that partner with conservancies. Many are actively involved in anti-poaching and community work.\n\nAvoid: Elephant rides, lion walks, and any "sanctuary" that allows cub-petting. These are exploitative operations dressed up as conservation.\n\nSupport: Community conservancies like Lewa, Ol Pejeta, and Mara North. These pay local landowners, employ local staff, and protect wildlife corridors.\n\nPhotography: Never pressure your guide to move off-road for a better shot. It damages habitat and stresses animals.`, coverImage: img("photo-1560055775-d63b17a55c44"), tags: "Wildlife,Conservation,Ethics", published: true, publishedAt: new Date("2025-10-30") },
   ];
 
   for (const p of posts) {
@@ -944,6 +945,255 @@ async function seedIncidents() {
 
   console.log(`✔ Seeded ${seeds.length} incidents (${created} created, ${updated} updated)`);
   console.log(`   ${seeds.filter((s) => s.status === "OPEN").length} OPEN, ${seeds.filter((s) => s.status === "UNDER_REVIEW").length} UNDER_REVIEW, ${seeds.filter((s) => s.status === "ESCALATED").length} ESCALATED, ${seeds.filter((s) => s.status === "RESOLVED").length} RESOLVED, ${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INVESTOR INQUIRIES — 8 records across all statuses
+// ═══════════════════════════════════════════════════════════════
+
+async function seedInvestorInquiries() {
+  const admin = await prisma.user.findUnique({
+    where: { email: "admin@test.local" },
+    select: { id: true },
+  });
+  if (!admin) {
+    console.warn("⚠ Skipping investor inquiries — admin user not found");
+    return;
+  }
+
+  const now = Date.now();
+  const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
+
+  type InquirySeed = {
+    referenceNo: string;
+    status: "NEW" | "IN_REVIEW" | "CONTACTED" | "CLOSED";
+    fullName: string;
+    email: string;
+    phone: string | null;
+    company: string | null;
+    country: string | null;
+    investorType: "INDIVIDUAL" | "COMPANY" | "FUND" | "FAMILY_OFFICE" | "OTHER";
+    interests: (
+      | "LODGE_RESORT"
+      | "COASTAL"
+      | "ECO_TOURISM"
+      | "MICE"
+      | "CULTURAL_HERITAGE"
+      | "INFRASTRUCTURE"
+      | "DOMESTIC_LEISURE"
+      | "TECHNOLOGY"
+      | "OTHER"
+    )[];
+    scale:
+      | "UNDER_10M"
+      | "FROM_10M_50M"
+      | "FROM_50M_100M"
+      | "FROM_100M_500M"
+      | "ABOVE_500M"
+      | "PREFER_NOT_TO_SAY"
+      | null;
+    message: string;
+    createdDaysAgo: number;
+    reviewedDaysAgo: number | null;
+    reviewNotes: string | null;
+  };
+
+  const seeds: InquirySeed[] = [
+    {
+      referenceNo: "INV/2026/0001",
+      status: "IN_REVIEW",
+      fullName: "Jonathan Mwangi",
+      email: "j.mwangi@serenainvest.example",
+      phone: "+254 722 500 100",
+      company: "Serena Capital Partners",
+      country: "Kenya",
+      investorType: "INDIVIDUAL",
+      interests: ["LODGE_RESORT", "ECO_TOURISM"],
+      scale: "FROM_10M_50M",
+      message: "I am exploring a luxury tented-camp development near the Mara Triangle. I have identified a 40-acre parcel adjacent to a conservancy and would like to discuss the licensing pathway, incentives available for conservation-linked lodges, and any PPP frameworks the authority supports.",
+      createdDaysAgo: 2,
+      reviewedDaysAgo: 1,
+      reviewNotes: "Relevant to the high-end lodges focus area. Requested a preliminary meeting; forwarded to TFC for co-financing discussion.",
+    },
+    {
+      referenceNo: "INV/2026/0002",
+      status: "CONTACTED",
+      fullName: "Fatima Al-Rashid",
+      email: "f.alrashid@gulfheritage.example",
+      phone: "+971 50 555 0100",
+      company: "Gulf Heritage Holdings",
+      country: "United Arab Emirates",
+      investorType: "FAMILY_OFFICE",
+      interests: ["LODGE_RESORT", "COASTAL", "CULTURAL_HERITAGE"],
+      scale: "ABOVE_500M",
+      message: "Our family office is evaluating a portfolio of 3 to 4 heritage-listed properties along the Lamu and Malindi coastlines. We are particularly interested in the conservation-easement frameworks available for historic Swahili architecture and would welcome introductions to the National Museums of Kenya for the heritage component.",
+      createdDaysAgo: 8,
+      reviewedDaysAgo: 5,
+      reviewNotes: "High-value opportunity. Met with the investor delegation in Nairobi. Introductions to NMK and the Lamu County government arranged.",
+    },
+    {
+      referenceNo: "INV/2026/0003",
+      status: "NEW",
+      fullName: "Erik Lindqvist",
+      email: "erik@nordicimpact.example",
+      phone: "+46 70 555 0123",
+      company: "Nordic Impact Capital",
+      country: "Sweden",
+      investorType: "FUND",
+      interests: ["ECO_TOURISM", "TECHNOLOGY"],
+      scale: "FROM_100M_500M",
+      message: "Nordic Impact Capital manages a USD 350M fund focused on sustainable tourism and climate-resilient infrastructure in Sub-Saharan Africa. We would like to understand the pipeline of carbon-neutral resort projects and the digital-booking platforms that have received Tourism Fund support.",
+      createdDaysAgo: 1,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+    },
+    {
+      referenceNo: "INV/2026/0004",
+      status: "NEW",
+      fullName: "Peter Chen",
+      email: "peter.chen@voyagerhotels.example",
+      phone: "+65 9123 4567",
+      company: "Voyager Hotels Group",
+      country: "Singapore",
+      investorType: "COMPANY",
+      interests: ["DOMESTIC_LEISURE", "COASTAL"],
+      scale: "FROM_10M_50M",
+      message: "We operate mid-scale business and leisure hotels across Southeast Asia and are looking at 2-3 properties in Nairobi and Mombasa. We would appreciate a briefing on the domestic-tourism growth data, the typical occupancy curve for new hotels, and the licensing timelines for a hotel in a coastal Special Economic Zone.",
+      createdDaysAgo: 3,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+    },
+    {
+      referenceNo: "INV/2026/0005",
+      status: "IN_REVIEW",
+      fullName: "Sarah Otieno",
+      email: "s.otieno@lakevictoriaagri.example",
+      phone: "+254 733 800 400",
+      company: "Lake Victoria Agri-Tourism Ltd",
+      country: "Kenya",
+      investorType: "COMPANY",
+      interests: ["DOMESTIC_LEISURE", "CULTURAL_HERITAGE"],
+      scale: "UNDER_10M",
+      message: "We run an agricultural operation near Kisumu and are interested in developing a farm-stay and cultural-experience product targeting the domestic market. The audience is Nairobi and Kisumu families seeking affordable weekend getaways. We are looking for guidance on the minimum licensing requirements for a small-scale agri-tourism operation and the branding support available through KTB.",
+      createdDaysAgo: 5,
+      reviewedDaysAgo: 3,
+      reviewNotes: "Domestic-leisure opportunity in the western circuit. Referred to the domestic tourism team at KTB.",
+    },
+    {
+      referenceNo: "INV/2026/0006",
+      status: "CLOSED",
+      fullName: "Ahmed Hassan",
+      email: "ahmed.hassan@redseacapital.example",
+      phone: "+20 100 555 0200",
+      company: "Red Sea Capital",
+      country: "Egypt",
+      investorType: "FUND",
+      interests: ["MICE", "INFRASTRUCTURE"],
+      scale: "FROM_50M_100M",
+      message: "We are scoping MICE infrastructure investment in East Africa and are considering a 3,000-seat conference facility in Nairobi. Interested in the current pipeline, the tender process for government-linked convention centres, and the typical ROI for facilities of this scale.",
+      createdDaysAgo: 20,
+      reviewedDaysAgo: 15,
+      reviewNotes: "Declined — the fund's focus on government-tendered convention centres does not match the PPP framework currently available. Referred to the Kenyatta International Convention Centre for direct engagement on future tenders.",
+    },
+    {
+      referenceNo: "INV/2026/0007",
+      status: "NEW",
+      fullName: "Amina Yusuf",
+      email: "a.yusuf@eastafricatrust.example",
+      phone: "+254 711 200 300",
+      company: "East Africa Conservation Trust",
+      country: "Kenya",
+      investorType: "FAMILY_OFFICE",
+      interests: ["ECO_TOURISM", "CULTURAL_HERITAGE"],
+      scale: "FROM_10M_50M",
+      message: "Our foundation is exploring an eco-lodge and Maasai cultural-immersion project on community land adjacent to Amboseli. We want to structure this as a conservation-linked tourism venture that generates both returns and direct community benefit. Interested in PPP frameworks for community conservancies and any existing co-financing partnerships.",
+      createdDaysAgo: 4,
+      reviewedDaysAgo: null,
+      reviewNotes: null,
+    },
+    {
+      referenceNo: "INV/2026/0008",
+      status: "CONTACTED",
+      fullName: "Marco Rossi",
+      email: "marco.rossi@adriatico-hospitality.example",
+      phone: "+39 340 555 7788",
+      company: "Adriatico Hospitality",
+      country: "Italy",
+      investorType: "COMPANY",
+      interests: ["COASTAL", "LODGE_RESORT"],
+      scale: "FROM_100M_500M",
+      message: "Adriatico Hospitality operates boutique coastal properties in Puglia and Sardinia. We are looking at the Kenyan coast — specifically Diani and Watamu — for our first Sub-Saharan African acquisition. Interested in discussing beachfront land acquisition, foreign ownership rules, and the heritage-restoration incentives for older coastal properties.",
+      createdDaysAgo: 6,
+      reviewedDaysAgo: 2,
+      reviewNotes: "Follow-up scheduled for next week. Sent the coastal tourism investment dossier and the current incentive summary for SEZs.",
+    },
+  ];
+
+  let created = 0;
+  let updated = 0;
+
+  for (const s of seeds) {
+    const reviewedAt = s.reviewedDaysAgo !== null ? daysAgo(s.reviewedDaysAgo) : null;
+    const createdAt = daysAgo(s.createdDaysAgo);
+
+    const existing = await prisma.investorInquiry.findUnique({
+      where: { referenceNo: s.referenceNo },
+      select: { id: true },
+    });
+
+    if (existing) {
+      await prisma.investorInquiry.update({
+        where: { id: existing.id },
+        data: {
+          status: s.status,
+          fullName: s.fullName,
+          email: s.email,
+          phone: s.phone,
+          company: s.company,
+          country: s.country,
+          investorType: s.investorType,
+          interests: s.interests,
+          scale: s.scale,
+          message: s.message,
+          reviewedById: reviewedAt ? admin.id : null,
+          reviewedAt,
+          reviewNotes: s.reviewNotes,
+        },
+      });
+      updated++;
+    } else {
+      await prisma.investorInquiry.create({
+        data: {
+          referenceNo: s.referenceNo,
+          status: s.status,
+          fullName: s.fullName,
+          email: s.email,
+          phone: s.phone,
+          company: s.company,
+          country: s.country,
+          investorType: s.investorType,
+          interests: s.interests,
+          scale: s.scale,
+          message: s.message,
+          reviewedById: reviewedAt ? admin.id : null,
+          reviewedAt,
+          reviewNotes: s.reviewNotes,
+          createdAt,
+        },
+      });
+      created++;
+    }
+  }
+
+  console.log(
+    `✔ Seeded ${seeds.length} investor inquiries (${created} created, ${updated} updated)`
+  );
+  console.log(
+    `   ${seeds.filter((s) => s.status === "NEW").length} NEW, ` +
+      `${seeds.filter((s) => s.status === "IN_REVIEW").length} IN_REVIEW, ` +
+      `${seeds.filter((s) => s.status === "CONTACTED").length} CONTACTED, ` +
+      `${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`
+  );
 }
 
 main()

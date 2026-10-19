@@ -61,7 +61,10 @@ model User {
 
   // ── Incident review side (admin)
   incidentsReviewed Incident[] @relation("IncidentReviewer")
-  incidentsEscalated Incident[] @relation("IncidentEscalator")   
+  incidentsEscalated Incident[] @relation("IncidentEscalator")  
+
+  // - Investor Inquiry
+  inquiriesReviewed InvestorInquiry[] @relation("InquiryReviewer")  
 
   @@index([role])
   @@index([companyId])
@@ -670,4 +673,76 @@ model IncidentAttachment {
 
   @@index([incidentId])
   
+}
+
+// ─── Investor Inquiries ────────────────────────────────────────
+
+enum InvestorType {
+  INDIVIDUAL
+  COMPANY
+  FUND
+  FAMILY_OFFICE
+  OTHER
+}
+
+enum InvestmentInterest {
+  LODGE_RESORT
+  COASTAL
+  ECO_TOURISM
+  MICE
+  CULTURAL_HERITAGE
+  INFRASTRUCTURE
+  DOMESTIC_LEISURE
+  TECHNOLOGY
+  OTHER
+}
+
+enum InvestmentScale {
+  UNDER_10M
+  FROM_10M_50M
+  FROM_50M_100M
+  FROM_100M_500M
+  ABOVE_500M
+  PREFER_NOT_TO_SAY
+}
+
+enum InquiryStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  CLOSED
+}
+
+model InvestorInquiry {
+  id          String   @id @default(cuid())
+  referenceNo String   @unique
+  status      InquiryStatus @default(NEW)
+
+  // Contact
+  fullName  String
+  email     String
+  phone     String?
+  company   String?
+  country   String?
+
+  // Who they are
+  investorType InvestorType?     @default(INDIVIDUAL)
+  interests    InvestmentInterest[] // multi-select
+  scale        InvestmentScale?
+
+  // Freeform
+  message String
+
+  // Admin review trail
+  reviewedById String?
+  reviewedBy   User?     @relation("InquiryReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  reviewNotes  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([reviewedById])
 }

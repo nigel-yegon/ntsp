@@ -14,19 +14,40 @@ import {
   LogOut,
   User as UserIcon,
   FileText,
+  ChevronDown,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { ThemeToggle } from "./theme-toggle";
 import type { SiteChromeSession } from "./site-chrome";
 
-const links = [
-  { href: "/destinations", label: "Destinations" },
+// ─── Navigation structure ───────────────────────────────────
+// Any item that carries a `dropdown` renders as a split button:
+// the label navigates to the section page, a chevron opens the
+// sub-items. Items without `dropdown` render as plain links.
+const destinationsSub = [
   { href: "/experiences", label: "Experiences" },
   { href: "/packages", label: "Packages" },
-  { href: "/stay", label: "Stay" },
+  { href: "/stay", label: "Stays" },
+] as const;
+
+const investmentSub = [
+  { href: "/investment/opportunities", label: "Opportunities" },
+  { href: "/investment/inquiry", label: "Investor inquiry" },
+] as const;
+
+const safetySub = [
+  { href: "/report-an-incident", label: "Report an incident" },
+] as const;
+
+const links = [
+  { href: "/destinations", label: "Destinations", dropdown: destinationsSub },
+  { href: "/services", label: "Services" },
+  { href: "/about", label: "About" },
+  { href: "/investment", label: "Investment", dropdown: investmentSub },
+  { href: "/resources", label: "Resources" },
   { href: "/events", label: "Events" },
-  { href: "/blog", label: "Blog" },
-];
+  { href: "/safety", label: "Safety", dropdown: safetySub },
+] as const;
 
 const ROLE_HOME: Record<string, string> = {
   EMPLOYER: "/services",
@@ -58,8 +79,9 @@ export function Navbar({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // Tracks which dropdown is open: null | 'user' | 'anon'
   const [menuOpen, setMenuOpen] = useState<null | "user" | "anon">(null);
+  // Which top-level dropdown is open, keyed by its href.
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const isDashboard =
     isStatic ||
@@ -72,6 +94,7 @@ export function Navbar({
   useEffect(() => {
     setOpen(false);
     setMenuOpen(null);
+    setOpenDropdown(null);
   }, [pathname]);
 
   // Track scroll position for the header's background treatment
@@ -92,7 +115,7 @@ export function Navbar({
     };
   }, [open]);
 
-  // Close whichever dropdown is open on outside click and Escape
+  // Close user/anon dropdown on outside click and Escape
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -113,6 +136,31 @@ export function Navbar({
       document.removeEventListener("keydown", onKey);
     };
   }, [menuOpen]);
+
+  // Close top-level dropdown on outside click and Escape.
+  // Any click that isn't inside an element with [data-dropdown-root]
+  // closes whichever dropdown is open. Clicks on the toggle button
+  // themselves are handled by the button's onClick.
+  useEffect(() => {
+    if (!openDropdown) return;
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-dropdown-root]")) {
+        setOpenDropdown(null);
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpenDropdown(null);
+    }
+
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openDropdown]);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -147,21 +195,105 @@ export function Navbar({
           {/* Desktop navigation */}
           <ul className="hidden items-center gap-1 xl:flex">
             {links.map((l) => {
-              const active = isActive(l.href);
+              const hasDropdown = "dropdown" in l && l.dropdown;
+              const dropdownActive =
+                hasDropdown &&
+                l.dropdown.some((sub: { href: string }) => isActive(sub.href));
+              const active = isActive(l.href) || dropdownActive;
+
+              if (!hasDropdown) {
+                return (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${active
+                          ? "text-brand-600 dark:text-brand-300"
+                          : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
+                        }`}
+                    >
+                      {l.label}
+                      {active && (
+                        <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand-500" />
+                      )}
+                    </Link>
+                  </li>
+                );
+              }
+
+              const isOpen = openDropdown === l.href;
               return (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${active
+                <li
+                  key={l.href}
+                  className="relative"
+                  data-dropdown-root
+                >
+                  <div
+                    className={`flex items-center rounded-md transition-colors ${active || isOpen
                         ? "text-brand-600 dark:text-brand-300"
                         : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
                       }`}
                   >
-                    {l.label}
-                    {active && (
-                      <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand-500" />
-                    )}
-                  </Link>
+                    <Link
+                      href={l.href}
+                      className="relative rounded-l-md px-3 py-2 text-sm font-medium"
+                    >
+                      {l.label}
+                      {active && (
+                        <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand-500" />
+                      )}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpenDropdown((v) => (v === l.href ? null : l.href))
+                      }
+                      aria-expanded={isOpen}
+                      aria-haspopup="menu"
+                      aria-label={`Open ${l.label.toLowerCase()} menu`}
+                      className="rounded-r-md py-2 pl-1 pr-2.5"
+                    >
+                      <ChevronDown
+                        size={14}
+                        aria-hidden
+                        className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  </div>
+
+                  {isOpen && (
+                    <div
+                      role="menu"
+                      aria-label={l.label}
+                      className="absolute left-0 top-full z-50 mt-1 w-56 rounded-xl border border-deep-200 bg-cream-100 p-1.5 shadow-xl dark:border-deep-800 dark:bg-deep-950"
+                    >
+                      {l.dropdown.map((sub: { href: string; label: string }) => {
+                        const subActive = isActive(sub.href);
+                        return (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            role="menuitem"
+                            onClick={() => setOpenDropdown(null)}
+                            className={`flex items-center rounded-lg px-3 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${subActive
+                                ? "bg-brand-100 text-brand-800 dark:bg-brand-950/40 dark:text-brand-200"
+                                : "text-deep-700 hover:bg-cream-200 dark:text-cream-200 dark:hover:bg-deep-900"
+                              }`}
+                          >
+                            {sub.label}
+                          </Link>
+                        );
+                      })}
+                      <div className="my-1 h-px bg-deep-200 dark:bg-deep-800" />
+                      <Link
+                        href={l.href}
+                        role="menuitem"
+                        onClick={() => setOpenDropdown(null)}
+                        className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-brand-300 dark:hover:bg-brand-950/40"
+                      >
+                        All {l.label.toLowerCase()}
+                      </Link>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -270,9 +402,31 @@ export function Navbar({
 
             <ul className="flex flex-col p-3">
               {links.map((l) => {
-                const active = isActive(l.href);
+                const hasDropdown = "dropdown" in l && l.dropdown;
+                const dropdownActive =
+                  hasDropdown &&
+                  l.dropdown.some((sub: { href: string }) => isActive(sub.href));
+                const active = isActive(l.href) || dropdownActive;
+
+                if (!hasDropdown) {
+                  return (
+                    <li key={l.href}>
+                      <Link
+                        href={l.href}
+                        onClick={() => setOpen(false)}
+                        className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
+                            ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                            : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                          }`}
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  );
+                }
+
                 return (
-                  <li key={l.href}>
+                  <li key={l.href} className="mt-1">
                     <Link
                       href={l.href}
                       onClick={() => setOpen(false)}
@@ -283,6 +437,25 @@ export function Navbar({
                     >
                       {l.label}
                     </Link>
+                    <ul className="ml-3 mt-1 space-y-0.5 border-l border-deep-200 pl-3 dark:border-deep-800">
+                      {l.dropdown.map((sub: { href: string; label: string }) => {
+                        const subActive = isActive(sub.href);
+                        return (
+                          <li key={sub.href}>
+                            <Link
+                              href={sub.href}
+                              onClick={() => setOpen(false)}
+                              className={`block rounded-md px-3 py-2 text-sm transition ${subActive
+                                  ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                                  : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                                }`}
+                            >
+                              {sub.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </li>
                 );
               })}
@@ -433,15 +606,6 @@ function UserMenuPanel({
         Go to my dashboard
       </Link>
 
-      {/* <Link
-        href="/services/applications"
-        role="menuitem"
-        onClick={onClose}
-        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-deep-700 transition hover:bg-cream-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-cream-200 dark:hover:bg-deep-900"
-      >
-        <FileText size={15} aria-hidden="true" />
-        {applicationsLabel}
-      </Link> */}
       {session.role !== "CUSTOMER" && (
         <Link
           href="/services/applications"
