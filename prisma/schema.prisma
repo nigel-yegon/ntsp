@@ -65,6 +65,8 @@ model User {
 
   // - Investor Inquiry
   inquiriesReviewed InvestorInquiry[] @relation("InquiryReviewer")  
+  // Resource Uploader
+  resourcesUploaded  Resource[] @relation("ResourceUploader")
 
   @@index([role])
   @@index([companyId])
@@ -745,4 +747,41 @@ model InvestorInquiry {
   @@index([status])
   @@index([createdAt])
   @@index([reviewedById])
+}
+// ─── Resources ────────────────────────────────────────────────
+
+enum ResourceCategory {
+  POLICY
+  RESEARCH
+  INNOVATION
+  GUIDELINES
+  REPORTS
+  OTHER
+}
+
+model Resource {
+  id          String           @id @default(cuid())
+  title       String
+  description String
+  category    ResourceCategory @default(OTHER)
+
+  fileName    String
+  mimeType    String
+  sizeBytes   Int
+  storageKey  String
+  uploadedAt  DateTime         @default(now())
+
+  published   Boolean          @default(true)
+  order       Int              @default(0)
+
+  uploadedById String?
+  uploadedBy   User?   @relation("ResourceUploader", fields: [uploadedById], references: [id])
+  uploaderName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, order])
+  @@index([category])
+  @@index([uploadedById])
 }

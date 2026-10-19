@@ -33,6 +33,8 @@ export type {
   MessageThread,
   PermitClass,
   Post,
+  Resource,
+  ResourceCategory,
   Role,
   ThreadSubject,
   TourPackage,

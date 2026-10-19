@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { BusinessesPanel } from "./businesses/businesses-panel";
 import { IncidentsPanel } from "./incidents/incidents-panel";
 import { InquiriesPanel } from "./inquiries/inquiries-panel";
+import { ResourcesPanel } from "./resources/resources-panel";
 import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
@@ -64,7 +65,8 @@ type ModuleKey =
   | "packages"
   | "stay"
   | "events"
-  | "blog";
+  | "blog"
+  | "resources";
 
 type ModuleTone = {
   ring: string;
@@ -138,6 +140,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillText: "text-brand-800 dark:text-brand-200",
     icon: <InquiryIcon />,
   },
+  resources: {
+  ring: "ring-brand-500/20",
+  border: "border-brand-300 dark:border-brand-800",
+  borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
+  bgSoft: "bg-brand-50 dark:bg-brand-950/40",
+  bgActive: "bg-brand-100 dark:bg-brand-950/70",
+  text: "text-brand-700 dark:text-brand-300",
+  button: "bg-brand-600",
+  buttonHover: "hover:bg-brand-700",
+  bar: "bg-brand-500",
+  pillBg: "bg-brand-100 dark:bg-brand-950",
+  pillText: "text-brand-800 dark:text-brand-200",
+  icon: <FolderIcon />,
+},
   experiences: {
     ring: "ring-emerald-500/20",
     border: "border-emerald-300 dark:border-emerald-800",
@@ -425,6 +441,7 @@ export function DashboardClient() {
               {activeModule === "inquiries" && (
                 <InquiriesPanel search={search} />
               )}
+              {activeModule === "resources" && <ResourcesPanel search={search} />}
 
               {activeModule === "destinations" && (
                 <DestinationsModule
@@ -511,6 +528,7 @@ function DashboardSidebar({
     { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
     { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
     { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+    { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
     { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
     { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
     { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
@@ -640,6 +658,7 @@ function DashboardHeader({
     businesses: "Businesses",
     incidents: "Reported Incidents",
     inquiries: "Investor inquiries",
+    resources: "Resources",
     destinations: "Destinations",
     experiences: "Experiences",
     packages: "Packages",
@@ -2518,6 +2537,14 @@ function PencilLineIcon() {
 }
 
 function InquiryIcon() {
+  return (
+    <svg {...iconBase} className="h-5 w-5">
+      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
+      <path d="m3 8 9 6 9-6" />
+    </svg>
+  );
+}
+function FolderIcon() {
   return (
     <svg {...iconBase} className="h-5 w-5">
       <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />

@@ -31,8 +31,9 @@ const destinationsSub = [
 ] as const;
 
 const aboutSub = [
-  { href: "/about/resources", label: "Resources" },
+
   { href: "/about/government-agencies", label: "Government Agencies" },
+  { href: "/about/resources", label: "Resources" },
   { href: "/blog", label: "Travel Blog" },
   { href: "/contact", label: "Contact Us" },
 ] as const;
@@ -51,7 +52,7 @@ const links = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About", dropdown: aboutSub },
   { href: "/investment", label: "Investment", dropdown: investmentSub },
-  { href: "/resources", label: "Resources" },
+//  { href: "/about/resources", label: "Resources" },
   { href: "/events", label: "Events" },
   { href: "/safety", label: "Safety", dropdown: safetySub },
 ] as const;
@@ -214,8 +215,8 @@ export function Navbar({
                     <Link
                       href={l.href}
                       className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${active
-                          ? "text-brand-600 dark:text-brand-300"
-                          : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
+                        ? "text-brand-600 dark:text-brand-300"
+                        : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
                         }`}
                     >
                       {l.label}
@@ -236,8 +237,8 @@ export function Navbar({
                 >
                   <div
                     className={`flex items-center rounded-md transition-colors ${active || isOpen
-                        ? "text-brand-600 dark:text-brand-300"
-                        : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
+                      ? "text-brand-600 dark:text-brand-300"
+                      : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
                       }`}
                   >
                     <Link
@@ -282,8 +283,8 @@ export function Navbar({
                             role="menuitem"
                             onClick={() => setOpenDropdown(null)}
                             className={`flex items-center rounded-lg px-3 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${subActive
-                                ? "bg-brand-100 text-brand-800 dark:bg-brand-950/40 dark:text-brand-200"
-                                : "text-deep-700 hover:bg-cream-200 dark:text-cream-200 dark:hover:bg-deep-900"
+                              ? "bg-brand-100 text-brand-800 dark:bg-brand-950/40 dark:text-brand-200"
+                              : "text-deep-700 hover:bg-cream-200 dark:text-cream-200 dark:hover:bg-deep-900"
                               }`}
                           >
                             {sub.label}
@@ -297,7 +298,7 @@ export function Navbar({
                         onClick={() => setOpenDropdown(null)}
                         className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-brand-300 dark:hover:bg-brand-950/40"
                       >
-                        {l.label.toWellFormed()}
+                        + {l.label.toLowerCase()}
                       </Link>
                     </div>
                   )}
@@ -422,8 +423,8 @@ export function Navbar({
                         href={l.href}
                         onClick={() => setOpen(false)}
                         className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
-                            ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                            : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                          ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                          : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
                           }`}
                       >
                         {l.label}
@@ -438,8 +439,8 @@ export function Navbar({
                       href={l.href}
                       onClick={() => setOpen(false)}
                       className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
-                          ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                          : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                        ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                        : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
                         }`}
                     >
                       {l.label}
@@ -453,8 +454,8 @@ export function Navbar({
                               href={sub.href}
                               onClick={() => setOpen(false)}
                               className={`block rounded-md px-3 py-2 text-sm transition ${subActive
-                                  ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                                  : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                                ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                                : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
                                 }`}
                             >
                               {sub.label}

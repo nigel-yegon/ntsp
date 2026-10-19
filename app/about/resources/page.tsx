@@ -1,346 +1,198 @@
-// app/about/government-agencies/page.tsx
+// app/resources/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 import FadeIn from "@/app/components/fade-in";
 import { Stagger } from "@/app/components/stagger";
+import type { ResourceCategory } from "@/lib/db-types";
 
 export const metadata: Metadata = {
-  title: "Government Agencies — NTSP",
+  title: "Resources — NTSP",
   description:
-    "The state corporations, regulatory bodies, and cultural institutions that make up Kenya's tourism sector.",
+    "Policies, research, innovation briefs, guidelines, and reports from the tourism sector. View online or download.",
 };
 
-// ─── Agencies ────────────────────────────────────────────────
-// Seventeen agencies from the Ministry of Tourism, Wildlife and
-// Heritage portfolio. Grouped into four thematic clusters so the
-// page reads as structured content rather than a wall of text.
-type Agency = {
-  name: string;
-  abbr?: string;
-  description: string;
-  tag?: "Marketing" | "Finance" | "Regulation" | "Training" | "Conservation" | "Culture" | "MICE";
+const CATEGORY_LABEL: Record<ResourceCategory, string> = {
+  POLICY: "Policy",
+  RESEARCH: "Research",
+  INNOVATION: "Innovation",
+  GUIDELINES: "Guidelines",
+  REPORTS: "Reports",
+  OTHER: "Other",
 };
 
-type AgencyGroup = {
-  id: string;
-  title: string;
-  subtitle: string;
-  tone: {
-    text: string;
-    bgSoft: string;
-    border: string;
-    bar: string;
-  };
-  icon: React.ReactNode;
-  agencies: Agency[];
-};
-
-const GROUPS: AgencyGroup[] = [
-  {
-    id: "marketing",
-    title: "Marketing & brand",
-    subtitle: "Promoting Kenya as a destination, domestically and internationally.",
-    tone: {
-      text: "text-brand-700 dark:text-brand-300",
-      bgSoft: "bg-brand-50 dark:bg-brand-950/40",
-      border: "border-brand-300 dark:border-brand-800",
-      bar: "bg-brand-500",
-    },
-    icon: <MegaphoneIcon />,
-    agencies: [
-      {
-        name: "Kenya Tourism Board",
-        abbr: "KTB",
-        description:
-          "A State Corporation established under the Tourism Act whose mandate is to market Kenya as a tourist destination locally, regionally, and internationally. KTB's marketing strategy uses digital programs and research-based approaches to inspire the world through the brand Kenya.",
-        tag: "Marketing",
-      },
-      {
-        name: "Brand Kenya Board",
-        description:
-          "Tasked with identifying and refining the key attributes of Kenya that contribute positively to the nation's image and reputation. The Board works to create an authentic, credible brand for the country that establishes its uniqueness in the global arena.",
-        tag: "Marketing",
-      },
-      {
-        name: "Tourism Research Institute",
-        abbr: "TRI",
-        description:
-          "A State Corporation established by the Tourism Act 2011 to undertake and coordinate tourism research and data analysis. TRI is the principal reference point for generating data that informs government and private-sector decision making on tourism matters.",
-        tag: "Marketing",
-      },
-    ],
-  },
-  {
-    id: "finance",
-    title: "Financing & development",
-    subtitle: "Funding tourism enterprises, infrastructure, and premium accommodation.",
-    tone: {
-      text: "text-indigo-700 dark:text-indigo-300",
-      bgSoft: "bg-indigo-50 dark:bg-indigo-950/40",
-      border: "border-indigo-300 dark:border-indigo-800",
-      bar: "bg-indigo-500",
-    },
-    icon: <CoinsIcon />,
-    agencies: [
-      {
-        name: "Tourism Fund",
-        description:
-          "A body corporate established under the Tourism Act 2011, operational since 1 September 2012. The Fund is the legal successor to the Catering and Tourism Development Levy Trustees, providing financing for tourism development.",
-        tag: "Finance",
-      },
-      {
-        name: "Tourism Finance Corporation",
-        abbr: "TFC",
-        description:
-          "A specialized Development Financial Institution established by the government of Kenya through the Tourism Act No. 28 of 2011. Its mission is to develop and diversify Kenya's tourism industry by providing financial services to investors in tourism-related enterprises.",
-        tag: "Finance",
-      },
-      {
-        name: "Kenya Safari Lodges and Hotels Limited",
-        abbr: "KSLH",
-        description:
-          "A government parastatal mandated with the provision of premium hotel and lodge accommodation, conference and business meeting venues, customized beach and safari experiences, and high-value niche products — aligned with Vision 2030.",
-        tag: "Finance",
-      },
-    ],
-  },
-  {
-    id: "regulation",
-    title: "Regulation & training",
-    subtitle: "Setting standards for the sector and building its workforce.",
-    tone: {
-      text: "text-emerald-700 dark:text-emerald-300",
-      bgSoft: "bg-emerald-50 dark:bg-emerald-950/40",
-      border: "border-emerald-300 dark:border-emerald-800",
-      bar: "bg-emerald-500",
-    },
-    icon: <ScaleIcon />,
-    agencies: [
-      {
-        name: "Tourism Regulatory Authority",
-        abbr: "TRA",
-        description:
-          "A corporate body established under Section 4 of the Tourism Act No. 28 of 2011, mandated to regulate the tourism sector. TRA develops regulations, standards, and guidelines that ensure all-round quality service delivery across the sector.",
-        tag: "Regulation",
-      },
-      {
-        name: "Kenya Utalii College",
-        abbr: "KUC",
-        description:
-          "A leading African hospitality and tourism training institution with over 60,000 graduates serving in the local and international industry. Established in 1975 under the Hotels and Restaurants Act (Cap. 494), now governed by the Tourism Act 2011.",
-        tag: "Training",
-      },
-      {
-        name: "Ushanga Kenya Initiative",
-        description:
-          "A national initiative launched in 2017 to create jobs and transform the living standards of pastoralist women through the commercialization of beadwork, turning a traditional activity into a source of economic benefit for communities.",
-        tag: "Training",
-      },
-    ],
-  },
-  {
-    id: "conservation",
-    title: "Conservation, culture & MICE",
-    subtitle: "Protecting Kenya's natural and cultural heritage, and hosting the world.",
-    tone: {
-      text: "text-rose-700 dark:text-rose-300",
-      bgSoft: "bg-rose-50 dark:bg-rose-950/40",
-      border: "border-rose-300 dark:border-rose-800",
-      bar: "bg-rose-500",
-    },
-    icon: <GlobeIcon />,
-    agencies: [
-      {
-        name: "Kenya Wildlife Service",
-        abbr: "KWS",
-        description:
-          "A state corporation established by an Act of Parliament (Cap. 376), now repealed by WCMA (2013), with the mandate to conserve and manage wildlife in Kenya and enforce related laws. KWS works with stakeholders across all protected areas to conserve Kenya's wildlife for the Kenyan people and the world.",
-        tag: "Conservation",
-      },
-      {
-        name: "Wildlife Research & Training Institute",
-        abbr: "WRTI",
-        description:
-          "Established under Section 50 of the Wildlife Conservation and Management Act 2013 and operationalized in July 2020, WRTI conducts and coordinates wildlife research and academic training to enhance planning and decision making in wildlife conservation and management.",
-        tag: "Conservation",
-      },
-      {
-        name: "National Museums of Kenya",
-        abbr: "NMK",
-        description:
-          "A state corporation established by the Museums and Heritage Act 2006. NMK is a multi-disciplinary institution that collects, preserves, studies, documents, and presents Kenya's past and present cultural and natural heritage for the benefit of Kenya and the world.",
-        tag: "Culture",
-      },
-      {
-        name: "Kenya National Archives and Documentation Services",
-        abbr: "KNADS",
-        description:
-          "Located in downtown Nairobi along Moi Avenue, KNADS was established in 1965 by an Act of Parliament and holds over 40,000 volumes. It currently sits under the Office of the Vice-President and State Department for Culture and Heritage.",
-        tag: "Culture",
-      },
-      {
-        name: "Bomas of Kenya",
-        description:
-          "A living showcase of Kenya's cultural diversity — situated 10km from Nairobi city centre and 1km past the main entrance of Nairobi National Park. Bomas offers a miniature Kenya through traditional homesteads, dance, and performance.",
-        tag: "Culture",
-      },
-      {
-        name: "National Heroes Council",
-        abbr: "NHC",
-        description:
-          "A state corporation established by the Kenya Heroes Act No. 5 of 2014 in accordance with the State Corporation Act (Cap. 446), under the State Department for Culture and Heritage in the Ministry of Tourism, Wildlife and Heritage.",
-        tag: "Culture",
-      },
-      {
-        name: "The Kenyatta International Convention Centre",
-        abbr: "KICC",
-        description:
-          "A state corporation established under the Tourism Act 2011 to promote Meetings, Incentive Travel, Conferences, and Exhibitions (MICE). The facility's main conference room holds over 4,000 delegates.",
-        tag: "MICE",
-      },
-    ],
-  },
+const CATEGORY_ORDER: ResourceCategory[] = [
+  "POLICY",
+  "RESEARCH",
+  "INNOVATION",
+  "GUIDELINES",
+  "REPORTS",
+  "OTHER",
 ];
 
-const TAG_TONE: Record<NonNullable<Agency["tag"]>, string> = {
-  Marketing: "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200",
-  Finance: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-200",
-  Regulation: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
-  Training: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200",
-  Conservation: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200",
-  Culture: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200",
-  MICE: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200",
-};
+export default async function ResourcesPage() {
+  const resources = await prisma.resource.findMany({
+    where: { published: true },
+    orderBy: [{ category: "asc" }, { order: "asc" }, { uploadedAt: "desc" }],
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      fileName: true,
+      mimeType: true,
+      sizeBytes: true,
+      storageKey: true,
+      uploadedAt: true,
+    },
+  });
 
-export default function GovernmentAgenciesPage() {
+  // Group by category, preserving the natural category order and
+  // dropping empty groups.
+  const grouped = CATEGORY_ORDER.map((c) => ({
+    category: c,
+    items: resources.filter((r) => r.category === c),
+  })).filter((g) => g.items.length > 0);
+
+  const total = resources.length;
+
   return (
     <main className="min-h-screen bg-cream-200 dark:bg-deep-950">
-      {/* ── Hero band ─────────────────────────────────────── */}
       <section className="hero-band border-b border-cream-300/60 dark:border-deep-800">
         <div className="mx-auto max-w-6xl px-4 pt-16 pb-10 sm:px-6 sm:pt-20 sm:pb-12 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 dark:text-brand-400">
-            About NTSP
+            Library
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-deep-900 dark:text-cream-100 sm:text-4xl">
-            Government Agencies
+            Resources
           </h1>
           <div className="divider-gold mt-5 w-24" />
           <p className="mt-5 max-w-3xl text-sm leading-relaxed text-deep-600 dark:text-cream-300 sm:text-base">
-            Kenya&apos;s tourism sector is supported by a family of state
-            corporations, regulatory bodies, and cultural institutions — each
-            with a distinct mandate. Together they market the country, fund its
-            enterprises, set its standards, and protect its natural and cultural
-            heritage.
+            Policies, research publications, innovation briefs, guidelines, and
+            reports from Kenya&apos;s tourism sector. Every document can be read
+            in the browser or downloaded for reference.
           </p>
-          <nav className="mt-6">
-            <Link
-              href="/about"
-              className="text-xs font-medium text-deep-600 transition hover:text-brand-600 dark:text-cream-300 dark:hover:text-brand-400"
-            >
-              ← Back to About
-            </Link>
-          </nav>
+          {total > 0 && (
+            <p className="mt-3 text-xs text-deep-500 dark:text-cream-500">
+              {total} {total === 1 ? "document" : "documents"} published
+            </p>
+          )}
         </div>
       </section>
 
-      {/* ── Groups ────────────────────────────────────────── */}
-      <div className="mx-auto max-w-6xl space-y-14 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        {GROUPS.map((group) => (
-          <FadeIn key={group.id} whenVisible>
-            <section id={group.id} className="scroll-mt-24">
-              <header className="mb-6 flex items-start gap-3">
-                <span
-                  className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${group.tone.bgSoft} ${group.tone.text}`}
-                  aria-hidden
-                >
-                  {group.icon}
-                </span>
-                <div>
-                  <h2 className={`text-xl font-bold ${group.tone.text}`}>
-                    {group.title}
-                  </h2>
-                  <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-                    {group.subtitle}
-                  </p>
-                </div>
-              </header>
+      <div className="mx-auto max-w-6xl space-y-12 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        {grouped.length === 0 && (
+          <div className="rounded-2xl border-2 border-dashed border-deep-200 p-12 text-center dark:border-deep-800">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-cream-100 text-deep-500 dark:bg-deep-900 dark:text-cream-500">
+              <FolderIcon />
+            </div>
+            <h2 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">
+              No resources published yet
+            </h2>
+            <p className="mx-auto mt-2 max-w-sm text-xs text-deep-500 dark:text-cream-500">
+              Documents published through the admin dashboard will appear here.
+            </p>
+          </div>
+        )}
 
-              <div className="grid gap-3 sm:grid-cols-2">
+        {grouped.map((group) => (
+          <FadeIn key={group.category} whenVisible>
+            <section>
+              <header className="mb-4">
+                <h2 className="text-lg font-bold text-deep-800 dark:text-cream-100">
+                  {CATEGORY_LABEL[group.category]}
+                </h2>
+              </header>
+              <div className="grid gap-3">
                 <Stagger delayStart={0.05} delayStep={0.04} maxDelay={0.3}>
-                  {group.agencies.map((a) => (
-                    <AgencyCard key={a.name} agency={a} tone={group.tone} />
+                  {group.items.map((r) => (
+                    <ResourceCard key={r.id} resource={r} />
                   ))}
                 </Stagger>
               </div>
             </section>
           </FadeIn>
         ))}
-
-        {/* ── CTA back to About ────────────────────────────── */}
-        <FadeIn whenVisible>
-          <div className="rounded-2xl border border-brand-300 bg-brand-50 p-6 text-center dark:border-brand-800 dark:bg-brand-950/50">
-            <h2 className="text-lg font-bold text-deep-800 dark:text-cream-100">
-              Looking for the Directorate itself?
-            </h2>
-            <p className="mx-auto mt-2 max-w-lg text-sm text-deep-700 dark:text-cream-300">
-              The State Department of Tourism sets policy and provides
-              leadership across this ecosystem. See its mandate and functions.
-            </p>
-            <Link
-              href="/about"
-              className="mt-4 inline-block rounded-md bg-deep-800 px-5 py-2.5 text-sm font-medium text-cream-100 transition hover:bg-deep-900 dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400"
-            >
-              About the State Department
-            </Link>
-          </div>
-        </FadeIn>
       </div>
     </main>
   );
 }
 
-function AgencyCard({
-  agency,
-  tone,
+function ResourceCard({
+  resource,
 }: {
-  agency: Agency;
-  tone: AgencyGroup["tone"];
+  resource: {
+    id: string;
+    title: string;
+    description: string;
+    fileName: string;
+    mimeType: string;
+    sizeBytes: number;
+    storageKey: string;
+    uploadedAt: Date;
+  };
 }) {
+  const viewUrl = `/api/files/${resource.storageKey}`;
+  const downloadUrl = `${viewUrl}?download=1`;
+
   return (
-    <article
-      className={`relative overflow-hidden rounded-xl border bg-cream-50 p-5 pl-6 dark:bg-deep-900 ${tone.border}`}
-    >
-      <span
-        aria-hidden
-        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} opacity-70`}
-      />
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+    <article className="relative overflow-hidden rounded-2xl border border-deep-200 bg-cream-50 p-5 dark:border-deep-800 dark:bg-deep-900">
+      <div className="flex items-start gap-4">
+        <span
+          aria-hidden
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300"
+        >
+          <FileTypeIcon mimeType={resource.mimeType} />
+        </span>
+
+        <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-deep-800 dark:text-cream-100">
-            {agency.name}
-            {agency.abbr && (
-              <span className={`ml-2 text-xs font-medium ${tone.text}`}>
-                {agency.abbr}
-              </span>
-            )}
+            {resource.title}
           </h3>
-          <p className="mt-1.5 text-xs leading-5 text-deep-600 dark:text-cream-400">
-            {agency.description}
+          <p className="mt-1 text-sm leading-6 text-deep-600 dark:text-cream-400">
+            {resource.description}
           </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-deep-500 dark:text-cream-500">
+            <span className="font-mono">{resource.fileName}</span>
+            <span aria-hidden>·</span>
+            <span>{formatBytes(resource.sizeBytes)}</span>
+            <span aria-hidden>·</span>
+            <span>
+              Added {new Date(resource.uploadedAt).toLocaleDateString()}
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href={viewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-brand-400 px-3.5 py-2 text-xs font-semibold text-deep-900 transition hover:bg-brand-500"
+            >
+              <EyeIcon />
+              View
+            </a>
+            <a
+              href={downloadUrl}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-deep-200 bg-cream-100 px-3.5 py-2 text-xs font-semibold text-deep-700 transition hover:bg-cream-200 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-300 dark:hover:bg-deep-800"
+            >
+              <DownloadIcon />
+              Download
+            </a>
+          </div>
         </div>
-        {agency.tag && (
-          <span
-            className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${TAG_TONE[agency.tag]}`}
-          >
-            {agency.tag}
-          </span>
-        )}
       </div>
     </article>
   );
 }
 
-// ─── Icons ───────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 const iconBase = {
   fill: "none",
@@ -352,38 +204,45 @@ const iconBase = {
   className: "h-5 w-5",
 };
 
-function MegaphoneIcon() {
+function FileTypeIcon({ mimeType }: { mimeType: string }) {
+  if (mimeType === "application/pdf") {
+    return (
+      <svg {...iconBase}>
+        <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z" />
+        <path d="M14 3v6h6" />
+        <path d="M9 15h6M9 18h4" />
+      </svg>
+    );
+  }
   return (
     <svg {...iconBase}>
-      <path d="M3 11v2a1 1 0 0 0 1 1h2l7 4V6L6 10H4a1 1 0 0 0-1 1Z" />
-      <path d="M16 8a4 4 0 0 1 0 8" />
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z" />
+      <path d="M14 3v6h6" />
     </svg>
   );
 }
 
-function CoinsIcon() {
+function FolderIcon() {
   return (
     <svg {...iconBase}>
-      <circle cx="9" cy="9" r="5" />
-      <path d="M14.5 5.5a5 5 0 1 1-9 9M15 14h4M17 12v4" />
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
     </svg>
   );
 }
 
-function ScaleIcon() {
+function EyeIcon() {
   return (
-    <svg {...iconBase}>
-      <path d="M12 3v18M5 21h14" />
-      <path d="M5 8h14l-2.5 5a3 3 0 0 1-9 0L5 8Z" />
+    <svg {...iconBase} className="h-3.5 w-3.5">
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 }
 
-function GlobeIcon() {
+function DownloadIcon() {
   return (
-    <svg {...iconBase}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" />
+    <svg {...iconBase} className="h-3.5 w-3.5">
+      <path d="M12 3v12M6 11l6 6 6-6M4 21h16" />
     </svg>
   );
 }
