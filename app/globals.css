@@ -592,3 +592,24 @@ input:-webkit-autofill:focus {
     animation: none;
   }
 }
+/* ─── Cookie consent panel ─────────────────────────────────── */
+@keyframes cookie-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cookie-panel-in {
+  animation: cookie-panel-in 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-panel-in {
+    animation: none;
+  }
+}

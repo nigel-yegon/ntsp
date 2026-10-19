@@ -7,6 +7,7 @@ import { SiteChromeServer as SiteChrome } from "./components/site-chrome-server"
 import { AccessibilityProvider } from "./components/accessibility/accessibility-provider";
 import AccessibilityToolbar from "./components/accessibility/accessibility-toolbar";
 import { AppSessionProvider } from "./components/session-provider";
+import { CookieConsent } from "./components/cookie-consent";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -26,17 +27,18 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <AppSessionProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AccessibilityProvider>
-            <SiteChrome>{children}</SiteChrome>
-            <AccessibilityToolbar />
-          </AccessibilityProvider>
-        </ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AccessibilityProvider>
+              <SiteChrome>{children}</SiteChrome>
+              <AccessibilityToolbar />
+              <CookieConsent />
+            </AccessibilityProvider>
+          </ThemeProvider>
         </AppSessionProvider>
         <Analytics />
       </body>
