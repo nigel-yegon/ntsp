@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { BusinessesPanel } from "./businesses/businesses-panel";
 import { IncidentsPanel } from "./incidents/incidents-panel";
+import { InquiriesPanel } from "./inquiries/inquiries-panel";
 import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
@@ -51,11 +52,13 @@ import {
   deletePost,
   type PostRow,
 } from "./actions/posts";
+import { countModuleRows } from "./actions/stats";
 
 type ModuleKey =
   | "overview"
   | "businesses"
   | "incidents"
+  | "inquiries"
   | "destinations"
   | "experiences"
   | "packages"
@@ -120,6 +123,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillBg: "bg-rose-100 dark:bg-rose-950",
     pillText: "text-rose-800 dark:text-rose-200",
     icon: <ShieldIcon className="h-5 w-5" />,
+  },
+  inquiries: {
+    ring: "ring-brand-500/20",
+    border: "border-brand-300 dark:border-brand-800",
+    borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
+    bgSoft: "bg-brand-50 dark:bg-brand-950/40",
+    bgActive: "bg-brand-100 dark:bg-brand-950/70",
+    text: "text-brand-700 dark:text-brand-300",
+    button: "bg-brand-600",
+    buttonHover: "hover:bg-brand-700",
+    bar: "bg-brand-500",
+    pillBg: "bg-brand-100 dark:bg-brand-950",
+    pillText: "text-brand-800 dark:text-brand-200",
+    icon: <InquiryIcon />,
   },
   experiences: {
     ring: "ring-emerald-500/20",
@@ -204,6 +221,12 @@ export function DashboardClient() {
   const [events, setEvents] = useState<EventRow[]>([]);
   const [posts, setPosts] = useState<PostRow[]>([]);
 
+  const [opCounts, setOpCounts] = useState<{
+    businesses: { total: number; pending: number };
+    incidents: { total: number; open: number };
+    inquiries: { total: number; new: number };
+  } | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -214,13 +237,14 @@ export function DashboardClient() {
       try {
         setLoading(true);
         setError(null);
-        const [d, e, p, s, ev, po] = await Promise.all([
+        const [d, e, p, s, ev, po, counts] = await Promise.all([
           listDestinations(),
           listExperiences(),
           listPackages(),
           listStays(),
           listEvents(),
           listPosts(),
+          countModuleRows(),
         ]);
         if (cancelled) return;
         setDestinations(d);
@@ -229,6 +253,7 @@ export function DashboardClient() {
         setStays(s);
         setEvents(ev);
         setPosts(po);
+        setOpCounts(counts);
       } catch (err) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : "Failed to load data");
@@ -297,13 +322,75 @@ export function DashboardClient() {
     );
   }, [search, posts]);
 
-  const stats = [
-    { label: "Destinations", value: destinations.length, module: "destinations" as ModuleKey },
-    { label: "Experiences", value: experiences.length, module: "experiences" as ModuleKey },
-    { label: "Packages", value: packages.length, module: "packages" as ModuleKey },
-    { label: "Stays", value: stays.length, module: "stay" as ModuleKey },
-    { label: "Events", value: events.length, module: "events" as ModuleKey },
-    { label: "Blog posts", value: posts.length, module: "blog" as ModuleKey },
+  // ── Overview stat cards ─────────────────────────────────────
+  // All cards share the same shape: label, big value, hint line,
+  // module icon, "open module" footer. Hints for content modules
+  // are derived from the already-loaded arrays (no extra queries);
+  // hints for operational modules come from countModuleRows().
+  const stats: {
+    label: string;
+    value: number;
+    module: ModuleKey;
+    hint?: string;
+  }[] = [
+    // Operational
+    {
+      label: "Businesses",
+      value: opCounts?.businesses.total ?? 0,
+      module: "businesses" as ModuleKey,
+      hint: opCounts
+        ? `${opCounts.businesses.pending} pending review`
+        : undefined,
+    },
+    {
+      label: "Incidents",
+      value: opCounts?.incidents.total ?? 0,
+      module: "incidents" as ModuleKey,
+      hint: opCounts ? `${opCounts.incidents.open} open` : undefined,
+    },
+    {
+      label: "Investor inquiries",
+      value: opCounts?.inquiries.total ?? 0,
+      module: "inquiries" as ModuleKey,
+      hint: opCounts ? `${opCounts.inquiries.new} new` : undefined,
+    },
+    // Content
+    {
+      label: "Destinations",
+      value: destinations.length,
+      module: "destinations" as ModuleKey,
+      hint: `${destinations.filter((d) => d.featured).length} featured`,
+    },
+    {
+      label: "Experiences",
+      value: experiences.length,
+      module: "experiences" as ModuleKey,
+      hint: `${experiences.length} attractions`,
+    },
+    {
+      label: "Packages",
+      value: packages.length,
+      module: "packages" as ModuleKey,
+      hint: `${packages.filter((p) => p.featured).length} featured`,
+    },
+    {
+      label: "Stays",
+      value: stays.length,
+      module: "stay" as ModuleKey,
+      hint: `${stays.length} properties`,
+    },
+    {
+      label: "Events",
+      value: events.length,
+      module: "events" as ModuleKey,
+      hint: `${events.filter((e) => e.featured).length} featured`,
+    },
+    {
+      label: "Blog posts",
+      value: posts.length,
+      module: "blog" as ModuleKey,
+      hint: `${posts.filter((p) => p.published).length} published`,
+    },
   ];
 
   return (
@@ -333,6 +420,10 @@ export function DashboardClient() {
 
               {activeModule === "incidents" && (
                 <IncidentsPanel search={search} />
+              )}
+
+              {activeModule === "inquiries" && (
+                <InquiriesPanel search={search} />
               )}
 
               {activeModule === "destinations" && (
@@ -417,16 +508,17 @@ function DashboardSidebar({
     tone?: ModuleTone;
     icon: React.ReactNode;
   }[] = [
-      { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
-      { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
-      { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
-      { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
-      { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
-      { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
-      { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
-      { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
-      { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-    ];
+    { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
+    { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+    { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+    { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
+    { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
+    { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
+    { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
+    { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
+    { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
+    { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+  ];
 
   return (
     <aside className="hidden w-72 shrink-0 lg:block">
@@ -547,6 +639,7 @@ function DashboardHeader({
     overview: "Dashboard",
     businesses: "Businesses",
     incidents: "Reported Incidents",
+    inquiries: "Investor inquiries",
     destinations: "Destinations",
     experiences: "Experiences",
     packages: "Packages",
@@ -563,8 +656,9 @@ function DashboardHeader({
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
-              className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600 dark:text-brand-400"
-                }`}
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${
+                tone?.text ?? "text-brand-600 dark:text-brand-400"
+              }`}
             >
               NTSP Content
             </div>
@@ -603,7 +697,12 @@ function Overview({
   stats,
   onNavigate,
 }: {
-  stats: { label: string; value: number; module: ModuleKey }[];
+  stats: {
+    label: string;
+    value: number;
+    module: ModuleKey;
+    hint?: string;
+  }[];
   onNavigate: (m: ModuleKey) => void;
 }) {
   return (
@@ -630,7 +729,7 @@ function Overview({
                 type="button"
                 onClick={() => onNavigate(stat.module)}
                 className={[
-                  "group relative w-full overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
+                  "group relative flex w-full flex-col overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
                   tone
                     ? `${tone.border} ${tone.borderHover}`
                     : "border-deep-200 hover:border-brand-400 dark:border-deep-800 dark:hover:border-brand-500",
@@ -644,12 +743,22 @@ function Overview({
                 )}
 
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium text-deep-500 dark:text-cream-500">
                       {stat.label}
                     </div>
                     <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
                       {stat.value}
+                    </div>
+                    {/* Hint line — always reserved to keep all cards
+                        the same height, regardless of whether the hint
+                        text is present. */}
+                    <div
+                      className={`mt-1 h-4 truncate text-xs font-medium ${
+                        tone?.text ?? "text-deep-500 dark:text-cream-500"
+                      }`}
+                    >
+                      {stat.hint ?? ""}
                     </div>
                   </div>
 
@@ -859,8 +968,8 @@ function DestinationEditor({
 
       <Field label="Location on map">
         <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Drag the pin or click anywhere on the map to set the destination&apos;s
-          coordinates. The public destination page will render this location.
+          Paste the destination&apos;s coordinates from Google Maps. The public
+          destination page will render this location.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -1067,8 +1176,6 @@ function ExperienceEditor({
     });
   }
 
-
-
   return (
     <EditorShell
       eyebrow="Edit experience"
@@ -1107,7 +1214,7 @@ function ExperienceEditor({
 
       <Field label="Location on map">
         <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Drag the pin or click the map to set the exact location. If unset,
+          Paste the experience&apos;s coordinates from Google Maps. If unset,
           the public page falls back to the parent destination&apos;s pin.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -1315,8 +1422,6 @@ function PackageEditor({
     });
   }
 
-
-
   return (
     <EditorShell
       eyebrow="Edit package"
@@ -1347,8 +1452,8 @@ function PackageEditor({
 
       <Field label="Location on map">
         <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Drag the pin or click the map to set the departure point or primary
-          location. If unset, falls back to the destination&apos;s pin.
+          Paste the package&apos;s departure point or primary location
+          coordinates. If unset, falls back to the destination&apos;s pin.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -1555,7 +1660,6 @@ function StayEditor({
     });
   }
 
-
   return (
     <EditorShell
       eyebrow="Edit stay"
@@ -1587,9 +1691,8 @@ function StayEditor({
 
       <Field label="Location on map">
         <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Drag the pin or click the map to set the exact lodge location. If
-          unset, the public page falls back to the parent destination&apos;s
-          pin.
+          Paste the lodge&apos;s coordinates from Google Maps. If unset, the
+          public page falls back to the parent destination&apos;s pin.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -2052,8 +2155,9 @@ function RowCard({
       ].join(" ")}
     >
       <span
-        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${active ? "opacity-100" : "opacity-40"
-          }`}
+        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${
+          active ? "opacity-100" : "opacity-40"
+        }`}
         aria-hidden
       />
 
@@ -2409,6 +2513,15 @@ function PencilLineIcon() {
     <svg {...iconBase} className="h-5 w-5">
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function InquiryIcon() {
+  return (
+    <svg {...iconBase} className="h-5 w-5">
+      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
+      <path d="m3 8 9 6 9-6" />
     </svg>
   );
 }
