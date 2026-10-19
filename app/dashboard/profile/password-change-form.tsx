@@ -45,7 +45,7 @@ export function PasswordChangeForm() {
           Password
         </h3>
         <p className="mt-1 text-xs text-deep-500 dark:text-cream-400">
-          Leave blank if you signed up with Google or GitHub — those accounts
+          Leave blank if you signed up with Google or Facebook — those accounts
           don't have a password.
         </p>
       </header>

@@ -3,7 +3,7 @@ import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
+import FacebookProvider from "next-auth/providers/facebook";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
@@ -64,11 +64,19 @@ export const authOptions: NextAuthOptions = {
       // allowDangerousEmailAccountLinking: true,
     }),
 
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      // Same caution as above.
-      // allowDangerousEmailAccountLinking: true,
+         FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID!,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email ?? `${profile.id}@facebook.local`,
+          image: profile.picture?.data?.url ?? null,
+          role: "EMPLOYER",
+          companyId: null,
+        };
+      },
     }),
 
     CredentialsProvider({
@@ -113,7 +121,7 @@ export const authOptions: NextAuthOptions = {
       // only knows about id/email/name/image. `role` and `companyId`
       // are not populated. Fall back to EMPLOYER (schema default) and
       // null company. The user completes their company profile later.
-      if (account && (account.provider === "google" || account.provider === "github")) {
+      if (account && (account.provider === "google" || account.provider === "facebook")) {
         if (!token.role) token.role = "EMPLOYER";
         if (token.companyId === undefined) token.companyId = null;
       }
