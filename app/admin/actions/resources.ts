@@ -155,7 +155,7 @@ export async function createResource(form: FormData): Promise<ResourceRow> {
         uploaderName: admin.name,
       },
     });
-    revalidatePath("/resources");
+    revalidatePath("/about/resources");
     revalidatePath("/admin");
     return toRow(created);
   } catch (err) {
@@ -200,7 +200,7 @@ export async function updateResource(
     data.order = patch.order;
 
   const updated = await prisma.resource.update({ where: { id }, data });
-  revalidatePath("/resources");
+  revalidatePath("/about/resources");
   revalidatePath("/admin");
   return toRow(updated);
 }
@@ -218,6 +218,6 @@ export async function deleteResource(id: string): Promise<void> {
   await prisma.resource.delete({ where: { id } });
   await deleteObject(row.storageKey).catch(() => {});
 
-  revalidatePath("/resources");
+  revalidatePath("/about/resources");
   revalidatePath("/admin");
 }
