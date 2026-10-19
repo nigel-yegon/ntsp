@@ -560,3 +560,35 @@ input:-webkit-autofill:focus {
     animation: none;
   }
 }
+
+/* ─── Explore map markers: slow pulse on hover ─────────────── */
+@keyframes marker-pulse {
+  0%   { transform: scale(1);    opacity: 1;    filter: brightness(1); }
+  50%  { transform: scale(1.14); opacity: 0.92; filter: brightness(1.15); }
+  100% { transform: scale(1);    opacity: 1;    filter: brightness(1); }
+}
+
+@keyframes marker-pulse-rotated {
+  0%   { transform: rotate(45deg) scale(1);    opacity: 1;    filter: brightness(1); }
+  50%  { transform: rotate(45deg) scale(1.14); opacity: 0.92; filter: brightness(1.15); }
+  100% { transform: rotate(45deg) scale(1);    opacity: 1;    filter: brightness(1); }
+}
+
+.marker-pulse {
+  animation: marker-pulse 2.4s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.marker-pulse-rotated {
+  animation: marker-pulse-rotated 2.4s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker-pulse,
+  .marker-pulse-rotated {
+    animation: none;
+  }
+}

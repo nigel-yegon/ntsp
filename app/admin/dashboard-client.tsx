@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { LocationPicker } from "@canvastack/canvaloc";
 import { BusinessesPanel } from "./businesses/businesses-panel";
 import { IncidentsPanel } from "./incidents/incidents-panel";
 import { ShieldIcon } from "lucide-react";
@@ -300,11 +299,11 @@ export function DashboardClient() {
 
   const stats = [
     { label: "Destinations", value: destinations.length, module: "destinations" as ModuleKey },
-    { label: "Experiences",  value: experiences.length,  module: "experiences"  as ModuleKey },
-    { label: "Packages",     value: packages.length,     module: "packages"     as ModuleKey },
-    { label: "Stays",        value: stays.length,        module: "stay"         as ModuleKey },
-    { label: "Events",       value: events.length,       module: "events"       as ModuleKey },
-    { label: "Blog posts",   value: posts.length,        module: "blog"         as ModuleKey },
+    { label: "Experiences", value: experiences.length, module: "experiences" as ModuleKey },
+    { label: "Packages", value: packages.length, module: "packages" as ModuleKey },
+    { label: "Stays", value: stays.length, module: "stay" as ModuleKey },
+    { label: "Events", value: events.length, module: "events" as ModuleKey },
+    { label: "Blog posts", value: posts.length, module: "blog" as ModuleKey },
   ];
 
   return (
@@ -418,16 +417,16 @@ function DashboardSidebar({
     tone?: ModuleTone;
     icon: React.ReactNode;
   }[] = [
-    { key: "overview",     label: "Overview",     description: "Dashboard summary",    icon: <GridIcon />    },
-    { key: "businesses",   label: "Businesses",   description: "Manage businesses",    icon: TONES.businesses.icon,   tone: TONES.businesses },
-    { key: "incidents",    label: "Incidents",    description: "Manage incidents",     icon: TONES.incidents.icon,    tone: TONES.incidents },
-    { key: "destinations", label: "Destinations", description: "Manage destinations",  icon: TONES.destinations.icon, tone: TONES.destinations },
-    { key: "experiences",  label: "Experiences",  description: "Manage experiences",   icon: TONES.experiences.icon,  tone: TONES.experiences },
-    { key: "packages",     label: "Packages",     description: "Manage packages",      icon: TONES.packages.icon,     tone: TONES.packages },
-    { key: "stay",         label: "Stay",         description: "Manage accommodation", icon: TONES.stay.icon,         tone: TONES.stay },
-    { key: "events",       label: "Events",       description: "Manage events",        icon: TONES.events.icon,       tone: TONES.events },
-    { key: "blog",         label: "Blog",         description: "Manage blog posts",    icon: TONES.blog.icon,         tone: TONES.blog },
-  ];
+      { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
+      { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+      { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+      { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
+      { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
+      { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
+      { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
+      { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
+      { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+    ];
 
   return (
     <aside className="hidden w-72 shrink-0 lg:block">
@@ -564,9 +563,8 @@ function DashboardHeader({
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
-              className={`text-xs font-medium uppercase tracking-[0.16em] ${
-                tone?.text ?? "text-brand-600 dark:text-brand-400"
-              }`}
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600 dark:text-brand-400"
+                }`}
             >
               NTSP Content
             </div>
@@ -834,11 +832,6 @@ function DestinationEditor({
     });
   }
 
-  const initialMapsUrl =
-    latitude != null && longitude != null
-      ? `https://maps.google.com/?q=${latitude},${longitude}`
-      : undefined;
-
   return (
     <EditorShell
       eyebrow="Edit destination"
@@ -869,14 +862,39 @@ function DestinationEditor({
           Drag the pin or click anywhere on the map to set the destination&apos;s
           coordinates. The public destination page will render this location.
         </p>
-        <LocationPicker
-          initialMapsUrl={initialMapsUrl}
-          onLocationSelected={(loc) => {
-            setLatitude(loc.lat);
-            setLongitude(loc.lng);
-          }}
-          height={280}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Latitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={latitude ?? ""}
+              onChange={(e) =>
+                setLatitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="-1.4850"
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Longitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={longitude ?? ""}
+              onChange={(e) =>
+                setLongitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="35.3720"
+              className={inputClass}
+            />
+          </label>
+        </div>
+
         {latitude != null && longitude != null ? (
           <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
             Selected:{" "}
@@ -1049,10 +1067,7 @@ function ExperienceEditor({
     });
   }
 
-  const initialMapsUrl =
-    latitude != null && longitude != null
-      ? `https://maps.google.com/?q=${latitude},${longitude}`
-      : undefined;
+
 
   return (
     <EditorShell
@@ -1095,14 +1110,38 @@ function ExperienceEditor({
           Drag the pin or click the map to set the exact location. If unset,
           the public page falls back to the parent destination&apos;s pin.
         </p>
-        <LocationPicker
-          initialMapsUrl={initialMapsUrl}
-          onLocationSelected={(loc) => {
-            setLatitude(loc.lat);
-            setLongitude(loc.lng);
-          }}
-          height={260}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Latitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={latitude ?? ""}
+              onChange={(e) =>
+                setLatitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="-1.4850"
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Longitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={longitude ?? ""}
+              onChange={(e) =>
+                setLongitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="35.3720"
+              className={inputClass}
+            />
+          </label>
+        </div>
         {latitude != null && longitude != null ? (
           <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
             Selected:{" "}
@@ -1276,10 +1315,7 @@ function PackageEditor({
     });
   }
 
-  const initialMapsUrl =
-    latitude != null && longitude != null
-      ? `https://maps.google.com/?q=${latitude},${longitude}`
-      : undefined;
+
 
   return (
     <EditorShell
@@ -1314,14 +1350,38 @@ function PackageEditor({
           Drag the pin or click the map to set the departure point or primary
           location. If unset, falls back to the destination&apos;s pin.
         </p>
-        <LocationPicker
-          initialMapsUrl={initialMapsUrl}
-          onLocationSelected={(loc) => {
-            setLatitude(loc.lat);
-            setLongitude(loc.lng);
-          }}
-          height={260}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Latitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={latitude ?? ""}
+              onChange={(e) =>
+                setLatitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="-1.4850"
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Longitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={longitude ?? ""}
+              onChange={(e) =>
+                setLongitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="35.3720"
+              className={inputClass}
+            />
+          </label>
+        </div>
         {latitude != null && longitude != null ? (
           <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
             Selected:{" "}
@@ -1495,10 +1555,6 @@ function StayEditor({
     });
   }
 
-  const initialMapsUrl =
-    latitude != null && longitude != null
-      ? `https://maps.google.com/?q=${latitude},${longitude}`
-      : undefined;
 
   return (
     <EditorShell
@@ -1535,14 +1591,38 @@ function StayEditor({
           unset, the public page falls back to the parent destination&apos;s
           pin.
         </p>
-        <LocationPicker
-          initialMapsUrl={initialMapsUrl}
-          onLocationSelected={(loc) => {
-            setLatitude(loc.lat);
-            setLongitude(loc.lng);
-          }}
-          height={260}
-        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Latitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={latitude ?? ""}
+              onChange={(e) =>
+                setLatitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="-1.4850"
+              className={inputClass}
+            />
+          </label>
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
+              Longitude
+            </span>
+            <input
+              type="number"
+              step="any"
+              value={longitude ?? ""}
+              onChange={(e) =>
+                setLongitude(e.target.value === "" ? null : Number(e.target.value))
+              }
+              placeholder="35.3720"
+              className={inputClass}
+            />
+          </label>
+        </div>
         {latitude != null && longitude != null ? (
           <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
             Selected:{" "}
@@ -1972,9 +2052,8 @@ function RowCard({
       ].join(" ")}
     >
       <span
-        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${
-          active ? "opacity-100" : "opacity-40"
-        }`}
+        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${active ? "opacity-100" : "opacity-40"
+          }`}
         aria-hidden
       />
 

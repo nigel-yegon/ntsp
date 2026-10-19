@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const STYLE_LIGHT = `https://api.maptiler.com/maps/streets-v2/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`;
-const STYLE_DARK = `https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`;
+const STYLE_LIGHT = `https://api.maptiler.com/maps/topo-v4-topographique/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`;
+const STYLE_DARK = `https://api.maptiler.com/maps/01a152be-e10d-7625-8b92-380667e0af99/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY}`;
 
 type MapEmbedProps = {
   latitude: number | null | undefined;
@@ -31,36 +31,42 @@ export function MapEmbed({ latitude, longitude, label, height = 320, zoom = 12 }
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
-  useEffect(() => {
+    useEffect(() => {
     if (!isValidCoord(latitude, longitude)) return;
     if (!containerRef.current) return;
 
-    // v6: set the worker URL once, before creating any map.
-    // Self-hosted path — copy maplibre-gl-worker.mjs and
-    // maplibre-gl-shared.mjs into public/ during build (see below).
+    // Narrow into locals so the compiler can see these are numbers
+    // for the whole effect body. The guard above already ran, but
+    // TS doesn't carry that narrowing into the closure below.
+    const lat = latitude;
+    const lng = longitude;
+    if (typeof lng !== "number" || !isValidCoord(lat, lng)) return;
+
     maplibregl.setWorkerUrl("/maplibre-gl-worker.mjs");
 
     const prefersDark = document.documentElement.classList.contains("dark");
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: prefersDark ? STYLE_DARK : STYLE_LIGHT,
-      center: [longitude, latitude],
+      center: [lng, lat],
       zoom,
       attributionControl: { compact: true },
     });
 
     new maplibregl.Marker({ color: "#e3b23c" })
-      .setLngLat([longitude, latitude])
+      .setLngLat([lng, lat])
       .addTo(map);
 
     mapRef.current = map;
 
-    // Theme observer, scoped to this effect so it's cleaned up with the map.
     const observer = new MutationObserver(() => {
       const dark = document.documentElement.classList.contains("dark");
       map.setStyle(dark ? STYLE_DARK : STYLE_LIGHT, { diff: false });
     });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     return () => {
       observer.disconnect();

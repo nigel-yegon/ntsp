@@ -1,20 +1,22 @@
 import Link from "next/link";
 
 const explore = [
-  { href: "/admin",        label: "Dashboard"    },
-  { href: "/services",     label: "Services"     },
-  { href: "/incidents",  label: "Report Incident"  },
-  { href: "/invest",     label: "Invest in Kenya"     },
-  { href: "/operators",       label: "Tour Operators"       },
-  
+  { href: "/explore", label: "Explore" },
+  { href: "/services", label: "Services" },
+  { href: "/admin", label: "Dashboard" },
+  { href: "/operators", label: "Tour Operators" },
+  { href: "/report-an-incident", label: "Report Incident" },
+
+
+
 ];
 
 const plan = [
-  { href: "/plan/tips",           label: "Travel Tips"    },
-  { href: "/plan/visa",           label: "Visa & Entry"   },
+  { href: "/plan/tips", label: "Travel Tips" },
+  { href: "/plan/visa", label: "Visa & Entry" },
   { href: "/plan/getting-around", label: "Getting Around" },
-  { href: "/about",               label: "About Us"       },
-  { href: "/contact",             label: "Contact Us"     },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Footer() {
