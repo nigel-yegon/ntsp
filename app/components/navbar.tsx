@@ -30,6 +30,13 @@ const destinationsSub = [
   { href: "/stay", label: "Stays" },
 ] as const;
 
+const aboutSub = [
+  { href: "/about/resources", label: "Resources" },
+  { href: "/about/government-agencies", label: "Government Agencies" },
+  { href: "/blog", label: "Travel Blog" },
+  { href: "/contact", label: "Contact Us" },
+] as const;
+
 const investmentSub = [
   { href: "/investment/opportunities", label: "Opportunities" },
   { href: "/investment/inquiry", label: "Investor inquiry" },
@@ -42,7 +49,7 @@ const safetySub = [
 const links = [
   { href: "/destinations", label: "Destinations", dropdown: destinationsSub },
   { href: "/services", label: "Services" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About", dropdown: aboutSub },
   { href: "/investment", label: "Investment", dropdown: investmentSub },
   { href: "/resources", label: "Resources" },
   { href: "/events", label: "Events" },
@@ -290,7 +297,7 @@ export function Navbar({
                         onClick={() => setOpenDropdown(null)}
                         className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 dark:text-brand-300 dark:hover:bg-brand-950/40"
                       >
-                        All {l.label.toLowerCase()}
+                        {l.label.toWellFormed()}
                       </Link>
                     </div>
                   )}
