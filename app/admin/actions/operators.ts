@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 
 export type OperatorRow = {
   id: string;
+  userId: string; // Added to allow filtering packages if needed
   businessName: string;
   contactEmail: string;
   traLicenseNumber: string | null;
@@ -38,6 +39,7 @@ export async function listOperators(): Promise<OperatorRow[]> {
 
   return rows.map((r) => ({
     id: r.id,
+    userId: r.userId,
     businessName: r.businessName,
     contactEmail: r.contactEmail,
     traLicenseNumber: r.traLicenseNumber,
@@ -76,14 +78,29 @@ export async function rejectOperator(
 ): Promise<string | null> {
   try {
     await requireAdmin();
-    await prisma.businessProfile.update({
+    
+    // 1. Reject the profile
+    const profile = await prisma.businessProfile.update({
       where: { id },
       data: {
         verificationStatus: "REJECTED",
         rejectionReason: reason.slice(0, 500),
+        approvedAt: null,
+        approvedById: null,
       },
     });
+
+    // 2. Unpublish their tour packages so they disappear from the public site
+    if (profile.userId) {
+      await prisma.tourPackage.updateMany({
+        where: { businessId: profile.userId },
+        data: { published: false },
+      });
+    }
+
     revalidatePath("/admin");
+    revalidatePath("/operators");
+    revalidatePath("/packages");
     return null;
   } catch (err) {
     console.error("rejectOperator failed:", err);
