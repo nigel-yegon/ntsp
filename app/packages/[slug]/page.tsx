@@ -15,6 +15,9 @@ import {
 } from "@/app/components/marketplace/related-cards";
 import { resolveImageUrl } from "@/lib/image-url";
 
+// Type for the JSON-stored itinerary
+type ItineraryDay = { title: string; description: string };
+
 export default async function PackagePage({
   params,
 }: {
@@ -55,6 +58,14 @@ export default async function PackagePage({
   const canInteract = businessApproved && !!pkg.published;
   const businessName =
     pkg.business?.businessProfile?.businessName ?? "this business";
+
+  // Extract itinerary safely from the JSON field
+  const itinerary: ItineraryDay[] =
+    Array.isArray(pkg.itinerary) && pkg.itinerary.length > 0
+      ? (pkg.itinerary as ItineraryDay[]).filter(
+          (day) => day.title?.trim() || day.description?.trim()
+        )
+      : [];
 
   const [attractions, stays, relatedPackages] = await Promise.all([
     prisma.attraction.findMany({
@@ -200,9 +211,54 @@ export default async function PackagePage({
             ]}
           />
 
+          {/* ── Itinerary ─────────────────────────────────── */}
+          {itinerary.length > 0 && (
+            <section className="mt-10">
+              <div className="mb-5">
+                <h2 className="text-xl font-semibold text-deep-800 dark:text-cream-100">
+                  Day-by-day itinerary
+                </h2>
+                <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+                  What to expect across the {pkg.durationDays}{" "}
+                  {pkg.durationDays === 1 ? "day" : "days"} of this trip.
+                </p>
+              </div>
+
+              <ol className="relative space-y-4 border-l border-deep-200 pl-6 dark:border-deep-800">
+                {itinerary.map((day, i) => (
+                  <li key={i} className="relative">
+                    {/* Timeline dot */}
+                    <span
+                      className="absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full border-2 border-brand-500 bg-cream-50 text-[10px] font-bold text-brand-600 dark:border-brand-400 dark:bg-deep-900 dark:text-brand-400"
+                      aria-hidden
+                    >
+                      {i + 1}
+                    </span>
+
+                    <div className="rounded-xl border border-cream-300 bg-cream-50 p-5 dark:border-deep-700 dark:bg-deep-900">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-brand-600 dark:text-brand-400">
+                        Day {i + 1}
+                      </span>
+                      {day.title && (
+                        <h3 className="mt-1 text-base font-semibold text-deep-800 dark:text-cream-100">
+                          {day.title}
+                        </h3>
+                      )}
+                      {day.description && (
+                        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-deep-600 dark:text-cream-400">
+                          {day.description}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
           {/* ── Location map (inherited from destination) ── */}
           {mapLat != null && mapLng != null && (
-            <section className="mt-8">
+            <section className="mt-10">
               <div className="mb-4">
                 <h2 className="text-xl font-semibold text-deep-800 dark:text-cream-100">
                   Where this trip goes

@@ -15,7 +15,10 @@ export default async function EditListingPage({
   const { id } = await params;
 
   const session = await getServerSession(authOptions);
-  if (!session?.user || session.user.role !== "BUSINESS") {
+  if (!session?.user?.id) redirect("/login");
+
+  // Allow both BUSINESS and OPERATOR
+  if (session.user.role !== "BUSINESS" && session.user.role !== "OPERATOR") {
     redirect("/dashboard");
   }
 
@@ -77,7 +80,9 @@ export default async function EditListingPage({
           destinations={destinations}
           initial={initial}
           listingId={listing.id}
-          onSubmit={(input) => updateListing(listing.id, "accommodation", input)}
+          onSubmit={(input) =>
+            updateListing(listing.id, "accommodation", input)
+          }
         />
       </section>
     );
@@ -90,6 +95,11 @@ export default async function EditListingPage({
   if (!listing) notFound();
   if (listing.businessId !== session.user.id) notFound();
 
+  // Preserve the itinerary across edits
+  const itinerary = Array.isArray(listing.itinerary)
+    ? (listing.itinerary as { title: string; description: string }[])
+    : [];
+
   const initial: ListingInput = {
     type: "package",
     title: listing.title,
@@ -101,15 +111,16 @@ export default async function EditListingPage({
     imageUrl: listing.imageUrl,
     destinationId: listing.destinationId,
     published: listing.published,
+    itinerary, // ← was missing before, caused data loss on save
   };
 
   return (
     <section className="space-y-6">
       <Link
-        href="/dashboard/listings"
+        href="/dashboard/listings/packages"
         className="text-sm text-deep-500 underline underline-offset-2 hover:text-brand-600 dark:text-cream-400"
       >
-        ← Back to listings
+        ← Back to packages
       </Link>
 
       <header>
