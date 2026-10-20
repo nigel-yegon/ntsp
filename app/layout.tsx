@@ -8,6 +8,7 @@ import { AccessibilityProvider } from "./components/accessibility/accessibility-
 import AccessibilityToolbar from "./components/accessibility/accessibility-toolbar";
 import { AppSessionProvider } from "./components/session-provider";
 import { CookieConsent } from "./components/cookie-consent";
+import { ScrollToTop } from "@/app/components/scroll-to-top";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -41,6 +42,7 @@ export default function RootLayout({
           </ThemeProvider>
         </AppSessionProvider>
         <Analytics />
+        <ScrollToTop />
       </body>
     </html>
   );

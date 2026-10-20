@@ -204,7 +204,7 @@ export function PackagesGrid({ packages, destinations }: Props) {
           </button>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p, i) => (
             <FadeIn key={p.id} delay={Math.min(i * 0.06, 0.4)} whenVisible>
               <Link
@@ -218,13 +218,13 @@ export function PackagesGrid({ packages, destinations }: Props) {
 
                 <CardImage name={p.title} imageUrl={p.imageUrl} aspect="2:1" />
 
-                <div className="flex flex-1 flex-col p-6">
+                <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-xs uppercase tracking-wide text-brand-600 dark:text-brand-400">
                         {p.destination.name}
                       </p>
-                      <h2 className="mt-1 text-lg font-semibold text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
+                      <h2 className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-deep-800 transition group-hover:text-brand-600 dark:text-cream-100 dark:group-hover:text-brand-400">
                         {p.title}
                       </h2>
                     </div>

@@ -4,7 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Menu,
   X,
@@ -74,13 +74,41 @@ const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Administrator",
 };
 
-// Roles allowed to access the permit applications area
 const APPLICATIONS_ROLES = new Set([
   "PERMANENT_SECRETARY",
   "COMMITTEE_MEMBER",
   "VERIFIER",
 ]);
 
+// ─── Scroll direction hook (inlined) ────────────────────────
+function useScrollDirection(threshold = 8) {
+  const [direction, setDirection] = useState<"up" | "down">("up");
+  const [scrolled, setScrolled] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    lastY.current = window.scrollY;
+
+    function onScroll() {
+      const y = window.scrollY;
+      const delta = y - lastY.current;
+
+      if (Math.abs(delta) < threshold) return;
+
+      setDirection(delta > 0 ? "down" : "up");
+      setScrolled(y > threshold);
+      lastY.current = y;
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [threshold]);
+
+  return { direction, scrolled };
+}
+
+// ─── Navbar ─────────────────────────────────────────────────
 export function Navbar({
   static: isStatic = false,
   session,
@@ -90,9 +118,10 @@ export function Navbar({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState<null | "user" | "anon">(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const { direction, scrolled } = useScrollDirection(8);
 
   const isDashboard =
     isStatic ||
@@ -101,21 +130,22 @@ export function Navbar({
     pathname.startsWith("/admin") ||
     pathname.startsWith("/services/applications");
 
+  // Close all menus on route change
   useEffect(() => {
     setOpen(false);
     setMenuOpen(null);
     setOpenDropdown(null);
   }, [pathname]);
 
+  // Close dropdowns/menus when the header hides on scroll-down
   useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 8);
+    if (direction === "down" && scrolled && !isDashboard) {
+      setOpenDropdown(null);
+      setMenuOpen(null);
     }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [direction, scrolled, isDashboard]);
 
+  // Lock body scroll while mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -123,6 +153,7 @@ export function Navbar({
     };
   }, [open]);
 
+  // Close user/anon dropdown on outside click and Escape
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -144,6 +175,7 @@ export function Navbar({
     };
   }, [menuOpen]);
 
+  // Close top-level dropdown on outside click and Escape
   useEffect(() => {
     if (!openDropdown) return;
 
@@ -168,16 +200,20 @@ export function Navbar({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  // Hide the header only on non-dashboard pages when scrolling down
+  const hideHeader = !isDashboard && direction === "down" && scrolled;
+
   return (
     <>
       <header
-        className={`z-50 border-b transition-colors ${
-          isDashboard ? "" : "top-0"
-        } ${
+        className={[
+          "sticky top-0 z-50 border-b",
+          "transition-[transform,background-color,border-color] duration-200",
+          hideHeader ? "-translate-y-full" : "translate-y-0",
           scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
-            : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
-        }`}
+            : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70",
+        ].join(" ")}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link
@@ -372,7 +408,7 @@ export function Navbar({
         </nav>
       </header>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — unchanged */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
@@ -503,7 +539,6 @@ export function Navbar({
                     My dashboard
                   </Link>
 
-                  {/* Permit applications — restricted to PS, Committee, Verifier */}
                   {APPLICATIONS_ROLES.has(session.role) && (
                     <Link
                       href="/services/applications"
@@ -592,7 +627,6 @@ function UserMenuPanel({
   const home = ROLE_HOME[session.role] ?? "/";
   const canViewApplications = APPLICATIONS_ROLES.has(session.role);
 
-  // Role-specific label for the applications entry
   const applicationsLabel =
     session.role === "COMMITTEE_MEMBER"
       ? "Committee reviews"
