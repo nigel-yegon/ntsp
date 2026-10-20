@@ -1,4 +1,15 @@
 // lib/db-types.ts  — insert in alphabetical position
+// export type Role =
+//   | "EMPLOYER"
+//   | "CUSTOMER"
+//   | "BUSINESS"
+//   | "OPERATOR"
+//   | "PERUSER"
+//   | "VERIFIER"
+//   | "COMMITTEE_MEMBER"
+//   | "PERMANENT_SECRETARY"
+//   | "ADMIN";
+
 export type {
   Account,
   Accommodation,

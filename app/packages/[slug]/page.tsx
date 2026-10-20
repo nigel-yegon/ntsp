@@ -229,7 +229,7 @@ export default async function PackagePage({
                   <li key={i} className="relative">
                     {/* Timeline dot */}
                     <span
-                      className="absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full border-2 border-brand-500 bg-cream-50 text-[10px] font-bold text-brand-600 dark:border-brand-400 dark:bg-deep-900 dark:text-brand-400"
+                      className="absolute -left-7.75 flex h-6 w-6 items-center justify-center rounded-full border-2 border-brand-500 bg-cream-50 text-[10px] font-bold text-brand-600 dark:border-brand-400 dark:bg-deep-900 dark:text-brand-400"
                       aria-hidden
                     >
                       {i + 1}

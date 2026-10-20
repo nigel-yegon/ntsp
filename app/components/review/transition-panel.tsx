@@ -7,7 +7,7 @@ import { transitionApplication } from "@/app/components/review/actions";
 
 export function TransitionPanel({
   applicationId,
-  from,
+  from, // display only — the action reads the real source status from the DB
   to,
   label,
   noteRequired = false,
@@ -31,6 +31,14 @@ export function TransitionPanel({
 
   function submit(form: FormData) {
     setError(null);
+
+    // Defensive: ensure the note is present when the transition requires it,
+    // even if the browser's native validation is bypassed.
+    if (noteRequired && note.trim().length < 5) {
+      setError("A note of at least 5 characters is required.");
+      return;
+    }
+
     startTransition(async () => {
       try {
         await transitionApplication(form);
@@ -61,23 +69,35 @@ export function TransitionPanel({
         {label}
       </h2>
 
-      {noteRequired && (
-        <label className="mt-3 block">
-          <span className="block text-xs font-medium text-deep-700 dark:text-cream-300">
-            {noteRequiredMessage ?? "Note (required)"}
-          </span>
-          <textarea
-            name="note"
-            rows={3}
-            required
-            minLength={5}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            disabled={submitting}
-            className="mt-1 w-full rounded-lg border border-cream-300 bg-cream-50 px-3 py-2 text-sm text-deep-800 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-100"
-          />
-        </label>
-      )}
+      {/* Status hint — mirrors the `from → to` the action will enforce. */}
+      <p className="mt-1 text-xs text-deep-600 dark:text-cream-400">
+        <span className="font-mono">{from}</span>
+        <span className="mx-1">→</span>
+        <span className="font-mono">{to}</span>
+      </p>
+
+      <label className="mt-3 block">
+        <span className="block text-xs font-medium text-deep-700 dark:text-cream-300">
+          {noteRequired
+            ? (noteRequiredMessage ?? "Note (required)")
+            : "Note (optional)"}
+        </span>
+        <textarea
+          name="note"
+          rows={3}
+          required={noteRequired}
+          minLength={noteRequired ? 5 : undefined}
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          disabled={submitting}
+          placeholder={
+            noteRequired
+              ? "Explain why this case is moving to the next stage…"
+              : "Add context for the audit trail (optional)…"
+          }
+          className="mt-1 w-full rounded-lg border border-cream-300 bg-cream-50 px-3 py-2 text-sm text-deep-800 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-100"
+        />
+      </label>
 
       <button
         type="submit"

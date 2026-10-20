@@ -18,7 +18,7 @@ export default async function SignupPage() {
       {/* Decorative background band */}
       <div className="hero-band absolute inset-0" aria-hidden />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-cream-200/60 to-cream-200 dark:via-deep-950/60 dark:to-deep-950"
+        className="absolute inset-0 bg-linear-to-b from-transparent via-cream-200/60 to-cream-200 dark:via-deep-950/60 dark:to-deep-950"
         aria-hidden
       />
 

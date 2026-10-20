@@ -23,7 +23,13 @@ export default async function Home() {
         orderBy: { priceKes: "asc" },
       }),
       prisma.event.findMany({
-        where: { featured: true },
+        where: {
+          featured: false,
+          OR: [
+            { endDate: { gte: new Date() } },
+            { endDate: null, startDate: { gte: new Date() } },
+          ],
+        },
         orderBy: { startDate: "asc" },
         take: 6,
       }),

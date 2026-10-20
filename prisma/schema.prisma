@@ -16,6 +16,7 @@ enum Role {
   CUSTOMER
   BUSINESS
   OPERATOR
+  PERUSER
   VERIFIER
   COMMITTEE_MEMBER
   PERMANENT_SECRETARY
@@ -41,19 +42,22 @@ model User {
   // NextAuth
   accounts Account[]
 
-  // ── Work permit side (employers)
+  // ── Work permit side
   applicationsSubmitted Application[]      @relation("SubmittedBy")
   events                ApplicationEvent[]
   committeeVotes        CommitteeVote[]
   assignments           Assignment[]
-  documentsReviewed     Document[]         @relation("DocumentReviewer")
+
+  // Two distinct document-audit trails
+  documentsPerused  Document[] @relation("DocumentPeruser")
+  documentsReviewed Document[] @relation("DocumentReviewer")
 
   // ── Business side
   businessProfile           BusinessProfile?
   ownedAccommodations       Accommodation[]
   ownedTourPackages         TourPackage[]
-  bookingRequestsAsBusiness Booking[]        @relation("BookingBusiness")
-  threadsAsBusiness         MessageThread[]  @relation("ThreadBusiness")
+  bookingRequestsAsBusiness Booking[]       @relation("BookingBusiness")
+  threadsAsBusiness         MessageThread[] @relation("ThreadBusiness")
 
   // ── Customer side
   bookingsAsCustomer Booking[]       @relation("BookingCustomer")
@@ -61,13 +65,14 @@ model User {
   messages           Message[]
 
   // ── Incident review side (admin)
-  incidentsReviewed Incident[] @relation("IncidentReviewer")
-  incidentsEscalated Incident[] @relation("IncidentEscalator")  
+  incidentsReviewed  Incident[] @relation("IncidentReviewer")
+  incidentsEscalated Incident[] @relation("IncidentEscalator")
 
-  // - Investor Inquiry
-  inquiriesReviewed InvestorInquiry[] @relation("InquiryReviewer")  
-  // Resource Uploader
-  resourcesUploaded  Resource[] @relation("ResourceUploader")
+  // ── Investor Inquiry
+  inquiriesReviewed InvestorInquiry[] @relation("InquiryReviewer")
+
+  // ── Resource Uploader
+  resourcesUploaded Resource[] @relation("ResourceUploader")
 
   @@index([role])
   @@index([companyId])
@@ -107,7 +112,7 @@ model VerificationToken {
 
 enum BusinessVerification {
   PENDING
-  PENDING_TRA_CHECK 
+  PENDING_TRA_CHECK
   APPROVED
   SUSPENDED
   REJECTED
@@ -245,24 +250,32 @@ model Document {
   applicationId String
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  slotId     String
-  fileName   String
-  mimeType   String
-  sizeBytes  Int
-  storageKey String
-  uploadedAt DateTime @default(now())
+  slotId       String
+  slotRequired Boolean               @default(true)
+  fileName     String
+  mimeType     String
+  sizeBytes    Int
+  storageKey   String
+  uploadedAt   DateTime              @default(now())
 
-  perusalStatus      DocumentReviewStatus @default(PENDING)
+  // ── Perusal (first pass) — owned by PERUSER
+  perusalStatus DocumentReviewStatus @default(PENDING)
+  perusedById   String?
+  perusedBy     User?                @relation("DocumentPeruser", fields: [perusedById], references: [id])
+  perusedAt     DateTime?
+
+  // ── Verification (second pass) — owned by VERIFIER
   verificationStatus DocumentReviewStatus @default(PENDING)
-  reviewNotes        String?
+  reviewedById       String?
+  reviewedBy         User?                @relation("DocumentReviewer", fields: [reviewedById], references: [id])
+  reviewedAt         DateTime?
 
-  reviewedById String?
-  reviewedBy   User?     @relation("DocumentReviewer", fields: [reviewedById], references: [id])
-  reviewedAt   DateTime?
+  reviewNotes String?
 
   @@unique([applicationId, slotId, fileName])
   @@index([applicationId])
   @@index([slotId])
+  @@index([perusedById])
   @@index([reviewedById])
 }
 
@@ -488,8 +501,6 @@ model Destination {
   county      String
   description String
   imageUrl    String?
-// Geolocation — WGS84 decimal degrees. Nullable so existing
-// rows don't break; set via the admin editor.
   latitude    Float?
   longitude   Float?
 
@@ -544,11 +555,8 @@ model TourPackage {
   order         Int         @default(0)
   published     Boolean     @default(true)
   featured      Boolean     @default(false)
-  itinerary Json? @default("[]")
+  itinerary     Json?       @default("[]")
 
-  // Nullable so the migration doesn't break existing rows. Backfilled
-  // by the seed; enforced non-null at the app layer before a listing
-  // is published.
   businessId String?
   business   User?           @relation(fields: [businessId], references: [id])
   bookings   Booking[]
@@ -579,7 +587,6 @@ model Accommodation {
   order         Int         @default(0)
   published     Boolean     @default(true)
 
-  // Nullable for the same reason as TourPackage above.
   businessId String?
   business   User?           @relation(fields: [businessId], references: [id])
   bookings   Booking[]
@@ -594,7 +601,7 @@ model Accommodation {
 
 // ─── Events ────────────────────────────────────────────────────
 
-model Event{
+model Event {
   id          Int       @id @default(autoincrement())
   name        String
   slug        String    @unique
@@ -603,8 +610,6 @@ model Event{
   endDate     DateTime?
   location    String
   imageUrl    String?
-  // Geolocation — WGS84 decimal degrees. Nullable so existing
-  // rows don't break; set via the admin editor or geocoder.
   latitude    Float?
   longitude   Float?
   featured    Boolean   @default(false)
@@ -639,12 +644,10 @@ model Incident {
   status      IncidentStatus   @default(OPEN)
   category    IncidentCategory @default(OTHER)
 
-  // Reporter — optional, form supports anonymous submissions
   reporterName  String?
   reporterEmail String?
   reporterPhone String?
 
-  // What happened
   title       String
   description String
   location    String?
@@ -653,13 +656,11 @@ model Incident {
 
   attachments IncidentAttachment[]
 
-  // Review trail
   reviewedById String?
   reviewedBy   User?     @relation("IncidentReviewer", fields: [reviewedById], references: [id])
   reviewedAt   DateTime?
   reviewNotes  String?
 
-   // Escalation trail (set when status → ESCALATED)
   escalatedTo   String?
   escalatedAt   DateTime?
   escalatedById String?
@@ -687,7 +688,6 @@ model IncidentAttachment {
   uploadedAt DateTime @default(now())
 
   @@index([incidentId])
-  
 }
 
 // ─── Investor Inquiries ────────────────────────────────────────
@@ -729,26 +729,22 @@ enum InquiryStatus {
 }
 
 model InvestorInquiry {
-  id          String   @id @default(cuid())
-  referenceNo String   @unique
+  id          String        @id @default(cuid())
+  referenceNo String        @unique
   status      InquiryStatus @default(NEW)
 
-  // Contact
   fullName  String
   email     String
   phone     String?
   company   String?
   country   String?
 
-  // Who they are
-  investorType InvestorType?     @default(INDIVIDUAL)
-  interests    InvestmentInterest[] // multi-select
+  investorType InvestorType?        @default(INDIVIDUAL)
+  interests    InvestmentInterest[]
   scale        InvestmentScale?
 
-  // Freeform
   message String
 
-  // Admin review trail
   reviewedById String?
   reviewedBy   User?     @relation("InquiryReviewer", fields: [reviewedById], references: [id])
   reviewedAt   DateTime?
@@ -761,6 +757,7 @@ model InvestorInquiry {
   @@index([createdAt])
   @@index([reviewedById])
 }
+
 // ─── Resources ────────────────────────────────────────────────
 
 enum ResourceCategory {
@@ -778,14 +775,14 @@ model Resource {
   description String
   category    ResourceCategory @default(OTHER)
 
-  fileName    String
-  mimeType    String
-  sizeBytes   Int
-  storageKey  String
-  uploadedAt  DateTime         @default(now())
+  fileName   String
+  mimeType   String
+  sizeBytes  Int
+  storageKey String
+  uploadedAt DateTime         @default(now())
 
-  published   Boolean          @default(true)
-  order       Int              @default(0)
+  published Boolean @default(true)
+  order     Int     @default(0)
 
   uploadedById String?
   uploadedBy   User?   @relation("ResourceUploader", fields: [uploadedById], references: [id])

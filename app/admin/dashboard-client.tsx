@@ -55,7 +55,7 @@ import {
   deletePost,
   type PostRow,
 } from "./actions/posts";
-import { countModuleRows } from "./actions/stats";
+import { getDashboardStats, type DashboardStats } from "./actions/stats";
 
 type ModuleKey =
   | "overview"
@@ -127,7 +127,7 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     bar: "bg-slate-600",
     pillBg: "bg-slate-100 dark:bg-slate-950",
     pillText: "text-slate-800 dark:text-slate-200",
-    icon: <BuildingIcon />,
+    icon: <TourGuideIcon />,
   },
   incidents: {
     ring: "ring-rose-500/20",
@@ -254,12 +254,7 @@ export function DashboardClient() {
   const [events, setEvents] = useState<EventRow[]>([]);
   const [posts, setPosts] = useState<PostRow[]>([]);
 
-  const [opCounts, setOpCounts] = useState<{
-    businesses: { total: number; pending: number };
-    operators: { total: number; pending: number };
-    incidents: { total: number; open: number };
-    inquiries: { total: number; new: number };
-  } | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -271,14 +266,14 @@ export function DashboardClient() {
       try {
         setLoading(true);
         setError(null);
-        const [d, e, p, s, ev, po, counts] = await Promise.all([
+        const [d, e, p, s, ev, po, statData] = await Promise.all([
           listDestinations(),
           listExperiences(),
           listPackages(),
           listStays(),
           listEvents(),
           listPosts(),
-          countModuleRows(),
+          getDashboardStats(),
         ]);
         if (cancelled) return;
         setDestinations(d);
@@ -287,7 +282,7 @@ export function DashboardClient() {
         setStays(s);
         setEvents(ev);
         setPosts(po);
-        setOpCounts(counts);
+        setStats(statData);
       } catch (err) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : "Failed to load data");
@@ -356,81 +351,6 @@ export function DashboardClient() {
     );
   }, [search, posts]);
 
-  // ── Overview stat cards ─────────────────────────────────────
-  const stats: {
-    label: string;
-    value: number;
-    module: ModuleKey;
-    hint?: string;
-  }[] = [
-    // Operational
-    {
-      label: "Businesses",
-      value: opCounts?.businesses.total ?? 0,
-      module: "businesses" as ModuleKey,
-      hint: opCounts
-        ? `${opCounts.businesses.pending} pending review`
-        : undefined,
-    },
-    {
-      label: "Tour Operators",
-      value: opCounts?.operators.total ?? 0,
-      module: "operators" as ModuleKey,
-      hint: opCounts
-        ? `${opCounts.operators.pending} pending verification`
-        : undefined,
-    },
-    {
-      label: "Incidents",
-      value: opCounts?.incidents.total ?? 0,
-      module: "incidents" as ModuleKey,
-      hint: opCounts ? `${opCounts.incidents.open} open` : undefined,
-    },
-    {
-      label: "Investor inquiries",
-      value: opCounts?.inquiries.total ?? 0,
-      module: "inquiries" as ModuleKey,
-      hint: opCounts ? `${opCounts.inquiries.new} new` : undefined,
-    },
-    // Content
-    {
-      label: "Destinations",
-      value: destinations.length,
-      module: "destinations" as ModuleKey,
-      hint: `${destinations.filter((d) => d.featured).length} featured`,
-    },
-    {
-      label: "Experiences",
-      value: experiences.length,
-      module: "experiences" as ModuleKey,
-      hint: `${experiences.length} attractions`,
-    },
-    {
-      label: "Packages",
-      value: packages.length,
-      module: "packages" as ModuleKey,
-      hint: `${packages.filter((p) => p.featured).length} featured`,
-    },
-    {
-      label: "Stays",
-      value: stays.length,
-      module: "stay" as ModuleKey,
-      hint: `${stays.length} properties`,
-    },
-    {
-      label: "Events",
-      value: events.length,
-      module: "events" as ModuleKey,
-      hint: `${events.filter((e) => e.featured).length} featured`,
-    },
-    {
-      label: "Blog posts",
-      value: posts.length,
-      module: "blog" as ModuleKey,
-      hint: `${posts.filter((p) => p.published).length} published`,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-cream-200 dark:bg-deep-950">
       <div className="flex min-h-screen">
@@ -448,8 +368,12 @@ export function DashboardClient() {
             {error && <ErrorBanner>{error}</ErrorBanner>}
 
             <div key={activeModule}>
-              {activeModule === "overview" && (
-                <Overview stats={stats} onNavigate={setActiveModule} />
+              {activeModule === "overview" && stats && (
+                <Overview
+                  stats={stats}
+                  loading={loading}
+                  onNavigate={setActiveModule}
+                />
               )}
 
               {activeModule === "businesses" && (
@@ -737,98 +661,566 @@ function DashboardHeader({
 }
 
 /* -------------------------------------------------------------------------- */
-/* OVERVIEW                                                                   */
+/* OVERVIEW (analytics dashboard)                                             */
 /* -------------------------------------------------------------------------- */
 
 function Overview({
   stats,
+  loading,
   onNavigate,
 }: {
-  stats: {
-    label: string;
-    value: number;
-    module: ModuleKey;
-    hint?: string;
-  }[];
+  stats: DashboardStats;
+  loading: boolean;
   onNavigate: (m: ModuleKey) => void;
 }) {
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-32 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
+            />
+          ))}
+        </div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-64 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-7xl">
-      <FadeIn>
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-deep-800 dark:text-cream-100">
-            Overview
+    <div className="mx-auto max-w-7xl space-y-8">
+      {/* ── KPI strip ── */}
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Key metrics
           </h2>
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-            Manage all content that appears on the NTSP public site.
+          <p className="text-xs text-deep-400 dark:text-cream-600">
+            Live totals across all modules
           </p>
         </div>
-      </FadeIn>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <Stagger delayStart={0.08} delayStep={0.06} maxDelay={0.5}>
-          {stats.map((stat) => {
-            const tone =
-              stat.module !== "overview" ? TONES[stat.module] : undefined;
-            return (
-              <button
-                key={stat.label}
-                type="button"
-                onClick={() => onNavigate(stat.module)}
-                className={[
-                  "group relative flex w-full flex-col overflow-hidden rounded-2xl border bg-cream-50 p-5 pl-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900",
-                  tone
-                    ? `${tone.border} ${tone.borderHover}`
-                    : "border-deep-200 hover:border-brand-400 dark:border-deep-800 dark:hover:border-brand-500",
-                ].join(" ")}
-              >
-                {tone && (
-                  <span
-                    className={`absolute inset-y-0 left-0 w-1.5 ${tone.bar}`}
-                    aria-hidden
-                  />
-                )}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard
+            label="Businesses"
+            value={stats.businesses.total}
+            hint={`${stats.businesses.pending} pending · ${stats.businesses.approved} approved`}
+            tone="businesses"
+            onClick={() => onNavigate("businesses")}
+            trend={
+              stats.businesses.pending > 0
+                ? { label: "needs review", tone: "amber" }
+                : { label: "all clear", tone: "emerald" }
+            }
+          />
+          <KpiCard
+            label="Tour operators"
+            value={stats.operators.total}
+            hint={`${stats.operators.pending} pending · ${stats.operators.approved} verified`}
+            tone="operators"
+            onClick={() => onNavigate("operators")}
+            trend={
+              stats.operators.pending > 0
+                ? {
+                    label: `${stats.operators.pending} to verify`,
+                    tone: "amber",
+                  }
+                : { label: "all verified", tone: "emerald" }
+            }
+          />
+          <KpiCard
+            label="Incidents"
+            value={stats.incidents.total}
+            hint={`${stats.incidents.open} open · ${stats.incidents.escalated} escalated`}
+            tone="incidents"
+            onClick={() => onNavigate("incidents")}
+            trend={
+              stats.incidents.open > 0
+                ? {
+                    label: `${stats.incidents.last7Days} in last 7d`,
+                    tone: "rose",
+                  }
+                : { label: "none open", tone: "emerald" }
+            }
+          />
+          <KpiCard
+            label="Investor inquiries"
+            value={stats.inquiries.total}
+            hint={`${stats.inquiries.new} new · ${stats.inquiries.inReview} in review`}
+            tone="inquiries"
+            onClick={() => onNavigate("inquiries")}
+            trend={
+              stats.inquiries.new > 0
+                ? {
+                    label: `${stats.inquiries.last7Days} in last 7d`,
+                    tone: "brand",
+                  }
+                : { label: "all handled", tone: "emerald" }
+            }
+          />
+        </div>
+      </section>
 
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium text-deep-500 dark:text-cream-500">
-                      {stat.label}
-                    </div>
-                    <div className="mt-2 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
-                      {stat.value}
-                    </div>
-                    <div
-                      className={`mt-1 h-4 truncate text-xs font-medium ${
-                        tone?.text ?? "text-deep-500 dark:text-cream-500"
-                      }`}
-                    >
-                      {stat.hint ?? ""}
-                    </div>
-                  </div>
+      {/* ── Status breakdown ── */}
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Status breakdown
+          </h2>
+        </div>
 
-                  {tone && (
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`}
-                      aria-hidden
-                    >
-                      {tone.icon}
-                    </span>
-                  )}
-                </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <StatusCard
+            title="Business composition"
+            rows={[
+              {
+                label: "Accommodation",
+                value: stats.businesses.byType.accommodation,
+                total: stats.businesses.total,
+                tone: "brand",
+              },
+              {
+                label: "Tour operators",
+                value: stats.businesses.byType.tourOperator,
+                total: stats.businesses.total,
+                tone: "indigo",
+              },
+            ]}
+            onNavigate={() => onNavigate("businesses")}
+          />
 
-                {tone && (
-                  <div
-                    className={`mt-4 inline-flex items-center gap-1 text-xs font-medium ${tone.text} opacity-70 transition group-hover:opacity-100`}
-                  >
-                    <span>Open module</span>
-                    <span aria-hidden>→</span>
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </Stagger>
+          <StatusCard
+            title="Incident pipeline"
+            rows={[
+              {
+                label: "Open",
+                value: stats.incidents.open,
+                total: stats.incidents.total,
+                tone: "rose",
+              },
+              {
+                label: "Under review",
+                value: stats.incidents.underReview,
+                total: stats.incidents.total,
+                tone: "amber",
+              },
+              {
+                label: "Escalated",
+                value: stats.incidents.escalated,
+                total: stats.incidents.total,
+                tone: "violet",
+              },
+              {
+                label: "Resolved",
+                value: stats.incidents.resolved + stats.incidents.closed,
+                total: stats.incidents.total,
+                tone: "emerald",
+              },
+            ]}
+            onNavigate={() => onNavigate("incidents")}
+          />
+
+          <StatusCard
+            title="Investor funnel"
+            rows={[
+              {
+                label: "New",
+                value: stats.inquiries.new,
+                total: stats.inquiries.total,
+                tone: "brand",
+              },
+              {
+                label: "In review",
+                value: stats.inquiries.inReview,
+                total: stats.inquiries.total,
+                tone: "amber",
+              },
+              {
+                label: "Contacted",
+                value: stats.inquiries.contacted,
+                total: stats.inquiries.total,
+                tone: "indigo",
+              },
+              {
+                label: "Closed",
+                value: stats.inquiries.closed,
+                total: stats.inquiries.total,
+                tone: "emerald",
+              },
+            ]}
+            onNavigate={() => onNavigate("inquiries")}
+          />
+        </div>
+      </section>
+
+      {/* ── Content inventory ── */}
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Content inventory
+          </h2>
+          <p className="text-xs text-deep-400 dark:text-cream-600">
+            Public-facing content across the site
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ContentTile
+            label="Destinations"
+            total={stats.content.destinations.total}
+            hint={`${stats.content.destinations.featured} featured`}
+            tone="destinations"
+            onClick={() => onNavigate("destinations")}
+          />
+          <ContentTile
+            label="Experiences"
+            total={stats.content.experiences.total}
+            hint="attractions and activities"
+            tone="experiences"
+            onClick={() => onNavigate("experiences")}
+          />
+          <ContentTile
+            label="Packages"
+            total={stats.content.packages.total}
+            hint={`${stats.content.packages.published} published · ${stats.content.packages.featured} featured`}
+            tone="packages"
+            onClick={() => onNavigate("packages")}
+          />
+          <ContentTile
+            label="Stays"
+            total={stats.content.stays.total}
+            hint="hotels, lodges, camps"
+            tone="stay"
+            onClick={() => onNavigate("stay")}
+          />
+          <ContentTile
+            label="Events"
+            total={stats.content.events.total}
+            hint={`${stats.content.events.upcoming} upcoming · ${stats.content.events.featured} featured`}
+            tone="events"
+            onClick={() => onNavigate("events")}
+          />
+          <ContentTile
+            label="Blog posts"
+            total={stats.content.posts.total}
+            hint={`${stats.content.posts.published} published`}
+            tone="blog"
+            onClick={() => onNavigate("blog")}
+          />
+        </div>
+      </section>
+
+      {/* ── Recent activity ── */}
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Recent activity
+          </h2>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <ActivityList
+            title="Latest incidents"
+            items={stats.activity.recentIncidents.map((i) => ({
+              id: i.id,
+              primary: i.title,
+              secondary: `${i.category} · ${i.referenceNo}`,
+              meta: new Date(i.reportedAt).toLocaleDateString(),
+              badge: i.status,
+            }))}
+            empty="No incidents reported yet"
+            onNavigate={() => onNavigate("incidents")}
+          />
+          <ActivityList
+            title="Latest inquiries"
+            items={stats.activity.recentInquiries.map((i) => ({
+              id: i.id,
+              primary: i.fullName,
+              secondary: i.email,
+              meta: new Date(i.createdAt).toLocaleDateString(),
+              badge: i.status,
+            }))}
+            empty="No inquiries yet"
+            onNavigate={() => onNavigate("inquiries")}
+          />
+          <ActivityList
+            title="Newest accounts"
+            items={stats.activity.recentSignups.map((u) => ({
+              id: u.id,
+              primary: u.name,
+              secondary: u.email,
+              meta: new Date(u.createdAt).toLocaleDateString(),
+              badge: u.role,
+            }))}
+            empty="No recent signups"
+          />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function KpiCard({
+  label,
+  value,
+  hint,
+  tone,
+  trend,
+  onClick,
+}: {
+  label: string;
+  value: number;
+  hint: string;
+  tone: keyof typeof TONES;
+  trend?: { label: string; tone: "amber" | "emerald" | "rose" | "brand" };
+  onClick: () => void;
+}) {
+  const meta = TONES[tone];
+  const trendTone =
+    trend?.tone === "amber"
+      ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+      : trend?.tone === "emerald"
+        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+        : trend?.tone === "rose"
+          ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+          : "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-cream-50 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900 ${meta.border}`}
+    >
+      <span className={`absolute inset-y-0 left-0 w-1 ${meta.bar}`} aria-hidden />
+
+      <div className="flex items-start justify-between gap-3">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+          {label}
+        </span>
+        <span
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
+          aria-hidden
+        >
+          {meta.icon}
+        </span>
       </div>
+
+      {/* value — matches the original dashboard number style */}
+      <div className="mt-3 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
+        {value.toLocaleString()}
+      </div>
+
+      <div className="mt-2 text-xs text-deep-500 dark:text-cream-500">
+        {hint}
+      </div>
+
+      {trend && (
+        <div className="mt-3 flex items-center gap-2">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${trendTone}`}
+          >
+            {trend.label}
+          </span>
+        </div>
+      )}
+    </button>
+  );
+}
+
+function StatusCard({
+  title,
+  rows,
+  onNavigate,
+}: {
+  title: string;
+  rows: { label: string; value: number; total: number; tone: string }[];
+  onNavigate: () => void;
+}) {
+  const colorFor = (tone: string) => {
+    switch (tone) {
+      case "rose":
+        return "bg-rose-500";
+      case "amber":
+        return "bg-amber-500";
+      case "violet":
+        return "bg-violet-500";
+      case "indigo":
+        return "bg-indigo-500";
+      case "emerald":
+        return "bg-emerald-500";
+      case "brand":
+        return "bg-brand-500";
+      default:
+        return "bg-deep-400";
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onNavigate}
+      className="group flex flex-col rounded-2xl border border-deep-200 bg-cream-50 p-5 text-left transition hover:border-brand-400 dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+          {title}
+        </span>
+        <span className="text-xs text-deep-400 transition group-hover:text-brand-500 dark:text-cream-600">
+          →
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {rows.map((r) => {
+          const pct = r.total > 0 ? Math.round((r.value / r.total) * 100) : 0;
+          return (
+            <div key={r.label}>
+              <div className="mb-1 flex items-baseline justify-between text-xs">
+                <span className="text-deep-600 dark:text-cream-400">
+                  {r.label}
+                </span>
+                <span className="text-deep-800 dark:text-cream-100">
+                  {r.value}
+                  <span className="ml-1 text-deep-400 dark:text-cream-600">
+                    / {r.total}
+                  </span>
+                </span>
+              </div>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream-200 dark:bg-deep-800">
+                <div
+                  className={`h-full rounded-full transition-all ${colorFor(r.tone)}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </button>
+  );
+}
+
+
+function ContentTile({
+  label,
+  total,
+  hint,
+  tone,
+  onClick,
+}: {
+  label: string;
+  total: number;
+  hint: string;
+  tone: keyof typeof TONES;
+  onClick: () => void;
+}) {
+  const meta = TONES[tone];
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group flex items-center gap-3 rounded-xl border bg-cream-50 px-4 py-3 text-left transition hover:border-brand-400 dark:bg-deep-900 dark:hover:border-brand-500 ${meta.border}`}
+    >
+      <span
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
+        aria-hidden
+      >
+        {meta.icon}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="text-xs font-semibold uppercase tracking-wider text-deep-500 dark:text-cream-500">
+          {label}
+        </div>
+        <div className="mt-0.5 flex items-baseline gap-2">
+          {/* total — uses default sans, matching module rows */}
+          <span className="text-lg font-bold text-deep-800 dark:text-cream-100">
+            {total}
+          </span>
+          <span className="truncate text-xs text-deep-500 dark:text-cream-500">
+            {hint}
+          </span>
+        </div>
+      </div>
+      <span className="text-deep-300 transition group-hover:text-brand-500 dark:text-cream-700">
+        →
+      </span>
+    </button>
+  );
+}
+function ActivityList({
+  title,
+  items,
+  empty,
+  onNavigate,
+}: {
+  title: string;
+  items: {
+    id: string;
+    primary: string;
+    secondary: string;
+    meta: string;
+    badge: string;
+  }[];
+  empty: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div className="flex flex-col rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900">
+      <div className="flex items-center justify-between border-b border-deep-200 px-4 py-3 dark:border-deep-800">
+        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+          {title}
+        </h3>
+        {onNavigate && (
+          <button
+            type="button"
+            onClick={onNavigate}
+            className="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          >
+            View all →
+          </button>
+        )}
+      </div>
+
+      {items.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center px-4 py-8 text-xs text-deep-400 dark:text-cream-600">
+          {empty}
+        </div>
+      ) : (
+        <ul className="divide-y divide-deep-100 dark:divide-deep-800">
+          {items.map((item) => (
+            <li
+              key={item.id}
+              className="flex items-start gap-2 px-4 py-2.5 text-xs transition hover:bg-cream-100 dark:hover:bg-deep-800"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-deep-800 dark:text-cream-100">
+                  {item.primary}
+                </p>
+                <p className="truncate text-deep-500 dark:text-cream-500">
+                  {item.secondary}
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                <span className="rounded-full bg-cream-200 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-deep-600 dark:bg-deep-800 dark:text-cream-400">
+                  {item.badge.replace(/_/g, " ")}
+                </span>
+                <span className="text-[10px] text-deep-400 dark:text-cream-600">
+                  {item.meta}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -2663,7 +3055,20 @@ function FolderIcon() {
     </svg>
   );
 }
-
+function TourGuideIcon() {
+  return (
+    <svg {...iconBase}>
+      {/* head */}
+      <circle cx="10" cy="5" r="2.25" />
+      {/* body / shoulders */}
+      <path d="M6.5 20v-3.5a3.5 3.5 0 0 1 3.5-3.5h.5" />
+      {/* guide flag pole */}
+      <path d="M14 8.5V20" />
+      {/* flag pennant */}
+      <path d="M14 8.5h5.5l-2 2.25 2 2.25H14Z" />
+    </svg>
+  );
+}
 /* -------------------------------------------------------------------------- */
 /* STYLES                                                                     */
 /* -------------------------------------------------------------------------- */
