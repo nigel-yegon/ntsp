@@ -4,47 +4,55 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const CUSTOMER_TABS = [
-  { href: "/dashboard", label: "Overview", exact: true },
-  { href: "/dashboard/applications", label: "Applications" },
-  { href: "/dashboard/bookings", label: "Bookings" },
-  { href: "/dashboard/messages", label: "Messages" },
-  { href: "/dashboard/profile", label: "Profile" },   // ← new
-];
-
-const BUSINESS_TABS = [
-  { href: "/dashboard", label: "Overview", exact: true },
-  { href: "/dashboard/listings", label: "Listings" },
-  { href: "/dashboard/bookings", label: "Bookings" },
-  { href: "/dashboard/messages", label: "Messages" },
-  { href: "/dashboard/profile", label: "My Profile" },   // ← new
-];
-
 export function DashboardTabs({ role }: { role: string }) {
   const pathname = usePathname();
-  const tabs = role === "BUSINESS" ? BUSINESS_TABS : CUSTOMER_TABS;
+
+  const customerTabs = [
+    { href: "/dashboard", label: "Overview" },
+    { href: "/dashboard/bookings", label: "My Bookings" },
+    { href: "/dashboard/messages", label: "Messages" },
+    { href: "/dashboard/profile", label: "Profile" },
+  ];
+
+  const businessTabs = [
+    { href: "/dashboard", label: "Overview" },
+    { href: "/dashboard/listings", label: "My Listings" },
+    { href: "/dashboard/bookings", label: "Bookings" },
+    { href: "/dashboard/messages", label: "Messages" },
+    { href: "/dashboard/profile", label: "Profile" },
+  ];
+
+  const operatorTabs = [
+    { href: "/dashboard", label: "Overview" },
+    { href: "/dashboard/listings", label: "My Listings" }, // <-- CHANGED
+    { href: "/dashboard/bookings", label: "Bookings" },
+    { href: "/dashboard/messages", label: "Messages" },
+    { href: "/dashboard/profile", label: "Profile" },
+  ];
+
+  let tabs = customerTabs;
+  if (role === "BUSINESS") tabs = businessTabs;
+  if (role === "OPERATOR") tabs = operatorTabs;
 
   return (
-    <nav
-      aria-label="Dashboard"
-      className="flex flex-wrap gap-1 rounded-xl border border-cream-300 bg-cream-100 p-1 dark:border-deep-700 dark:bg-deep-900"
-    >
-      {tabs.map((t) => {
-        const active = t.exact
-          ? pathname === t.href
-          : pathname === t.href || pathname.startsWith(`${t.href}/`);
+    <nav className="flex space-x-1 border-b border-cream-200 dark:border-deep-800">
+      {tabs.map((tab) => {
+        // Active state: startsWith so nested routes (e.g. /listings/packages) keep the tab highlighted
+        const isActive =
+          pathname === tab.href ||
+          (tab.href !== "/dashboard" && pathname.startsWith(tab.href));
+
         return (
           <Link
-            key={t.href}
-            href={t.href}
-            aria-current={active ? "page" : undefined}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              active
-                ? "bg-brand-400 text-deep-800"
-                : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-800"
+            key={tab.href}
+            href={tab.href}
+            className={`border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+              isActive
+                ? "border-brand-500 text-brand-600 dark:border-brand-400 dark:text-brand-400"
+                : "border-transparent text-deep-500 hover:border-deep-300 hover:text-deep-700 dark:text-cream-400 dark:hover:border-deep-700 dark:hover:text-cream-200"
             }`}
           >
-            {t.label}
+            {tab.label}
           </Link>
         );
       })}

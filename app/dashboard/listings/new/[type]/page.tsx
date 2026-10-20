@@ -20,8 +20,16 @@ export default async function NewListingTypePage({
   const listingType = type as ListingType;
 
   const session = await getServerSession(authOptions);
-  if (!session?.user || session.user.role !== "BUSINESS") {
-    redirect("/dashboard");
+  if (!session?.user?.id) redirect("/login");
+
+  // ← Allow both BUSINESS and OPERATOR
+  const isAllowed =
+    session.user.role === "BUSINESS" || session.user.role === "OPERATOR";
+  if (!isAllowed) redirect("/dashboard");
+
+  // Operators can only create packages, not accommodations
+  if (session.user.role === "OPERATOR" && listingType === "accommodation") {
+    redirect("/dashboard/listings/new/package");
   }
 
   const destinations = await prisma.destination.findMany({

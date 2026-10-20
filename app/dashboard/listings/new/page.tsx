@@ -6,8 +6,18 @@ import { authOptions } from "@/lib/auth";
 
 export default async function NewListingPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user || session.user.role !== "BUSINESS") {
+  if (!session?.user?.id) redirect("/login");
+
+  const isBusiness = session.user.role === "BUSINESS";
+  const isOperator = session.user.role === "OPERATOR";
+
+  if (!isBusiness && !isOperator) {
     redirect("/dashboard");
+  }
+
+  // An operator only has one listing type — skip the fork and go straight to packages
+  if (isOperator) {
+    redirect("/dashboard/listings/new/package");
   }
 
   return (

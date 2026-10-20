@@ -29,7 +29,13 @@ export default async function ProfilePage() {
     PERMANENT_SECRETARY: "/review/ps",
     ADMIN: "/admin",
   };
-  if (user.role !== "CUSTOMER" && user.role !== "BUSINESS") {
+
+  // Allow CUSTOMER, BUSINESS, and OPERATOR
+  const isAllowed =
+    user.role === "CUSTOMER" ||
+    user.role === "BUSINESS" ||
+    user.role === "OPERATOR";
+  if (!isAllowed) {
     redirect(roleHome[user.role] ?? "/");
   }
 
@@ -52,24 +58,26 @@ export default async function ProfilePage() {
         />
       )}
 
-      {user.role === "BUSINESS" && user.businessProfile && (
-        <BusinessProfileForm
-          defaultName={user.name}
-          defaultPhone={user.phone ?? ""}
-          email={user.email}
-          profile={{
-            businessName: user.businessProfile.businessName,
-            contactEmail: user.businessProfile.contactEmail,
-            contactPhone: user.businessProfile.contactPhone ?? "",
-            registrationNo: user.businessProfile.registrationNo ?? "",
-            kraPin: user.businessProfile.kraPin ?? "",
-            website: user.businessProfile.website ?? "",
-            description: user.businessProfile.description ?? "",
-            logoUrl: user.businessProfile.logoUrl ?? "",
-            verificationStatus: user.businessProfile.verificationStatus,
-          }}
-        />
-      )}
+      {/* BUSINESS and OPERATOR both get the BusinessProfileForm */}
+      {(user.role === "BUSINESS" || user.role === "OPERATOR") &&
+        user.businessProfile && (
+          <BusinessProfileForm
+            defaultName={user.name}
+            defaultPhone={user.phone ?? ""}
+            email={user.email}
+            profile={{
+              businessName: user.businessProfile.businessName,
+              contactEmail: user.businessProfile.contactEmail,
+              contactPhone: user.businessProfile.contactPhone ?? "",
+              registrationNo: user.businessProfile.registrationNo ?? "",
+              kraPin: user.businessProfile.kraPin ?? "",
+              website: user.businessProfile.website ?? "",
+              description: user.businessProfile.description ?? "",
+              logoUrl: user.businessProfile.logoUrl ?? "",
+              verificationStatus: user.businessProfile.verificationStatus,
+            }}
+          />
+        )}
 
       <PasswordChangeForm />
     </section>

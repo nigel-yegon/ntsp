@@ -60,7 +60,7 @@ export default async function PendingVerificationPage() {
             Return to Home
           </Link>
           <a 
-            href="mailto:support@ntsp.go.ke" 
+            href="/contact" 
             className="text-xs text-brand-600 hover:underline dark:text-brand-400"
           >
             Contact Support

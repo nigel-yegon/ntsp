@@ -6,130 +6,99 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-async function requireBusinessUser() {
+async function requireBusinessOrOperator() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id || session.user.role !== "BUSINESS") {
+  if (!session?.user?.id) throw new Error("Unauthorized");
+  if (session.user.role !== "BUSINESS" && session.user.role !== "OPERATOR") {
     throw new Error("Unauthorized");
   }
   return session.user;
 }
 
-export type PackageFormData = {
+// Match the shape ListingForm emits for a package
+export type PackageListingInput = {
+  type: "package";
   title: string;
   slug: string;
   summary: string;
   description: string;
   priceKes: number;
   durationDays: number;
-  destinationId: number;
   imageUrl: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  featured: boolean;
+  destinationId: number;
   published: boolean;
 };
 
-export async function createOperatorPackage(data: PackageFormData) {
-  const user = await requireBusinessUser();
+export type ListingActionResult =
+  | { ok: true; id: number }
+  | { ok: false; errors: string[] };
 
-  // Enforce unique slug at DB level
-  const existing = await prisma.tourPackage.findUnique({
-    where: { slug: data.slug },
-  });
-  if (existing) {
-    return { error: "A package with this slug already exists." };
-  }
+export async function createOperatorPackage(
+  input: PackageListingInput
+): Promise<ListingActionResult> {
+  try {
+    const user = await requireBusinessOrOperator();
 
-  const created = await prisma.tourPackage.create({
-    data: {
-      ...data,
-      businessId: user.id,
-    },
-  });
+    // Validate
+    const errors: string[] = [];
+    if (!input.title || input.title.trim().length < 3) {
+      errors.push("Title must be at least 3 characters.");
+    }
+    if (!input.slug || !/^[a-z0-9-]+$/.test(input.slug)) {
+      errors.push("Slug must be lowercase letters, numbers, and hyphens only.");
+    }
+    if (!input.summary || input.summary.trim().length < 10) {
+      errors.push("Summary must be at least 10 characters.");
+    }
+    if (!input.description || input.description.trim().length < 20) {
+      errors.push("Description must be at least 20 characters.");
+    }
+    if (input.priceKes <= 0) {
+      errors.push("Price must be greater than zero.");
+    }
+    if (input.durationDays <= 0) {
+      errors.push("Duration must be at least 1 day.");
+    }
 
-  revalidatePath("/dashboard/listings/packages");
-  revalidatePath("/packages");
-  revalidatePath(`/packages/${created.slug}`);
-  return { success: true, id: created.id };
-}
+    if (errors.length > 0) {
+      return { ok: false, errors };
+    }
 
-export async function updateOperatorPackage(
-  id: number,
-  data: Partial<PackageFormData>
-) {
-  const user = await requireBusinessUser();
+    // Check for slug collision (scoped to this user's packages — slugs are global, so check global)
+    const existing = await prisma.tourPackage.findUnique({
+      where: { slug: input.slug },
+      select: { id: true },
+    });
+    if (existing) {
+      return { ok: false, errors: ["A package with this slug already exists."] };
+    }
 
-  // Verify ownership
-  const existing = await prisma.tourPackage.findUnique({
-    where: { id },
-    select: { businessId: true, slug: true },
-  });
-  if (!existing) return { error: "Package not found." };
-  if (existing.businessId !== user.id) {
-    return { error: "You do not have permission to edit this package." };
-  }
+    const created = await prisma.tourPackage.create({
+      data: {
+        title: input.title.trim(),
+        slug: input.slug,
+        summary: input.summary.trim(),
+        description: input.description.trim(),
+        priceKes: input.priceKes,
+        durationDays: input.durationDays,
+        imageUrl: input.imageUrl,
+        destinationId: input.destinationId,
+        published: input.published,
+        businessId: user.id,
+      },
+    });
 
-  await prisma.tourPackage.update({
-    where: { id },
-    data,
-  });
-
-  revalidatePath("/dashboard/listings/packages");
-  revalidatePath("/packages");
-  revalidatePath(`/packages/${data.slug ?? existing.slug}`);
-  return { success: true };
-}
-
-export async function deleteOperatorPackage(id: number) {
-  const user = await requireBusinessUser();
-
-  const existing = await prisma.tourPackage.findUnique({
-    where: { id },
-    select: { businessId: true, slug: true },
-  });
-  if (!existing) return { error: "Package not found." };
-  if (existing.businessId !== user.id) {
-    return { error: "You do not have permission to delete this package." };
-  }
-
-  // Prevent deleting if there are active bookings
-  const activeBookings = await prisma.booking.count({
-    where: {
-      tourPackageId: id,
-      status: { in: ["REQUESTED", "CONFIRMED"] },
-    },
-  });
-  if (activeBookings > 0) {
+    revalidatePath("/dashboard/listings/packages");
+    revalidatePath("/packages");
+    revalidatePath(`/packages/${created.slug}`);
+    return { ok: true, id: created.id };
+  } catch (err) {
+    console.error("createOperatorPackage failed:", err);
     return {
-      error: `Cannot delete — this package has ${activeBookings} active booking(s).`,
+      ok: false,
+      errors: [
+        err instanceof Error ? err.message : "Failed to create package.",
+      ],
     };
   }
-
-  await prisma.tourPackage.delete({ where: { id } });
-
-  revalidatePath("/dashboard/listings/packages");
-  revalidatePath("/packages");
-  revalidatePath(`/packages/${existing.slug}`);
-  return { success: true };
-}
-
-export async function togglePackagePublish(id: number) {
-  const user = await requireBusinessUser();
-
-  const pkg = await prisma.tourPackage.findUnique({
-    where: { id },
-    select: { businessId: true, published: true, slug: true },
-  });
-  if (!pkg) return { error: "Package not found." };
-  if (pkg.businessId !== user.id) return { error: "Forbidden." };
-
-  await prisma.tourPackage.update({
-    where: { id },
-    data: { published: !pkg.published },
-  });
-
-  revalidatePath("/dashboard/listings/packages");
-  revalidatePath("/packages");
-  revalidatePath(`/packages/${pkg.slug}`);
-  return { success: true };
 }

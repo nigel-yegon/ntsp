@@ -32,6 +32,7 @@ type PackageInput = {
   imageUrl: string | null;
   destinationId: number;
   published: boolean;
+  itinerary?: { title: string; description: string }[];
 };
 
 export type ListingInput = AccommodationInput | PackageInput;
@@ -40,10 +41,22 @@ export type ListingActionResult =
   | { ok: true; id: number; type: ListingType }
   | { ok: false; errors: string[] };
 
-async function requireBusiness() {
+// ─── Auth ───────────────────────────────────────────────────────────
+
+type AuthedUser = {
+  userId: string;
+  role: "BUSINESS" | "OPERATOR";
+  verificationStatus: string;
+};
+
+async function requireLister(): Promise<AuthedUser> {
   const session = await getServerSession(authOptions);
-  if (!session?.user) throw new Error("Unauthorized");
-  if (session.user.role !== "BUSINESS") throw new Error("Forbidden");
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const role = session.user.role;
+  if (role !== "BUSINESS" && role !== "OPERATOR") {
+    throw new Error("Forbidden");
+  }
 
   const profile = await prisma.businessProfile.findUnique({
     where: { userId: session.user.id },
@@ -53,9 +66,12 @@ async function requireBusiness() {
 
   return {
     userId: session.user.id,
+    role,
     verificationStatus: profile.verificationStatus,
   };
 }
+
+// ─── Validation helpers ────────────────────────────────────────────
 
 function validateBaseInput(input: ListingInput): string[] {
   const errors: string[] = [];
@@ -113,19 +129,32 @@ async function checkDestination(destinationId: number): Promise<boolean> {
   return !!dest;
 }
 
+// ─── Authorization: can this user create/edit this listing type? ───
+
+function canCreateType(role: AuthedUser["role"], type: ListingType): boolean {
+  // OPERATOR can only create packages.
+  if (role === "OPERATOR") return type === "package";
+  // BUSINESS can create either — hotels can also sell packages.
+  return true;
+}
+
 // ─── Create ─────────────────────────────────────────────────────────
 
 export async function createListing(
   input: ListingInput
 ): Promise<ListingActionResult> {
-  let userId: string;
-  let verificationStatus: string;
+  let user: AuthedUser;
   try {
-    const b = await requireBusiness();
-    userId = b.userId;
-    verificationStatus = b.verificationStatus;
+    user = await requireLister();
   } catch (e) {
     return { ok: false, errors: [e instanceof Error ? e.message : "Unauthorized"] };
+  }
+
+  if (!canCreateType(user.role, input.type)) {
+    return {
+      ok: false,
+      errors: ["Your account cannot create this type of listing."],
+    };
   }
 
   const errors = validateBaseInput(input);
@@ -138,8 +167,8 @@ export async function createListing(
     return { ok: false, errors: ["Destination not found"] };
   }
 
-  // Pending businesses can create listings but can't publish them.
-  const published = verificationStatus === "APPROVED" && input.published;
+  // Pending users can create listings but can't publish them.
+  const published = user.verificationStatus === "APPROVED" && input.published;
 
   try {
     if (input.type === "accommodation") {
@@ -153,7 +182,7 @@ export async function createListing(
           priceRange: input.priceRange?.trim() || null,
           imageUrl: input.imageUrl?.trim() || null,
           destinationId: input.destinationId,
-          businessId: userId,
+          businessId: user.userId,
           published,
         },
       });
@@ -171,12 +200,14 @@ export async function createListing(
           durationDays: Math.floor(input.durationDays),
           imageUrl: input.imageUrl?.trim() || null,
           destinationId: input.destinationId,
-          businessId: userId,
+          businessId: user.userId,
           published,
           featured: false,
+          itinerary: input.itinerary ?? [],
         },
       });
       revalidatePath("/dashboard/listings");
+      revalidatePath("/dashboard/listings/packages");
       revalidatePath("/packages");
       return { ok: true, id: created.id, type: "package" };
     }
@@ -195,27 +226,31 @@ export async function updateListing(
   type: ListingType,
   input: ListingInput
 ): Promise<ListingActionResult> {
-  let userId: string;
-  let verificationStatus: string;
+  let user: AuthedUser;
   try {
-    const b = await requireBusiness();
-    userId = b.userId;
-    verificationStatus = b.verificationStatus;
+    user = await requireLister();
   } catch (e) {
     return { ok: false, errors: [e instanceof Error ? e.message : "Unauthorized"] };
+  }
+
+  if (!canCreateType(user.role, type)) {
+    return {
+      ok: false,
+      errors: ["Your account cannot edit this type of listing."],
+    };
   }
 
   const errors = validateBaseInput(input);
   if (errors.length) return { ok: false, errors };
 
-  // Ownership check — the listing must belong to this business.
+  // Ownership check — the listing must belong to this user.
   if (type === "accommodation") {
     const existing = await prisma.accommodation.findUnique({
       where: { id },
       select: { businessId: true },
     });
     if (!existing) return { ok: false, errors: ["Listing not found"] };
-    if (existing.businessId !== userId) {
+    if (existing.businessId !== user.userId) {
       return { ok: false, errors: ["You don't own this listing"] };
     }
   } else {
@@ -224,7 +259,7 @@ export async function updateListing(
       select: { businessId: true },
     });
     if (!existing) return { ok: false, errors: ["Listing not found"] };
-    if (existing.businessId !== userId) {
+    if (existing.businessId !== user.userId) {
       return { ok: false, errors: ["You don't own this listing"] };
     }
   }
@@ -236,8 +271,8 @@ export async function updateListing(
     return { ok: false, errors: ["Destination not found"] };
   }
 
-  // Pending businesses can't flip a listing to published.
-  const published = verificationStatus === "APPROVED" && input.published;
+  // Pending users can't flip a listing to published.
+  const published = user.verificationStatus === "APPROVED" && input.published;
 
   try {
     if (input.type === "accommodation" && type === "accommodation") {
@@ -268,6 +303,7 @@ export async function updateListing(
           imageUrl: input.imageUrl?.trim() || null,
           destinationId: input.destinationId,
           published,
+          itinerary: input.itinerary ?? [],
         },
       });
     } else {
@@ -275,6 +311,7 @@ export async function updateListing(
     }
 
     revalidatePath("/dashboard/listings");
+    revalidatePath("/dashboard/listings/packages");
     revalidatePath("/stay");
     revalidatePath("/packages");
     return { ok: true, id, type };
@@ -286,16 +323,15 @@ export async function updateListing(
   }
 }
 
-// ─── Unpublish (soft delete) ────────────────────────────────────────
+// ─── Unpublish (soft delete) ───────────────────────────────────────
 
 export async function unpublishListing(
   id: number,
   type: ListingType
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  let userId: string;
+  let user: AuthedUser;
   try {
-    const b = await requireBusiness();
-    userId = b.userId;
+    user = await requireLister();
   } catch (e) {
     return {
       ok: false,
@@ -309,7 +345,7 @@ export async function unpublishListing(
       select: { businessId: true },
     });
     if (!existing) return { ok: false, error: "Listing not found" };
-    if (existing.businessId !== userId) {
+    if (existing.businessId !== user.userId) {
       return { ok: false, error: "You don't own this listing" };
     }
     await prisma.accommodation.update({
@@ -322,7 +358,7 @@ export async function unpublishListing(
       select: { businessId: true },
     });
     if (!existing) return { ok: false, error: "Listing not found" };
-    if (existing.businessId !== userId) {
+    if (existing.businessId !== user.userId) {
       return { ok: false, error: "You don't own this listing" };
     }
     await prisma.tourPackage.update({
@@ -332,6 +368,7 @@ export async function unpublishListing(
   }
 
   revalidatePath("/dashboard/listings");
+  revalidatePath("/dashboard/listings/packages");
   revalidatePath("/stay");
   revalidatePath("/packages");
   return { ok: true };

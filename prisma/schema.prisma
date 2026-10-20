@@ -544,6 +544,7 @@ model TourPackage {
   order         Int         @default(0)
   published     Boolean     @default(true)
   featured      Boolean     @default(false)
+  itinerary Json? @default("[]")
 
   // Nullable so the migration doesn't break existing rows. Backfilled
   // by the seed; enforced non-null at the app layer before a listing

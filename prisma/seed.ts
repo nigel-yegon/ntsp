@@ -37,6 +37,7 @@ async function main() {
 // ═══════════════════════════════════════════════════════════════
 
 const BUSINESS_SEEDS = [
+  // ── Accommodation focused businesses ──
   {
     email: "mara@business.local",
     name: "Mara Serena Manager",
@@ -46,10 +47,11 @@ const BUSINESS_SEEDS = [
     description: "A collection of lodges and camps in the Maasai Mara, offering full-board game drive packages.",
     verificationStatus: "APPROVED" as const,
     businessType: "ACCOMMODATION",
-    traLicenseNumber: "TRA1/47/C02/1024", // Example format
+    traLicenseNumber: "TRA1/47/C02/1024",
     katoMember: true,
+    role: "BUSINESS" as const, // ← NEW: explicit role for user creation
     accommodationSlugs: ["mara-serena", "mara-sopa", "governors-camp"],
-    packageSlugs: ["3-day-maasai-mara", "4-day-mara-camping"],
+    packageSlugs: [],
   },
   {
     email: "diani@business.local",
@@ -62,9 +64,12 @@ const BUSINESS_SEEDS = [
     businessType: "ACCOMMODATION",
     traLicenseNumber: "TRA1/47/C02/2055",
     katoMember: false,
+    role: "BUSINESS" as const,
     accommodationSlugs: ["diani-sea-resort", "almanara-villas", "sands-nomad"],
-    packageSlugs: ["5-day-diani-retreat"],
+    packageSlugs: [],
   },
+
+  // ── Tour Operator focused businesses (role: OPERATOR) ──
   {
     email: "savannah@business.local",
     name: "Savannah Tours Operator",
@@ -74,8 +79,9 @@ const BUSINESS_SEEDS = [
     description: "A safari tour operator running scheduled and custom itineraries across Kenya's national parks and reserves.",
     verificationStatus: "APPROVED" as const,
     businessType: "TOUR_OPERATOR",
-    traLicenseNumber: "TRA1/47/C01/2057", // Example TRA Class C license
+    traLicenseNumber: "TRA1/47/C01/2057",
     katoMember: true,
+    role: "OPERATOR" as const, // ← CHANGED: now OPERATOR, not BUSINESS
     accommodationSlugs: [],
     packageSlugs: [
       "7-day-kenya-highlights",
@@ -92,11 +98,12 @@ const BUSINESS_SEEDS = [
     contactEmail: "stay@amboseli-lodges.example",
     contactPhone: "+254 700 400 400",
     description: "Lodges and camps with views of Mount Kilimanjaro in Amboseli National Park.",
-    verificationStatus: "PENDING" as const,
+    verificationStatus: "PENDING" as const, // ← Still pending, so it shows up in the admin approval queue
     businessType: "TOUR_OPERATOR",
     traLicenseNumber: "TRA1/47/C01/9988",
     katoMember: false,
-    accommodationSlugs: ["amboseli-serena", "tortilis-camp", "ol-tukai"],
+    role: "OPERATOR" as const,
+    accommodationSlugs: [],
     packageSlugs: [],
   },
 ];
@@ -111,7 +118,7 @@ const CUSTOMER_SEEDS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// DESTINATIONS — 20 records
+// DESTINATIONS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedDestinations() {
@@ -160,7 +167,7 @@ async function getDestinationMap() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ATTRACTIONS — 23 records
+// ATTRACTIONS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedAttractions() {
@@ -204,7 +211,7 @@ async function seedAttractions() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// TOUR PACKAGES — 22 records
+// TOUR PACKAGES
 // ═══════════════════════════════════════════════════════════════
 
 async function seedTourPackages() {
@@ -247,7 +254,7 @@ async function seedTourPackages() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ACCOMMODATIONS — 24 records
+// ACCOMMODATIONS
 // ═══════════════════════════════════════════════════════════════
 
 async function seedAccommodations() {
@@ -292,7 +299,7 @@ async function seedAccommodations() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// EVENTS — 20 records (With Coordinates!)
+// EVENTS (unchanged from your working version)
 // ═══════════════════════════════════════════════════════════════
 
 async function seedEvents() {
@@ -322,9 +329,9 @@ async function seedEvents() {
   for (const e of events) {
     await prisma.event.upsert({
       where: { slug: e.slug },
-      update: { 
-        imageUrl: e.imageUrl, 
-        latitude: e.latitude, 
+      update: {
+        imageUrl: e.imageUrl,
+        latitude: e.latitude,
         longitude: e.longitude,
         featured: e.featured,
         order: e.order
@@ -337,7 +344,7 @@ async function seedEvents() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// BLOG POSTS — 20 records
+// BLOG POSTS (unchanged from your working version)
 // ═══════════════════════════════════════════════════════════════
 
 async function seedBlogPosts() {
@@ -449,7 +456,7 @@ async function seedBusinessesAndCustomers() {
       create: {
         email: b.email,
         name: b.name,
-        role: "BUSINESS",
+        role: b.role,
         passwordHash,
       },
     });
@@ -512,6 +519,7 @@ async function seedBusinessesAndCustomers() {
 
   console.log(`✔ Seeded ${CUSTOMER_SEEDS.length} customers`);
 
+  // Sample messages and bookings between customers and businesses
   const maraBusiness = businessUsers.get("mara@business.local")!;
   const dianiBusiness = businessUsers.get("diani@business.local")!;
   const customer1 = customerUsers.get("customer1@test.local")!;
@@ -648,7 +656,6 @@ async function seedApplications() {
     select: { id: true },
     orderBy: { email: "asc" },
   });
-  const committeeMember = committeeMembers[0] ?? null;
 
   const now = Date.now();
   const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000);
@@ -944,11 +951,10 @@ async function seedIncidents() {
   }
 
   console.log(`✔ Seeded ${seeds.length} incidents (${created} created, ${updated} updated)`);
-  console.log(`   ${seeds.filter((s) => s.status === "OPEN").length} OPEN, ${seeds.filter((s) => s.status === "UNDER_REVIEW").length} UNDER_REVIEW, ${seeds.filter((s) => s.status === "ESCALATED").length} ESCALATED, ${seeds.filter((s) => s.status === "RESOLVED").length} RESOLVED, ${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// INVESTOR INQUIRIES — 8 records across all statuses
+// INVESTOR INQUIRIES
 // ═══════════════════════════════════════════════════════════════
 
 async function seedInvestorInquiries() {
@@ -1187,12 +1193,6 @@ async function seedInvestorInquiries() {
 
   console.log(
     `✔ Seeded ${seeds.length} investor inquiries (${created} created, ${updated} updated)`
-  );
-  console.log(
-    `   ${seeds.filter((s) => s.status === "NEW").length} NEW, ` +
-      `${seeds.filter((s) => s.status === "IN_REVIEW").length} IN_REVIEW, ` +
-      `${seeds.filter((s) => s.status === "CONTACTED").length} CONTACTED, ` +
-      `${seeds.filter((s) => s.status === "CLOSED").length} CLOSED`
   );
 }
 
