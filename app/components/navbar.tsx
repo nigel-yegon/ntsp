@@ -21,9 +21,6 @@ import { ThemeToggle } from "./theme-toggle";
 import type { SiteChromeSession } from "./site-chrome";
 
 // ─── Navigation structure ───────────────────────────────────
-// Any item that carries a `dropdown` renders as a split button:
-// the label navigates to the section page, a chevron opens the
-// sub-items. Items without `dropdown` render as plain links.
 const destinationsSub = [
   { href: "/experiences", label: "Experiences" },
   { href: "/packages", label: "Packages" },
@@ -31,7 +28,6 @@ const destinationsSub = [
 ] as const;
 
 const aboutSub = [
-
   { href: "/about/government-agencies", label: "Government Agencies" },
   { href: "/about/resources", label: "Resources" },
   { href: "/blog", label: "Travel Blog" },
@@ -52,7 +48,6 @@ const links = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About", dropdown: aboutSub },
   { href: "/investment", label: "Investment", dropdown: investmentSub },
-//  { href: "/about/resources", label: "Resources" },
   { href: "/events", label: "Events" },
   { href: "/safety", label: "Safety", dropdown: safetySub },
 ] as const;
@@ -61,6 +56,7 @@ const ROLE_HOME: Record<string, string> = {
   EMPLOYER: "/services",
   CUSTOMER: "/dashboard",
   BUSINESS: "/dashboard",
+  OPERATOR: "/dashboard",
   VERIFIER: "/review/perusal",
   COMMITTEE_MEMBER: "/review/committee",
   PERMANENT_SECRETARY: "/review/ps",
@@ -71,11 +67,19 @@ const ROLE_LABEL: Record<string, string> = {
   EMPLOYER: "Employer",
   CUSTOMER: "Traveller",
   BUSINESS: "Business",
+  OPERATOR: "Tour Operator",
   VERIFIER: "Verifier",
   COMMITTEE_MEMBER: "Committee",
   PERMANENT_SECRETARY: "Permanent Secretary",
   ADMIN: "Administrator",
 };
+
+// Roles allowed to access the permit applications area
+const APPLICATIONS_ROLES = new Set([
+  "PERMANENT_SECRETARY",
+  "COMMITTEE_MEMBER",
+  "VERIFIER",
+]);
 
 export function Navbar({
   static: isStatic = false,
@@ -88,7 +92,6 @@ export function Navbar({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState<null | "user" | "anon">(null);
-  // Which top-level dropdown is open, keyed by its href.
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const isDashboard =
@@ -98,14 +101,12 @@ export function Navbar({
     pathname.startsWith("/admin") ||
     pathname.startsWith("/services/applications");
 
-  // Close all menus on route change
   useEffect(() => {
     setOpen(false);
     setMenuOpen(null);
     setOpenDropdown(null);
   }, [pathname]);
 
-  // Track scroll position for the header's background treatment
   useEffect(() => {
     function onScroll() {
       setScrolled(window.scrollY > 8);
@@ -115,7 +116,6 @@ export function Navbar({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while the mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -123,7 +123,6 @@ export function Navbar({
     };
   }, [open]);
 
-  // Close user/anon dropdown on outside click and Escape
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -145,10 +144,6 @@ export function Navbar({
     };
   }, [menuOpen]);
 
-  // Close top-level dropdown on outside click and Escape.
-  // Any click that isn't inside an element with [data-dropdown-root]
-  // closes whichever dropdown is open. Clicks on the toggle button
-  // themselves are handled by the button's onClick.
   useEffect(() => {
     if (!openDropdown) return;
 
@@ -176,18 +171,20 @@ export function Navbar({
   return (
     <>
       <header
-        className={`z-50 border-b transition-colors ${isDashboard ? "" : "top-0"
-          } ${scrolled
+        className={`z-50 border-b transition-colors ${
+          isDashboard ? "" : "top-0"
+        } ${
+          scrolled
             ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
             : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70"
-          }`}
+        }`}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          {/* Logo */}
           <Link
             href="/"
-            className={`flex shrink-0 items-center ${isDashboard ? "ml-0.5" : ""
-              }`}
+            className={`flex shrink-0 items-center ${
+              isDashboard ? "ml-0.5" : ""
+            }`}
             aria-label="National Tourism Service Portal home"
           >
             <Image
@@ -214,10 +211,11 @@ export function Navbar({
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${active
-                        ? "text-brand-600 dark:text-brand-300"
-                        : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
-                        }`}
+                      className={`relative rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                        active
+                          ? "text-brand-600 dark:text-brand-300"
+                          : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
+                      }`}
                     >
                       {l.label}
                       {active && (
@@ -230,16 +228,13 @@ export function Navbar({
 
               const isOpen = openDropdown === l.href;
               return (
-                <li
-                  key={l.href}
-                  className="relative"
-                  data-dropdown-root
-                >
+                <li key={l.href} className="relative" data-dropdown-root>
                   <div
-                    className={`flex items-center rounded-md transition-colors ${active || isOpen
-                      ? "text-brand-600 dark:text-brand-300"
-                      : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
-                      }`}
+                    className={`flex items-center rounded-md transition-colors ${
+                      active || isOpen
+                        ? "text-brand-600 dark:text-brand-300"
+                        : "text-deep-700 hover:text-deep-900 dark:text-cream-300 dark:hover:text-cream-100"
+                    }`}
                   >
                     <Link
                       href={l.href}
@@ -263,7 +258,9 @@ export function Navbar({
                       <ChevronDown
                         size={14}
                         aria-hidden
-                        className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+                        className={`transition-transform ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
                       />
                     </button>
                   </div>
@@ -274,23 +271,26 @@ export function Navbar({
                       aria-label={l.label}
                       className="absolute left-0 top-full z-50 mt-1 w-56 rounded-xl border border-deep-200 bg-cream-100 p-1.5 shadow-xl dark:border-deep-800 dark:bg-deep-950"
                     >
-                      {l.dropdown.map((sub: { href: string; label: string }) => {
-                        const subActive = isActive(sub.href);
-                        return (
-                          <Link
-                            key={sub.href}
-                            href={sub.href}
-                            role="menuitem"
-                            onClick={() => setOpenDropdown(null)}
-                            className={`flex items-center rounded-lg px-3 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${subActive
-                              ? "bg-brand-100 text-brand-800 dark:bg-brand-950/40 dark:text-brand-200"
-                              : "text-deep-700 hover:bg-cream-200 dark:text-cream-200 dark:hover:bg-deep-900"
+                      {l.dropdown.map(
+                        (sub: { href: string; label: string }) => {
+                          const subActive = isActive(sub.href);
+                          return (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              role="menuitem"
+                              onClick={() => setOpenDropdown(null)}
+                              className={`flex items-center rounded-lg px-3 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 ${
+                                subActive
+                                  ? "bg-brand-100 text-brand-800 dark:bg-brand-950/40 dark:text-brand-200"
+                                  : "text-deep-700 hover:bg-cream-200 dark:text-cream-200 dark:hover:bg-deep-900"
                               }`}
-                          >
-                            {sub.label}
-                          </Link>
-                        );
-                      })}
+                            >
+                              {sub.label}
+                            </Link>
+                          );
+                        }
+                      )}
                       <div className="my-1 h-px bg-deep-200 dark:bg-deep-800" />
                       <Link
                         href={l.href}
@@ -311,7 +311,6 @@ export function Navbar({
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
 
-            {/* Auth slot — always one button, dropdown handles both states */}
             <div className="relative" data-user-menu>
               {session ? (
                 <button
@@ -413,7 +412,9 @@ export function Navbar({
                 const hasDropdown = "dropdown" in l && l.dropdown;
                 const dropdownActive =
                   hasDropdown &&
-                  l.dropdown.some((sub: { href: string }) => isActive(sub.href));
+                  l.dropdown.some((sub: { href: string }) =>
+                    isActive(sub.href)
+                  );
                 const active = isActive(l.href) || dropdownActive;
 
                 if (!hasDropdown) {
@@ -422,10 +423,11 @@ export function Navbar({
                       <Link
                         href={l.href}
                         onClick={() => setOpen(false)}
-                        className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
-                          ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                          : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
-                          }`}
+                        className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${
+                          active
+                            ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                            : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                        }`}
                       >
                         {l.label}
                       </Link>
@@ -438,31 +440,35 @@ export function Navbar({
                     <Link
                       href={l.href}
                       onClick={() => setOpen(false)}
-                      className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${active
-                        ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                        : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
-                        }`}
+                      className={`block rounded-md px-3 py-2.5 text-sm font-medium transition ${
+                        active
+                          ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                          : "text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                      }`}
                     >
                       {l.label}
                     </Link>
                     <ul className="ml-3 mt-1 space-y-0.5 border-l border-deep-200 pl-3 dark:border-deep-800">
-                      {l.dropdown.map((sub: { href: string; label: string }) => {
-                        const subActive = isActive(sub.href);
-                        return (
-                          <li key={sub.href}>
-                            <Link
-                              href={sub.href}
-                              onClick={() => setOpen(false)}
-                              className={`block rounded-md px-3 py-2 text-sm transition ${subActive
-                                ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
-                                : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                      {l.dropdown.map(
+                        (sub: { href: string; label: string }) => {
+                          const subActive = isActive(sub.href);
+                          return (
+                            <li key={sub.href}>
+                              <Link
+                                href={sub.href}
+                                onClick={() => setOpen(false)}
+                                className={`block rounded-md px-3 py-2 text-sm transition ${
+                                  subActive
+                                    ? "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-200"
+                                    : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
                                 }`}
-                            >
-                              {sub.label}
-                            </Link>
-                          </li>
-                        );
-                      })}
+                              >
+                                {sub.label}
+                              </Link>
+                            </li>
+                          );
+                        }
+                      )}
                     </ul>
                   </li>
                 );
@@ -497,14 +503,17 @@ export function Navbar({
                     My dashboard
                   </Link>
 
-                  <Link
-                    href="/services/applications"
-                    onClick={() => setOpen(false)}
-                    className="mb-2 flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
-                  >
-                    <FileText size={16} aria-hidden="true" />
-                    Applications
-                  </Link>
+                  {/* Permit applications — restricted to PS, Committee, Verifier */}
+                  {APPLICATIONS_ROLES.has(session.role) && (
+                    <Link
+                      href="/services/applications"
+                      onClick={() => setOpen(false)}
+                      className="mb-2 flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
+                    >
+                      <FileText size={16} aria-hidden="true" />
+                      Applications
+                    </Link>
+                  )}
 
                   <button
                     type="button"
@@ -581,8 +590,17 @@ function UserMenuPanel({
   onClose: () => void;
 }) {
   const home = ROLE_HOME[session.role] ?? "/";
+  const canViewApplications = APPLICATIONS_ROLES.has(session.role);
+
+  // Role-specific label for the applications entry
   const applicationsLabel =
-    session.role === "EMPLOYER" ? "My applications" : "Permit applications";
+    session.role === "COMMITTEE_MEMBER"
+      ? "Committee reviews"
+      : session.role === "PERMANENT_SECRETARY"
+        ? "PS reviews"
+        : session.role === "VERIFIER"
+          ? "Verification queue"
+          : "Permit applications";
 
   return (
     <div
@@ -614,7 +632,7 @@ function UserMenuPanel({
         Go to my dashboard
       </Link>
 
-      {session.role !== "CUSTOMER" && (
+      {canViewApplications && (
         <Link
           href="/services/applications"
           role="menuitem"
