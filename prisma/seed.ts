@@ -1,6 +1,5 @@
 // prisma/seed.ts
 import "dotenv/config";
-import { existsSync } from "fs";
 import { PrismaClient } from "../lib/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
@@ -28,7 +27,7 @@ async function main() {
   await seedBusinessesAndCustomers();
   await seedApplications();
   await seedIncidents();
-  await seedInvestorInquiries();   // ← new
+  await seedInvestorInquiries();
 
   console.log("✅ Seed complete.");
 }
@@ -44,9 +43,11 @@ const BUSINESS_SEEDS = [
     businessName: "Mara Serena Safari Lodges",
     contactEmail: "bookings@mara-serena.example",
     contactPhone: "+254 700 100 100",
-    description:
-      "A collection of lodges and camps in the Maasai Mara, offering full-board game drive packages.",
+    description: "A collection of lodges and camps in the Maasai Mara, offering full-board game drive packages.",
     verificationStatus: "APPROVED" as const,
+    businessType: "ACCOMMODATION",
+    traLicenseNumber: "TRA1/47/C02/1024", // Example format
+    katoMember: true,
     accommodationSlugs: ["mara-serena", "mara-sopa", "governors-camp"],
     packageSlugs: ["3-day-maasai-mara", "4-day-mara-camping"],
   },
@@ -56,9 +57,11 @@ const BUSINESS_SEEDS = [
     businessName: "Diani Beach Resorts",
     contactEmail: "reservations@diani-resorts.example",
     contactPhone: "+254 700 200 200",
-    description:
-      "Beachfront resorts and villas on Kenya's award-winning Diani Beach, with snorkeling and dhow cruise packages.",
+    description: "Beachfront resorts and villas on Kenya's award-winning Diani Beach, with snorkeling and dhow cruise packages.",
     verificationStatus: "APPROVED" as const,
+    businessType: "ACCOMMODATION",
+    traLicenseNumber: "TRA1/47/C02/2055",
+    katoMember: false,
     accommodationSlugs: ["diani-sea-resort", "almanara-villas", "sands-nomad"],
     packageSlugs: ["5-day-diani-retreat"],
   },
@@ -68,9 +71,11 @@ const BUSINESS_SEEDS = [
     businessName: "Savannah Tours Ltd",
     contactEmail: "info@savannah-tours.example",
     contactPhone: "+254 700 300 300",
-    description:
-      "A safari tour operator running scheduled and custom itineraries across Kenya's national parks and reserves.",
+    description: "A safari tour operator running scheduled and custom itineraries across Kenya's national parks and reserves.",
     verificationStatus: "APPROVED" as const,
+    businessType: "TOUR_OPERATOR",
+    traLicenseNumber: "TRA1/47/C01/2057", // Example TRA Class C license
+    katoMember: true,
     accommodationSlugs: [],
     packageSlugs: [
       "7-day-kenya-highlights",
@@ -86,9 +91,11 @@ const BUSINESS_SEEDS = [
     businessName: "Amboseli Lodges",
     contactEmail: "stay@amboseli-lodges.example",
     contactPhone: "+254 700 400 400",
-    description:
-      "Lodges and camps with views of Mount Kilimanjaro in Amboseli National Park.",
+    description: "Lodges and camps with views of Mount Kilimanjaro in Amboseli National Park.",
     verificationStatus: "PENDING" as const,
+    businessType: "TOUR_OPERATOR",
+    traLicenseNumber: "TRA1/47/C01/9988",
+    katoMember: false,
     accommodationSlugs: ["amboseli-serena", "tortilis-camp", "ol-tukai"],
     packageSlugs: [],
   },
@@ -134,11 +141,7 @@ async function seedDestinations() {
   for (const d of destinations) {
     await prisma.destination.upsert({
       where: { slug: d.slug },
-      update: {
-        imageUrl: d.imageUrl,
-        latitude: d.latitude,
-        longitude: d.longitude,
-      },
+      update: { imageUrl: d.imageUrl, latitude: d.latitude, longitude: d.longitude },
       create: d,
     });
   }
@@ -192,11 +195,7 @@ async function seedAttractions() {
   for (const a of attractions) {
     await prisma.attraction.upsert({
       where: { slug: a.slug },
-      update: {
-        imageUrl: a.imageUrl,
-        latitude: a.latitude,
-        longitude: a.longitude,
-      },
+      update: { imageUrl: a.imageUrl, latitude: a.latitude, longitude: a.longitude },
       create: a,
     });
   }
@@ -239,11 +238,7 @@ async function seedTourPackages() {
   for (const p of packages) {
     await prisma.tourPackage.upsert({
       where: { slug: p.slug },
-      update: {
-        imageUrl: p.imageUrl,
-        latitude: p.latitude,
-        longitude: p.longitude,
-      },
+      update: { imageUrl: p.imageUrl, latitude: p.latitude, longitude: p.longitude },
       create: p,
     });
   }
@@ -288,11 +283,7 @@ async function seedAccommodations() {
   for (const a of accommodations) {
     await prisma.accommodation.upsert({
       where: { slug: a.slug },
-      update: {
-        imageUrl: a.imageUrl,
-        latitude: a.latitude,
-        longitude: a.longitude,
-      },
+      update: { imageUrl: a.imageUrl, latitude: a.latitude, longitude: a.longitude },
       create: a,
     });
   }
@@ -301,37 +292,43 @@ async function seedAccommodations() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// EVENTS — 20 records
+// EVENTS — 20 records (With Coordinates!)
 // ═══════════════════════════════════════════════════════════════
 
 async function seedEvents() {
   const events = [
-    { name: "Magical Kenya Travel Expo (MKTE) 2026", slug: "mkte-2026", description: "Kenya's premier travel trade show, bringing together global buyers, exhibitors, and tourism leaders for networking and partnership opportunities.", startDate: new Date("2026-10-06"), endDate: new Date("2026-10-08"), location: "Nairobi, Kenya", imageUrl: img("photo-1540575467063-178a50c2df87"), featured: true },
-    { name: "Wildebeest Migration Season", slug: "migration-season-2026", description: "The annual Great Migration brings over 1.5 million wildebeest and zebras into the Maasai Mara from the Serengeti.", startDate: new Date("2026-07-01"), endDate: new Date("2026-10-31"), location: "Maasai Mara National Reserve", imageUrl: img("photo-1534177616072-ef7dc120449d"), featured: true },
-    { name: "Lamu Cultural Festival", slug: "lamu-cultural-festival-2026", description: "A celebration of Swahili culture with dhow races, donkey races, traditional dances, and poetry.", startDate: new Date("2026-11-20"), endDate: new Date("2026-11-23"), location: "Lamu Island", imageUrl: img("photo-1571407970349-bc81e7e96d47"), featured: false },
-    { name: "Safari Rally Kenya 2026", slug: "safari-rally-2026", description: "Round 3 of the World Rally Championship, held on the grueling gravel roads of Naivasha and the Rift Valley.", startDate: new Date("2026-03-19"), endDate: new Date("2026-03-22"), location: "Naivasha, Nakuru County", imageUrl: img("photo-1503376780353-7e6692767b70"), featured: true },
-    { name: "Maralal International Camel Derby", slug: "maralal-camel-derby-2026", description: "A unique cultural and sporting event featuring camel races, cycling, and Samburu traditions.", startDate: new Date("2026-08-07"), endDate: new Date("2026-08-09"), location: "Maralal, Samburu County", imageUrl: img("photo-1509316785289-025f5b846b35"), featured: false },
-    { name: "Mombasa Carnival", slug: "mombasa-carnival-2026", description: "An annual street parade celebrating Swahili, Arab, Indian, and African heritage on the coast.", startDate: new Date("2026-11-01"), endDate: new Date("2026-11-03"), location: "Mombasa", imageUrl: img("photo-1519046904884-53103b34b206"), featured: true },
-    { name: "Nairobi International Trade Fair", slug: "nairobi-trade-fair-2026", description: "East and Central Africa's largest trade exhibition, showcasing agriculture, tourism, and industry.", startDate: new Date("2026-09-28"), endDate: new Date("2026-10-04"), location: "Jamhuri Park, Nairobi", imageUrl: img("photo-1540575467063-178a50c2df87"), featured: false },
-    { name: "Kenya Music Festival 2026", slug: "kenya-music-festival-2026", description: "The annual national music competition, from primary school choirs to professional ensembles.", startDate: new Date("2026-08-10"), endDate: new Date("2026-08-15"), location: "Nairobi", imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false },
-    { name: "Lake Turkana Festival", slug: "turkana-festival-2026", description: "A celebration of the cultural diversity of the Turkana basin's tribes — El Molo, Rendille, Samburu, Turkana, Dassanech, and more.", startDate: new Date("2026-06-12"), endDate: new Date("2026-06-14"), location: "Loiyangalani, Marsabit County", imageUrl: img("photo-1516450360452-9312f5e86fc7"), featured: false },
-    { name: "Rhino Charge 2026", slug: "rhino-charge-2026", description: "An off-road motorsport event that raises funds for rhino conservation across Kenya.", startDate: new Date("2026-06-06"), endDate: null, location: "Laikipia", imageUrl: img("photo-1503376780353-7e6692767b70"), featured: false },
-    { name: "Kenya Open Golf Championship", slug: "kenya-open-golf-2026", description: "One of Africa's oldest and most prestigious golf tournaments, part of the Sunshine Tour.", startDate: new Date("2026-02-19"), endDate: new Date("2026-02-22"), location: "Karen Country Club, Nairobi", imageUrl: img("photo-1535131749006-b7f58c99034b"), featured: false },
-    { name: "Kisumu Fish Festival", slug: "kisumu-fish-festival-2026", description: "A lakeside celebration of Luo culture, Lake Victoria's tilapia, and traditional music.", startDate: new Date("2026-12-11"), endDate: new Date("2026-12-13"), location: "Kisumu", imageUrl: img("photo-1544551763-46a013bb70d5"), featured: false },
-    { name: "Lewa Safari Marathon", slug: "lewa-marathon-2026", description: "A world-famous marathon run entirely inside a wildlife conservancy, raising funds for conservation and community projects.", startDate: new Date("2026-06-27"), endDate: null, location: "Lewa Wildlife Conservancy, Laikipia", imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: true },
-    { name: "Malindi Cultural Festival", slug: "malindi-festival-2026", description: "A coastal celebration of Swahili, Italian, and Arab influences in Malindi's history.", startDate: new Date("2026-11-27"), endDate: new Date("2026-11-29"), location: "Malindi", imageUrl: img("photo-1519046904884-53103b34b206"), featured: false },
-    { name: "Koroga Festival", slug: "koroga-festival-2026", description: "A quarterly outdoor music and food festival featuring Kenyan and international artists.", startDate: new Date("2026-04-05"), endDate: new Date("2026-04-05"), location: "Nairobi", imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false },
-    { name: "Nairobi Restaurant Week", slug: "nairobi-restaurant-week-2026", description: "Ten days of fixed-price menus across Nairobi's top restaurants, celebrating Kenyan cuisine.", startDate: new Date("2026-02-06"), endDate: new Date("2026-02-16"), location: "Nairobi", imageUrl: img("photo-1414235077428-338989a2e8c0"), featured: false },
-    { name: "Blankets & Wine", slug: "blankets-and-wine-2026", description: "A monthly open-air concert showcasing Kenyan and East African live music.", startDate: new Date("2026-01-25"), endDate: null, location: "Nairobi", imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false },
-    { name: "Kili Marathon", slug: "kili-marathon-2026", description: "A marathon run at the foot of Mount Kilimanjaro, starting and finishing in Amboseli.", startDate: new Date("2026-03-01"), endDate: null, location: "Amboseli", imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: false },
-    { name: "Kijani Festival", slug: "kijani-festival-2026", description: "A music and arts festival held on the shores of Lake Naivasha, blending Kenyan and international acts.", startDate: new Date("2026-09-12"), endDate: new Date("2026-09-13"), location: "Lake Naivasha", imageUrl: img("photo-1470229722913-7c0e2dbbafd3"), featured: false },
-    { name: "Marathon des Sables Kenya", slug: "marathon-des-sables-2026", description: "An ultra-marathon through the Chalbi Desert, part of the global Marathon des Sables series.", startDate: new Date("2026-07-18"), endDate: new Date("2026-07-24"), location: "Chalbi Desert, Marsabit County", imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: false },
+    { name: "Magical Kenya Travel Expo (MKTE) 2026", slug: "mkte-2026", description: "Kenya's premier travel trade show, bringing together global buyers, exhibitors, and tourism leaders for networking and partnership opportunities.", startDate: new Date("2026-10-06"), endDate: new Date("2026-10-08"), location: "Kenyatta International Convention Centre, Nairobi", latitude: -1.2921, longitude: 36.8219, imageUrl: img("photo-1540575467063-178a50c2df87"), featured: true, order: 1 },
+    { name: "Wildebeest Migration Season", slug: "migration-season-2026", description: "The annual Great Migration brings over 1.5 million wildebeest and zebras into the Maasai Mara from the Serengeti.", startDate: new Date("2026-07-01"), endDate: new Date("2026-10-31"), location: "Maasai Mara National Reserve", latitude: -1.4850, longitude: 35.3720, imageUrl: img("photo-1534177616072-ef7dc120449d"), featured: true, order: 2 },
+    { name: "Lamu Cultural Festival", slug: "lamu-cultural-festival-2026", description: "A celebration of Swahili culture with dhow races, donkey races, traditional dances, and poetry.", startDate: new Date("2026-11-20"), endDate: new Date("2026-11-23"), location: "Lamu Island", latitude: -2.2717, longitude: 40.9020, imageUrl: img("photo-1571407970349-bc81e7e96d47"), featured: false, order: 3 },
+    { name: "Safari Rally Kenya 2026", slug: "safari-rally-2026", description: "Round 3 of the World Rally Championship, held on the grueling gravel roads of Naivasha and the Rift Valley.", startDate: new Date("2026-03-19"), endDate: new Date("2026-03-22"), location: "Naivasha, Nakuru County", latitude: -0.7167, longitude: 36.4359, imageUrl: img("photo-1503376780353-7e6692767b70"), featured: true, order: 4 },
+    { name: "Maralal International Camel Derby", slug: "maralal-camel-derby-2026", description: "A unique cultural and sporting event featuring camel races, cycling, and Samburu traditions.", startDate: new Date("2026-08-07"), endDate: new Date("2026-08-09"), location: "Maralal, Samburu County", latitude: 1.0967, longitude: 36.6972, imageUrl: img("photo-1509316785289-025f5b846b35"), featured: false, order: 5 },
+    { name: "Mombasa Carnival", slug: "mombasa-carnival-2026", description: "An annual street parade celebrating Swahili, Arab, Indian, and African heritage on the coast.", startDate: new Date("2026-11-01"), endDate: new Date("2026-11-03"), location: "Mombasa", latitude: -4.0435, longitude: 39.6682, imageUrl: img("photo-1519046904884-53103b34b206"), featured: true, order: 6 },
+    { name: "Nairobi International Trade Fair", slug: "nairobi-trade-fair-2026", description: "East and Central Africa's largest trade exhibition, showcasing agriculture, tourism, and industry.", startDate: new Date("2026-09-28"), endDate: new Date("2026-10-04"), location: "Jamhuri Park, Nairobi", latitude: -1.3010, longitude: 36.7680, imageUrl: img("photo-1540575467063-178a50c2df87"), featured: false, order: 7 },
+    { name: "Kenya Music Festival 2026", slug: "kenya-music-festival-2026", description: "The annual national music competition, from primary school choirs to professional ensembles.", startDate: new Date("2026-08-10"), endDate: new Date("2026-08-15"), location: "Nairobi", latitude: -1.2921, longitude: 36.8219, imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false, order: 8 },
+    { name: "Lake Turkana Festival", slug: "turkana-festival-2026", description: "A celebration of the cultural diversity of the Turkana basin's tribes — El Molo, Rendille, Samburu, Turkana, Dassanech, and more.", startDate: new Date("2026-06-12"), endDate: new Date("2026-06-14"), location: "Loiyangalani, Marsabit County", latitude: 2.7500, longitude: 36.7167, imageUrl: img("photo-1516450360452-9312f5e86fc7"), featured: false, order: 9 },
+    { name: "Rhino Charge 2026", slug: "rhino-charge-2026", description: "An off-road motorsport event that raises funds for rhino conservation across Kenya.", startDate: new Date("2026-06-06"), endDate: null, location: "Laikipia", latitude: 0.0500, longitude: 36.8000, imageUrl: img("photo-1503376780353-7e6692767b70"), featured: false, order: 10 },
+    { name: "Kenya Open Golf Championship", slug: "kenya-open-golf-2026", description: "One of Africa's oldest and most prestigious golf tournaments, part of the Sunshine Tour.", startDate: new Date("2026-02-19"), endDate: new Date("2026-02-22"), location: "Karen Country Club, Nairobi", latitude: -1.3350, longitude: 36.7100, imageUrl: img("photo-1535131749006-b7f58c99034b"), featured: false, order: 11 },
+    { name: "Kisumu Fish Festival", slug: "kisumu-fish-festival-2026", description: "A lakeside celebration of Luo culture, Lake Victoria's tilapia, and traditional music.", startDate: new Date("2026-12-11"), endDate: new Date("2026-12-13"), location: "Kisumu", latitude: -0.0917, longitude: 34.7680, imageUrl: img("photo-1544551763-46a013bb70d5"), featured: false, order: 12 },
+    { name: "Lewa Safari Marathon", slug: "lewa-marathon-2026", description: "A world-famous marathon run entirely inside a wildlife conservancy, raising funds for conservation and community projects.", startDate: new Date("2026-06-27"), endDate: null, location: "Lewa Wildlife Conservancy, Laikipia", latitude: 0.1833, longitude: 37.4500, imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: true, order: 13 },
+    { name: "Malindi Cultural Festival", slug: "malindi-festival-2026", description: "A coastal celebration of Swahili, Italian, and Arab influences in Malindi's history.", startDate: new Date("2026-11-27"), endDate: new Date("2026-11-29"), location: "Malindi", latitude: -3.2192, longitude: 40.1169, imageUrl: img("photo-1519046904884-53103b34b206"), featured: false, order: 14 },
+    { name: "Koroga Festival", slug: "koroga-festival-2026", description: "A quarterly outdoor music and food festival featuring Kenyan and international artists.", startDate: new Date("2026-04-05"), endDate: new Date("2026-04-05"), location: "Nairobi", latitude: -1.2921, longitude: 36.8219, imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false, order: 15 },
+    { name: "Nairobi Restaurant Week", slug: "nairobi-restaurant-week-2026", description: "Ten days of fixed-price menus across Nairobi's top restaurants, celebrating Kenyan cuisine.", startDate: new Date("2026-02-06"), endDate: new Date("2026-02-16"), location: "Nairobi", latitude: -1.2921, longitude: 36.8219, imageUrl: img("photo-1414235077428-338989a2e8c0"), featured: false, order: 16 },
+    { name: "Blankets & Wine", slug: "blankets-and-wine-2026", description: "A monthly open-air concert showcasing Kenyan and East African live music.", startDate: new Date("2026-01-25"), endDate: null, location: "Nairobi", latitude: -1.2921, longitude: 36.8219, imageUrl: img("photo-1493225457124-a3eb161ffa5f"), featured: false, order: 17 },
+    { name: "Kili Marathon", slug: "kili-marathon-2026", description: "A marathon run at the foot of Mount Kilimanjaro, starting and finishing in Amboseli.", startDate: new Date("2026-03-01"), endDate: null, location: "Amboseli", latitude: -2.6527, longitude: 37.2606, imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: false, order: 18 },
+    { name: "Kijani Festival", slug: "kijani-festival-2026", description: "A music and arts festival held on the shores of Lake Naivasha, blending Kenyan and international acts.", startDate: new Date("2026-09-12"), endDate: new Date("2026-09-13"), location: "Lake Naivasha", latitude: -0.7667, longitude: 36.3667, imageUrl: img("photo-1470229722913-7c0e2dbbafd3"), featured: false, order: 19 },
+    { name: "Marathon des Sables Kenya", slug: "marathon-des-sables-2026", description: "An ultra-marathon through the Chalbi Desert, part of the global Marathon des Sables series.", startDate: new Date("2026-07-18"), endDate: new Date("2026-07-24"), location: "Chalbi Desert, Marsabit County", latitude: 2.7500, longitude: 37.5000, imageUrl: img("photo-1552674605-db6ffd4facb5"), featured: false, order: 20 },
   ];
 
   for (const e of events) {
     await prisma.event.upsert({
       where: { slug: e.slug },
-      update: { imageUrl: e.imageUrl },
+      update: { 
+        imageUrl: e.imageUrl, 
+        latitude: e.latitude, 
+        longitude: e.longitude,
+        featured: e.featured,
+        order: e.order
+      },
       create: e,
     });
   }
@@ -467,6 +464,9 @@ async function seedBusinessesAndCustomers() {
         contactPhone: b.contactPhone,
         description: b.description,
         verificationStatus: b.verificationStatus,
+        businessType: b.businessType,
+        traLicenseNumber: b.traLicenseNumber,
+        katoMember: b.katoMember,
         approvedAt: b.verificationStatus === "APPROVED" ? daysAgo(30) : null,
       },
     });

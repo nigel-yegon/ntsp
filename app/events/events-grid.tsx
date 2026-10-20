@@ -608,7 +608,7 @@ function MapView({ events }: { events: Event[] }) {
       <div className="relative overflow-hidden rounded-2xl border border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900">
         <div
           ref={containerRef}
-          className="h-[60vh] min-h-[400px] w-full"
+          className="h-[60vh] min-h-100 w-full"
           aria-label="Map of events across Kenya"
         />
 
@@ -648,7 +648,7 @@ function MapView({ events }: { events: Event[] }) {
                 alt={selectedEvent.name}
                 className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
             </div>
           )}
 

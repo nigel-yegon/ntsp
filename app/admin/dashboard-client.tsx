@@ -1,3 +1,4 @@
+// app/admin/dashboard-client.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { BusinessesPanel } from "./businesses/businesses-panel";
 import { IncidentsPanel } from "./incidents/incidents-panel";
 import { InquiriesPanel } from "./inquiries/inquiries-panel";
 import { ResourcesPanel } from "./resources/resources-panel";
+import { OperatorsPanel } from "./operators/operators-panel";
 import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
@@ -58,6 +60,7 @@ import { countModuleRows } from "./actions/stats";
 type ModuleKey =
   | "overview"
   | "businesses"
+  | "operators"
   | "incidents"
   | "inquiries"
   | "destinations"
@@ -99,6 +102,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     icon: <CompassMarkIcon />,
   },
   businesses: {
+    ring: "ring-slate-500/20",
+    border: "border-slate-300 dark:border-slate-800",
+    borderHover: "hover:border-slate-500 dark:hover:border-slate-500",
+    bgSoft: "bg-slate-50 dark:bg-slate-950/40",
+    bgActive: "bg-slate-100 dark:bg-slate-950/70",
+    text: "text-slate-700 dark:text-slate-300",
+    button: "bg-slate-700",
+    buttonHover: "hover:bg-slate-800",
+    bar: "bg-slate-600",
+    pillBg: "bg-slate-100 dark:bg-slate-950",
+    pillText: "text-slate-800 dark:text-slate-200",
+    icon: <BuildingIcon />,
+  },
+  operators: {
     ring: "ring-slate-500/20",
     border: "border-slate-300 dark:border-slate-800",
     borderHover: "hover:border-slate-500 dark:hover:border-slate-500",
@@ -239,6 +256,7 @@ export function DashboardClient() {
 
   const [opCounts, setOpCounts] = useState<{
     businesses: { total: number; pending: number };
+    operators: { total: number; pending: number };
     incidents: { total: number; open: number };
     inquiries: { total: number; new: number };
   } | null>(null);
@@ -355,6 +373,14 @@ export function DashboardClient() {
         : undefined,
     },
     {
+      label: "Tour Operators",
+      value: opCounts?.operators.total ?? 0,
+      module: "operators" as ModuleKey,
+      hint: opCounts
+        ? `${opCounts.operators.pending} pending verification`
+        : undefined,
+    },
+    {
       label: "Incidents",
       value: opCounts?.incidents.total ?? 0,
       module: "incidents" as ModuleKey,
@@ -428,6 +454,10 @@ export function DashboardClient() {
 
               {activeModule === "businesses" && (
                 <BusinessesPanel search={search} />
+              )}
+
+              {activeModule === "operators" && (
+                <OperatorsPanel search={search} />
               )}
 
               {activeModule === "incidents" && (
@@ -523,6 +553,7 @@ function DashboardSidebar({
   }[] = [
     { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
     { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+    { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
     { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
     { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
     { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
@@ -652,6 +683,7 @@ function DashboardHeader({
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
     businesses: "Businesses",
+    operators: "Tour Operators",
     incidents: "Reported Incidents",
     inquiries: "Investor inquiries",
     resources: "Resources",

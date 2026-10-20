@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+import type { BookingStatus } from "@/lib/generated/prisma/client";
 
 export const runtime = "nodejs";
 
@@ -40,6 +42,7 @@ export async function POST(
     where: { id },
     select: { id: true, businessId: true, status: true },
   });
+  
   if (!booking) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -53,14 +56,30 @@ export async function POST(
     );
   }
 
-  await prisma.booking.update({
-    where: { id: booking.id },
-    data: {
-      status: body.decision,
-      responseNote: body.responseNote?.trim() || null,
-      respondedAt: new Date(),
-    },
-  });
+  // Truncate response note to prevent abuse
+  const safeNote = body.responseNote?.trim().slice(0, 1000) || null;
+
+  try {
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: {
+        status: body.decision as BookingStatus,
+        responseNote: safeNote,
+        respondedAt: new Date(),
+      },
+    });
+  } catch (err) {
+    console.error("Booking response failed:", err);
+    return NextResponse.json(
+      { error: "Database error. Please try again." },
+      { status: 500 }
+    );
+  }
+
+  // Purge cache so the UI updates immediately
+  revalidatePath("/dashboard/bookings");
+  revalidatePath(`/dashboard/bookings/${id}`);
+  revalidatePath("/dashboard");
 
   return NextResponse.json({ ok: true });
 }

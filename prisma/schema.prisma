@@ -15,6 +15,7 @@ enum Role {
   EMPLOYER
   CUSTOMER
   BUSINESS
+  OPERATOR
   VERIFIER
   COMMITTEE_MEMBER
   PERMANENT_SECRETARY
@@ -106,6 +107,7 @@ model VerificationToken {
 
 enum BusinessVerification {
   PENDING
+  PENDING_TRA_CHECK 
   APPROVED
   SUSPENDED
   REJECTED
@@ -126,18 +128,24 @@ model BusinessProfile {
   contactPhone   String?
   website        String?
 
+  // ── Tour Operator Fields ──
+  businessType     String?
+  traLicenseNumber String? @unique
+  traLicenseDocUrl String?
+  ktbRegistered    Boolean @default(false)
+  katoMember       Boolean @default(false)
+
   verificationStatus BusinessVerification @default(PENDING)
   approvedAt         DateTime?
   approvedById       String?
   rejectionReason    String?
+  verificationNotes  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([verificationStatus])
 }
-
-// ─── Company (the employer) ────────────────────────────────────
 
 model Company {
   id               String   @id @default(cuid())

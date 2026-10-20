@@ -1,6 +1,7 @@
-// middleware.ts (project root, next to next.config.ts)
+// middleware.ts
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 const ROLE_HOME: Record<string, string> = {
   EMPLOYER: "/services",
@@ -8,35 +9,42 @@ const ROLE_HOME: Record<string, string> = {
   COMMITTEE_MEMBER: "/review/committee",
   PERMANENT_SECRETARY: "/review/ps",
   ADMIN: "/admin",
+  BUSINESS: "/dashboard",
+  OPERATOR: "/dashboard",
+  CUSTOMER: "/dashboard",
 };
 
 const ROLE_PREFIXES: Record<string, string[]> = {
   EMPLOYER: ["/services"],
   CUSTOMER: ["/dashboard"],
-  BUSINESS: ["/dashboard"],
+  BUSINESS: ["/dashboard", "/operators/pending"],
+  OPERATOR: ["/dashboard", "/operators/pending"],
   VERIFIER: ["/review/perusal", "/review/verification", "/services/applications"],
   COMMITTEE_MEMBER: ["/review/committee", "/services/applications"],
   PERMANENT_SECRETARY: ["/review/ps", "/services/applications"],
-  ADMIN: ["/admin", "/review", "/services", "/dashboard"],
+  ADMIN: ["/admin", "/review", "/services", "/dashboard", "/operators"],
 };
 
 export const config = {
-matcher: [
-  "/services/applications/:path*",
-  "/services/expatriate/:path*",
-  "/services/profile/:path*",
-  "/review/:path*",
-  "/admin/:path*",
-  "/dashboard/:path*",
-],
+  matcher: [
+    "/services/applications/:path*",
+    "/services/expatriate/:path*",
+    "/services/profile/:path*",
+    "/review/:path*",
+    "/admin/:path*",
+    "/dashboard/:path*",
+    "/operators/pending",
+  ],
 };
 
 export default withAuth(
-  function middleware(req) {
+  async function middleware(req) {
     const { pathname } = req.nextUrl;
-    const role = req.nextauth.token?.role as string | undefined;
+    const token = req.nextauth.token;
+    const role = token?.role as string | undefined;
+    const userId = token?.id as string | undefined;
 
-    if (!role) {
+    if (!role || !userId) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
@@ -46,9 +54,28 @@ export default withAuth(
       allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
 
     if (!isAllowed) {
-      return NextResponse.redirect(
-        new URL(ROLE_HOME[role] ?? "/login", req.url)
-      );
+      return NextResponse.redirect(new URL(ROLE_HOME[role] ?? "/login", req.url));
+    }
+
+    // Verification gate for BUSINESS and OPERATOR
+    if (role === "BUSINESS" || role === "OPERATOR") {
+      const profile = await prisma.businessProfile.findUnique({
+        where: { userId },
+        select: { verificationStatus: true, businessType: true },
+      });
+
+      const isTourOperator = profile?.businessType === "TOUR_OPERATOR" || role === "OPERATOR";
+      const isPending = profile?.verificationStatus !== "APPROVED";
+
+      if (isTourOperator && isPending) {
+        if (pathname !== "/operators/pending") {
+          return NextResponse.redirect(new URL("/operators/pending", req.url));
+        }
+      } else {
+        if (pathname === "/operators/pending") {
+          return NextResponse.redirect(new URL("/dashboard", req.url));
+        }
+      }
     }
 
     return NextResponse.next();

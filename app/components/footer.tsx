@@ -22,7 +22,7 @@ const business = [
   { href: "/login", label: "Sign In" },
   { href: "/dashboard", label: "Business Dashboard" },
   { href: "/investment", label: "Investment" },
-  { href: "/services", label: "Permit Services" },
+  { href: "/operators", label: "Tour Operators" },
 ];
 
 const about = [

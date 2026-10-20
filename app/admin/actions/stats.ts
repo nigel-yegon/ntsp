@@ -14,12 +14,13 @@ async function requireAdmin() {
 
 /**
  * Cheap aggregate counts for the overview cards.
- * Runs three `count()` queries in parallel — no rows loaded, no
+ * Runs all count() queries in parallel — no rows loaded, no
  * relations included. Called once on dashboard mount alongside the
  * existing list*() calls.
  */
 export async function countModuleRows(): Promise<{
   businesses: { total: number; pending: number };
+  operators: { total: number; pending: number };
   incidents: { total: number; open: number };
   inquiries: { total: number; new: number };
 }> {
@@ -28,6 +29,8 @@ export async function countModuleRows(): Promise<{
   const [
     businessesTotal,
     businessesPending,
+    operatorsTotal,
+    operatorsPending,
     incidentsTotal,
     incidentsOpen,
     inquiriesTotal,
@@ -35,6 +38,13 @@ export async function countModuleRows(): Promise<{
   ] = await Promise.all([
     prisma.businessProfile.count(),
     prisma.businessProfile.count({ where: { verificationStatus: "PENDING" } }),
+    prisma.businessProfile.count({ where: { businessType: "TOUR_OPERATOR" } }),
+    prisma.businessProfile.count({
+      where: {
+        businessType: "TOUR_OPERATOR",
+        verificationStatus: "PENDING",
+      },
+    }),
     prisma.incident.count(),
     prisma.incident.count({ where: { status: "OPEN" } }),
     prisma.investorInquiry.count(),
@@ -43,6 +53,7 @@ export async function countModuleRows(): Promise<{
 
   return {
     businesses: { total: businessesTotal, pending: businessesPending },
+    operators: { total: operatorsTotal, pending: operatorsPending },
     incidents: { total: incidentsTotal, open: incidentsOpen },
     inquiries: { total: inquiriesTotal, new: inquiriesNew },
   };
