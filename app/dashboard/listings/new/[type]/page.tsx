@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ListingForm } from "../../listing-form";
-import { createListing } from "../../listing-actions";
 
 const VALID = ["accommodation", "package"] as const;
 type ListingType = (typeof VALID)[number];
@@ -21,13 +20,11 @@ export default async function NewListingTypePage({
 
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
+  if (session.user.role !== "BUSINESS" && session.user.role !== "OPERATOR") {
+    redirect("/dashboard");
+  }
 
-  // ← Allow both BUSINESS and OPERATOR
-  const isAllowed =
-    session.user.role === "BUSINESS" || session.user.role === "OPERATOR";
-  if (!isAllowed) redirect("/dashboard");
-
-  // Operators can only create packages, not accommodations
+  // OPERATOR can only create packages
   if (session.user.role === "OPERATOR" && listingType === "accommodation") {
     redirect("/dashboard/listings/new/package");
   }
@@ -57,11 +54,11 @@ export default async function NewListingTypePage({
         </p>
       </header>
 
+      {/* No onSubmit — the form calls createListing directly */}
       <ListingForm
         mode="create"
         type={listingType}
         destinations={destinations}
-        onSubmit={createListing}
       />
     </section>
   );

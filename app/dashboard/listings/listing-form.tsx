@@ -3,7 +3,13 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { ListingInput, ListingActionResult } from "./listing-actions";
+import {
+  createListing,
+  updateListing,
+  type ListingInput,
+} from "./listing-actions";
+
+/* ─── Types ───────────────────────────────────────────────── */
 
 type Destination = { id: number; name: string };
 
@@ -15,25 +21,22 @@ type Props = {
   destinations: Destination[];
   initial?: Partial<ListingInput>;
   listingId?: number;
-  onSubmit: (input: ListingInput) => Promise<ListingActionResult>;
 };
 
-const ACCOMMODATION_TYPES = ["Hotel", "Lodge", "Resort", "Tented Camp"];
+const ACCOMMODATION_TYPES = ["Hotel", "Lodge", "Resort", "Tented Camp"] as const;
 
-/* ──────────────────────────────────────────────────────────────────
-   Main form
-   ────────────────────────────────────────────────────────────────── */
+/* ─── Main form ───────────────────────────────────────────── */
 
 export function ListingForm({
   mode,
   type,
   destinations,
   initial,
-  onSubmit,
+  listingId,
 }: Props) {
   const router = useRouter();
-  const [pending, startTransition] = useTransition();
   const [errors, setErrors] = useState<string[]>([]);
+  const [pending, startTransition] = useTransition();
 
   // Common
   const [slug, setSlug] = useState(initial?.slug ?? "");
@@ -68,9 +71,7 @@ export function ListingForm({
 
   // Package
   const [title, setTitle] = useState(
-    type === "package" && initial?.type === "package"
-      ? initial.title ?? ""
-      : ""
+    type === "package" && initial?.type === "package" ? initial.title ?? "" : ""
   );
   const [summary, setSummary] = useState(
     type === "package" && initial?.type === "package"
@@ -91,11 +92,11 @@ export function ListingForm({
     type === "package" &&
       initial?.type === "package" &&
       Array.isArray(initial.itinerary)
-      ? (initial.itinerary as ItineraryDay[])
+      ? initial.itinerary
       : []
   );
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrors([]);
 
@@ -119,8 +120,8 @@ export function ListingForm({
             slug,
             summary,
             description,
-            priceKes,
-            durationDays,
+            priceKes: Number(priceKes),
+            durationDays: Number(durationDays),
             imageUrl: imageUrl || null,
             destinationId,
             published,
@@ -130,11 +131,16 @@ export function ListingForm({
           };
 
     startTransition(async () => {
-      const result = await onSubmit(input);
+      const result =
+        mode === "create"
+          ? await createListing(input)
+          : await updateListing(listingId!, type, input);
+
       if (!result.ok) {
         setErrors(result.errors);
         return;
       }
+
       router.push(
         type === "package"
           ? "/dashboard/listings/packages"
@@ -142,6 +148,14 @@ export function ListingForm({
       );
       router.refresh();
     });
+  }
+
+  function handleCancel() {
+    router.push(
+      type === "package"
+        ? "/dashboard/listings/packages"
+        : "/dashboard/listings"
+    );
   }
 
   return (
@@ -163,7 +177,6 @@ export function ListingForm({
       </div>
 
       <fieldset disabled={pending} className="space-y-5">
-        {/* ── Type-specific fields ── */}
         {type === "accommodation" ? (
           <>
             <Field
@@ -186,7 +199,7 @@ export function ListingForm({
               as="select"
               value={accommodationType}
               onChange={setAccommodationType}
-              options={ACCOMMODATION_TYPES}
+              options={[...ACCOMMODATION_TYPES]}
             />
             <Field
               label="Location"
@@ -267,7 +280,6 @@ export function ListingForm({
           rows={5}
         />
 
-        {/* ── Itinerary builder (packages only) ── */}
         {type === "package" && (
           <ItineraryBuilder
             itinerary={itinerary}
@@ -275,7 +287,6 @@ export function ListingForm({
           />
         )}
 
-        {/* ── Image upload ── */}
         <div className="rounded-xl border border-deep-200 bg-cream-100 p-4 dark:border-deep-800 dark:bg-deep-950/50">
           <ImageUploader
             label="Listing image"
@@ -287,7 +298,6 @@ export function ListingForm({
           />
         </div>
 
-        {/* ── Publish toggle ── */}
         <label className="flex items-start gap-3 rounded-xl border border-cream-300 bg-cream-100 px-4 py-3 transition hover:bg-cream-200 dark:border-deep-700 dark:bg-deep-950 dark:hover:bg-deep-800">
           <input
             type="checkbox"
@@ -324,13 +334,7 @@ export function ListingForm({
       <div className="flex flex-wrap items-center justify-end gap-3 border-t border-cream-200 pt-6 dark:border-deep-800">
         <button
           type="button"
-          onClick={() =>
-            router.push(
-              type === "package"
-                ? "/dashboard/listings/packages"
-                : "/dashboard/listings"
-            )
-          }
+          onClick={handleCancel}
           disabled={pending}
           className="rounded-xl border border-deep-200 px-4 py-2.5 text-sm font-semibold text-deep-600 transition hover:bg-cream-100 disabled:opacity-60 dark:border-deep-800 dark:text-cream-300 dark:hover:bg-deep-800"
         >
@@ -354,9 +358,7 @@ export function ListingForm({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   Itinerary builder
-   ────────────────────────────────────────────────────────────────── */
+/* ─── Itinerary builder ───────────────────────────────────── */
 
 function ItineraryBuilder({
   itinerary,
@@ -419,7 +421,7 @@ function ItineraryBuilder({
 
       {itinerary.length === 0 ? (
         <p className="rounded-lg border border-dashed border-deep-200 p-4 text-center text-xs text-deep-500 dark:border-deep-800 dark:text-cream-500">
-          No itinerary days yet. Click "Add day" to start.
+          No itinerary days yet. Click &quot;Add day&quot; to start.
         </p>
       ) : (
         <ol className="space-y-3">
@@ -481,9 +483,7 @@ function ItineraryBuilder({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   Image uploader (self-contained, posts to /api/upload)
-   ────────────────────────────────────────────────────────────────── */
+/* ─── Image uploader ──────────────────────────────────────── */
 
 function ImageUploader({
   label,
@@ -563,7 +563,7 @@ function ImageUploader({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-x-0 bottom-0 flex justify-end gap-2 bg-gradient-to-t from-black/60 to-transparent p-3">
+          <div className="absolute inset-x-0 bottom-0 flex justify-end gap-2 bg-linear-to-t from-black/60 to-transparent p-3">
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
@@ -622,9 +622,7 @@ function ImageUploader({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────
-   Field primitive
-   ────────────────────────────────────────────────────────────────── */
+/* ─── Field primitive ─────────────────────────────────────── */
 
 type FieldProps = {
   label: string;

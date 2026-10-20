@@ -1,14 +1,18 @@
 // app/dashboard/listings/packages/page.tsx
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-export default async function OperatorPackagesPage() {
+export default async function PackagesListPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) redirect("/login");
+  if (session.user.role !== "BUSINESS" && session.user.role !== "OPERATOR") {
+    redirect("/dashboard");
+  }
 
   const packages = await prisma.tourPackage.findMany({
     where: { businessId: session.user.id },
@@ -20,13 +24,19 @@ export default async function OperatorPackagesPage() {
 
   return (
     <section className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-deep-800 dark:text-cream-100">
+          <Link
+            href="/dashboard/listings"
+            className="text-sm text-deep-500 underline underline-offset-2 hover:text-brand-600 dark:text-cream-400"
+          >
+            ← Back to listings
+          </Link>
+          <h2 className="mt-2 text-lg font-semibold text-deep-800 dark:text-cream-100">
             Tour Packages
           </h2>
           <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
-            Manage the safari packages and itineraries you offer.
+            Manage your safari and travel itineraries.
           </p>
         </div>
         <Link
@@ -35,7 +45,7 @@ export default async function OperatorPackagesPage() {
         >
           + Create Package
         </Link>
-      </header>
+      </div>
 
       {packages.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
@@ -66,24 +76,30 @@ export default async function OperatorPackagesPage() {
                 <tr key={pkg.id} className="hover:bg-cream-100/50 dark:hover:bg-deep-800/50">
                   <td className="px-4 py-3">
                     <p className="font-medium text-deep-800 dark:text-cream-100">{pkg.title}</p>
-                    <p className="text-xs text-deep-500 dark:text-cream-500">{pkg.durationDays} days</p>
+                    <p className="text-xs text-deep-500 dark:text-cream-500">
+                      {pkg.durationDays} days
+                    </p>
                   </td>
-                  <td className="px-4 py-3 text-deep-600 dark:text-cream-400">{pkg.destination.name}</td>
+                  <td className="px-4 py-3 text-deep-600 dark:text-cream-400">
+                    {pkg.destination.name}
+                  </td>
                   <td className="px-4 py-3 text-deep-600 dark:text-cream-400">
                     KES {pkg.priceKes.toLocaleString()}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                      pkg.published 
-                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" 
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                    }`}>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        pkg.published
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                      }`}
+                    >
                       {pkg.published ? "Published" : "Draft"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
-                      href={`/dashboard/listings/${pkg.id}/edit`}
+                      href={`/dashboard/listings/pkg-${pkg.id}/edit`}
                       className="text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
                     >
                       Edit

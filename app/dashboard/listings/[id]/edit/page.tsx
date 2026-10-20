@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ListingForm } from "../../listing-form";
-import { updateListing, type ListingInput } from "../../listing-actions";
+import type { ListingInput } from "../../listing-actions";
 
 export default async function EditListingPage({
   params,
@@ -17,13 +17,10 @@ export default async function EditListingPage({
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
 
-  // Allow both BUSINESS and OPERATOR
   if (session.user.role !== "BUSINESS" && session.user.role !== "OPERATOR") {
     redirect("/dashboard");
   }
 
-  // The id is prefixed — "acc-12" or "pkg-7" — so the route knows
-  // which model to look up without a separate query param.
   const isAccommodation = id.startsWith("acc-");
   const isPackage = id.startsWith("pkg-");
   if (!isAccommodation && !isPackage) notFound();
@@ -74,15 +71,13 @@ export default async function EditListingPage({
           </p>
         </header>
 
+        {/* No onSubmit prop — the client component handles the server action */}
         <ListingForm
           mode="edit"
           type="accommodation"
           destinations={destinations}
           initial={initial}
           listingId={listing.id}
-          onSubmit={(input) =>
-            updateListing(listing.id, "accommodation", input)
-          }
         />
       </section>
     );
@@ -95,8 +90,9 @@ export default async function EditListingPage({
   if (!listing) notFound();
   if (listing.businessId !== session.user.id) notFound();
 
-  // Preserve the itinerary across edits
-  const itinerary = Array.isArray(listing.itinerary)
+  const itinerary: { title: string; description: string }[] = Array.isArray(
+    listing.itinerary
+  )
     ? (listing.itinerary as { title: string; description: string }[])
     : [];
 
@@ -111,7 +107,7 @@ export default async function EditListingPage({
     imageUrl: listing.imageUrl,
     destinationId: listing.destinationId,
     published: listing.published,
-    itinerary, // ← was missing before, caused data loss on save
+    itinerary,
   };
 
   return (
@@ -138,7 +134,6 @@ export default async function EditListingPage({
         destinations={destinations}
         initial={initial}
         listingId={listing.id}
-        onSubmit={(input) => updateListing(listing.id, "package", input)}
       />
     </section>
   );
