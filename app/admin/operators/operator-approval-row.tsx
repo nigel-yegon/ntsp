@@ -22,16 +22,15 @@ export function OperatorApprovalRow({
   onStatusChange,
 }: {
   op: Op;
-  onStatusChange?: (status: "APPROVED" | "REJECTED" | "PENDING") => void;
+  onStatusChange?: (status: "APPROVED" | "REJECTED" | "PENDING" | "PENDING_TRA_CHECK") => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
-  const isPending = op.verificationStatus === "PENDING";
+  const isPending = op.verificationStatus === "PENDING" || op.verificationStatus === "PENDING_TRA_CHECK";
   const isApproved = op.verificationStatus === "APPROVED";
   const isRejected = op.verificationStatus === "REJECTED";
 
@@ -77,12 +76,14 @@ export function OperatorApprovalRow({
                 className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
                   isApproved
                     ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                    : isPending
-                      ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-                      : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
+                    : op.verificationStatus === "PENDING_TRA_CHECK"
+                      ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300"
+                      : isPending
+                        ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                        : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
                 }`}
               >
-                {op.verificationStatus}
+                {op.verificationStatus.replace("_", " ")}
               </span>
               {op.katoMember && (
                 <span className="rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-800 dark:bg-brand-950 dark:text-brand-200">
@@ -146,7 +147,6 @@ export function OperatorApprovalRow({
         )}
       </div>
 
-      {/* Reject / Revoke Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => !pending && setIsModalOpen(false)}

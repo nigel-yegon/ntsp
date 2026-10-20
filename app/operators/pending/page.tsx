@@ -35,7 +35,12 @@ export default async function PendingVerificationPage() {
         </p>
         
         <p className="mt-2 text-sm text-deep-600 dark:text-cream-400">
-          We are currently verifying your TRA License (<span className="font-mono">{profile.traLicenseNumber}</span>) against the Tourism Regulatory Authority registry.
+          {profile.verificationStatus === "PENDING_TRA_CHECK" 
+            ? "We are currently running an automated check on your TRA License."
+            : "We are currently manually verifying your TRA License against the Tourism Regulatory Authority registry."}
+        </p>
+        <p className="mt-1 text-sm text-deep-600 dark:text-cream-400">
+          License: <span className="font-mono">{profile.traLicenseNumber}</span>
         </p>
 
         <div className="mt-6 rounded-lg bg-cream-200 p-4 text-left text-xs text-deep-700 dark:bg-deep-950 dark:text-cream-300">

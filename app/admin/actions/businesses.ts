@@ -5,9 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import type { BusinessVerification } from "@/lib/generated/prisma/enums";
 
 export type BusinessRow = {
   id: string;
+  userId: string;
   businessName: string;
   contactEmail: string;
   contactPhone: string | null;
@@ -15,13 +17,20 @@ export type BusinessRow = {
   kraPin: string | null;
   website: string | null;
   description: string | null;
-  verificationStatus: "PENDING" | "APPROVED" | "SUSPENDED" | "REJECTED";
+  logoUrl: string | null;
+  businessType: string | null;
+  traLicenseNumber: string | null;
+  traLicenseDocUrl: string | null;
+  katoMember: boolean;
+  ktbRegistered: boolean;
+  verificationStatus: BusinessVerification;
   approvedAt: Date | null;
+  approvedById: string | null;
   rejectionReason: string | null;
   createdAt: Date;
   updatedAt: Date;
-  ownerName: string;
-  ownerEmail: string;
+  userEmail: string;
+  userName: string;
   listingCount: number;
 };
 
@@ -36,13 +45,13 @@ async function requireAdmin() {
 export async function listBusinesses(): Promise<BusinessRow[]> {
   await requireAdmin();
 
-  const rows = await prisma.businessProfile.findMany({
+  const businesses = await prisma.businessProfile.findMany({
     orderBy: [{ verificationStatus: "asc" }, { createdAt: "desc" }],
     include: {
       user: {
         select: {
-          name: true,
           email: true,
+          name: true,
           _count: {
             select: {
               ownedAccommodations: true,
@@ -54,8 +63,9 @@ export async function listBusinesses(): Promise<BusinessRow[]> {
     },
   });
 
-  return rows.map((b) => ({
+  return businesses.map((b) => ({
     id: b.id,
+    userId: b.userId,
     businessName: b.businessName,
     contactEmail: b.contactEmail,
     contactPhone: b.contactPhone,
@@ -63,13 +73,20 @@ export async function listBusinesses(): Promise<BusinessRow[]> {
     kraPin: b.kraPin,
     website: b.website,
     description: b.description,
+    logoUrl: b.logoUrl,
+    businessType: b.businessType,
+    traLicenseNumber: b.traLicenseNumber,
+    traLicenseDocUrl: b.traLicenseDocUrl,
+    katoMember: b.katoMember,
+    ktbRegistered: b.ktbRegistered,
     verificationStatus: b.verificationStatus,
     approvedAt: b.approvedAt,
+    approvedById: b.approvedById,
     rejectionReason: b.rejectionReason,
     createdAt: b.createdAt,
     updatedAt: b.updatedAt,
-    ownerName: b.user.name,
-    ownerEmail: b.user.email,
+    userEmail: b.user.email,
+    userName: b.user.name,
     listingCount:
       b.user._count.ownedAccommodations + b.user._count.ownedTourPackages,
   }));
@@ -77,27 +94,35 @@ export async function listBusinesses(): Promise<BusinessRow[]> {
 
 export async function setBusinessStatus(
   id: string,
-  status: "APPROVED" | "REJECTED" | "SUSPENDED" | "PENDING",
+  status: BusinessVerification,
   reason?: string
-) {
-  const admin = await requireAdmin();
+): Promise<string | null> {
+  try {
+    const admin = await requireAdmin();
+    await prisma.businessProfile.update({
+      where: { id },
+      data: {
+        verificationStatus: status,
+        approvedAt: status === "APPROVED" ? new Date() : null,
+        approvedById: status === "APPROVED" ? admin.id : null,
+        rejectionReason: status === "REJECTED" ? reason?.slice(0, 500) : null,
+      },
+    });
+    revalidatePath("/admin");
+    return null;
+  } catch (err) {
+    console.error("setBusinessStatus failed:", err);
+    return err instanceof Error ? err.message : "Failed to update status.";
+  }
+}
 
-  const profile = await prisma.businessProfile.findUnique({
-    where: { id },
-    select: { id: true },
-  });
-  if (!profile) throw new Error("Business not found");
+export async function approveBusiness(id: string): Promise<string | null> {
+  return setBusinessStatus(id, "APPROVED");
+}
 
-  await prisma.businessProfile.update({
-    where: { id },
-    data: {
-      verificationStatus: status,
-      approvedAt: status === "APPROVED" ? new Date() : null,
-      approvedById: status === "APPROVED" ? admin.id : null,
-      rejectionReason:
-        status === "REJECTED" ? reason?.trim() || null : null,
-    },
-  });
-
-  revalidatePath("/admin");
+export async function rejectBusiness(
+  id: string,
+  reason: string
+): Promise<string | null> {
+  return setBusinessStatus(id, "REJECTED", reason);
 }

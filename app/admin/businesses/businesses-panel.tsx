@@ -7,314 +7,238 @@ import {
   setBusinessStatus,
   type BusinessRow,
 } from "../actions/businesses";
+import { BusinessVerificationBadge } from "@/app/components/dashboard/business-verification-badge";
+import type { BusinessVerification } from "@/lib/generated/prisma/enums";
 
-type StatusFilter = "ALL" | "PENDING" | "APPROVED" | "SUSPENDED" | "REJECTED";
+type StatusFilter =
+  | "ALL"
+  | "PENDING"
+  | "PENDING_TRA_CHECK"
+  | "APPROVED"
+  | "SUSPENDED"
+  | "REJECTED";
 
-const STATUS_LABEL: Record<BusinessRow["verificationStatus"], string> = {
-  PENDING: "Pending review",
-  APPROVED: "Approved",
-  SUSPENDED: "Suspended",
-  REJECTED: "Rejected",
-};
-
-const STATUS_TONE: Record<BusinessRow["verificationStatus"], string> = {
-  PENDING:
-    "bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300",
-  APPROVED:
-    "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
-  SUSPENDED:
-    "bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300",
-  REJECTED:
-    "bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300",
-};
+const FILTERS: { key: StatusFilter; label: string }[] = [
+  { key: "ALL", label: "All" },
+  { key: "PENDING", label: "Pending" },
+  { key: "PENDING_TRA_CHECK", label: "TRA Check" },
+  { key: "APPROVED", label: "Approved" },
+  { key: "SUSPENDED", label: "Suspended" },
+  { key: "REJECTED", label: "Rejected" },
+];
 
 export function BusinessesPanel({ search = "" }: { search?: string }) {
-  const [rows, setRows] = useState<BusinessRow[] | null>(null);
-  const [filter, setFilter] = useState<StatusFilter>("PENDING");
+  const [rows, setRows] = useState<BusinessRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [rejectingId, setRejectingId] = useState<string | null>(null);
-  const [reason, setReason] = useState("");
-  const [isPending, startTransition] = useTransition();
-
-  async function refresh() {
-    try {
-      const data = await listBusinesses();
-      setRows(data);
-      setError(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load");
-    }
-  }
+  const [filter, setFilter] = useState<StatusFilter>("ALL");
+  const [pending, startTransition] = useTransition();
 
   useEffect(() => {
-    refresh();
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await listBusinesses();
+        if (!cancelled) setRows(data);
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  function updateStatus(
-    id: string,
-    status: BusinessRow["verificationStatus"],
-    rejectionReason?: string
-  ) {
-    setPendingId(id);
-    startTransition(async () => {
-      try {
-        await setBusinessStatus(id, status, rejectionReason);
-        await refresh();
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to update");
-      } finally {
-        setPendingId(null);
-        setRejectingId(null);
-        setReason("");
-      }
-    });
-  }
-
   const filtered = useMemo(() => {
-    if (!rows) return null;
     const q = search.trim().toLowerCase();
     return rows.filter((r) => {
       if (filter !== "ALL" && r.verificationStatus !== filter) return false;
       if (!q) return true;
-      return [
-        r.businessName,
-        r.ownerName,
-        r.ownerEmail,
-        r.contactEmail,
-        r.contactPhone ?? "",
-        r.registrationNo ?? "",
-        r.kraPin ?? "",
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(q);
+      return (
+        r.businessName.toLowerCase().includes(q) ||
+        r.userEmail.toLowerCase().includes(q) ||
+        r.contactEmail.toLowerCase().includes(q) ||
+        (r.registrationNo || "").toLowerCase().includes(q)
+      );
     });
-  }, [rows, filter, search]);
+  }, [rows, search, filter]);
 
-  const trimmedSearch = search.trim();
+  function handleStatusChange(
+    id: string,
+    status: BusinessVerification,
+    reason?: string
+  ) {
+    startTransition(async () => {
+      try {
+        const err = await setBusinessStatus(id, status, reason);
+        if (err) {
+          alert(err);
+        } else {
+          setRows((curr) =>
+            curr.map((r) =>
+              r.id === id ? { ...r, verificationStatus: status } : r
+            )
+          );
+        }
+      } catch (e) {
+        alert(e instanceof Error ? e.message : "Failed to update status");
+      }
+    });
+  }
 
   return (
-    <div className="space-y-4">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Businesses</h2>
-        <div className="flex flex-wrap gap-1">
-          {(["ALL", "PENDING", "APPROVED", "SUSPENDED", "REJECTED"] as const).map(
-            (s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setFilter(s)}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                  filter === s
-                    ? "bg-brand-400 text-deep-800"
-                    : "text-deep-600 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-800"
-                }`}
-              >
-                {s === "ALL" ? "All" : STATUS_LABEL[s]}
-              </button>
-            )
-          )}
+    <div className="mx-auto max-w-7xl">
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span
+            className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-700 dark:bg-slate-950/40 dark:text-slate-300"
+            aria-hidden
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="4" y="3" width="16" height="18" rx="2" />
+              <path d="M9 21v-4h6v4M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01" />
+            </svg>
+          </span>
+          <div>
+            <h2 className="text-xl font-bold text-slate-700 dark:text-slate-300">
+              Businesses
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
+              Manage all registered businesses, including accommodations and
+              operators.
+            </p>
+          </div>
         </div>
-      </header>
+      </div>
 
       {error && (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
-        >
+        <div className="mb-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">
           {error}
-        </p>
+        </div>
       )}
 
-      {rows === null ? (
-        <p className="text-sm text-deep-500 dark:text-cream-400">Loading…</p>
-      ) : filtered?.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-cream-300 bg-cream-50 p-6 text-sm text-deep-500 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-400">
-          {trimmedSearch
-            ? `No businesses match "${trimmedSearch}".`
-            : "No businesses match this filter."}
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {filtered!.map((b) => (
-            <li
-              key={b.id}
-              className="rounded-2xl border border-cream-300 bg-cream-50 p-5 dark:border-deep-700 dark:bg-deep-900"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="font-medium">{b.businessName}</h3>
-                  <p className="mt-0.5 text-xs text-deep-500 dark:text-cream-400">
-                    {b.contactEmail}
-                    {b.contactPhone ? ` · ${b.contactPhone}` : ""}
-                  </p>
-                  <p className="mt-0.5 text-xs text-deep-500 dark:text-cream-400">
-                    Registered by {b.ownerName} ({b.ownerEmail}) ·{" "}
-                    {b.listingCount}{" "}
-                    {b.listingCount === 1 ? "listing" : "listings"}
-                  </p>
-                </div>
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_TONE[b.verificationStatus]}`}
-                >
-                  {STATUS_LABEL[b.verificationStatus]}
-                </span>
-              </div>
+      {/* Filters */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              filter === f.key
+                ? "border-brand-500 bg-brand-500 text-white"
+                : "border-deep-300 bg-cream-50 text-deep-700 hover:border-brand-400 dark:border-deep-700 dark:bg-deep-900 dark:text-cream-300"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
-              {b.description && (
-                <p className="mt-3 text-sm text-deep-600 dark:text-cream-300">
-                  {b.description}
-                </p>
-              )}
-
-              {(b.registrationNo || b.kraPin || b.website) && (
-                <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs">
-                  {b.registrationNo && (
-                    <div className="flex gap-1.5">
-                      <dt className="text-deep-500 dark:text-cream-400">
-                        Reg. no.:
-                      </dt>
-                      <dd>{b.registrationNo}</dd>
-                    </div>
-                  )}
-                  {b.kraPin && (
-                    <div className="flex gap-1.5">
-                      <dt className="text-deep-500 dark:text-cream-400">
-                        KRA PIN:
-                      </dt>
-                      <dd>{b.kraPin}</dd>
-                    </div>
-                  )}
-                  {b.website && (
-                    <div className="flex gap-1.5">
-                      <dt className="text-deep-500 dark:text-cream-400">
-                        Website:
-                      </dt>
-                      <dd>
-                        <a
-                          href={b.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-brand-600 underline underline-offset-2 dark:text-brand-400"
-                        >
-                          {b.website}
-                        </a>
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              )}
-
-              {b.rejectionReason && (
-                <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
-                  Rejection reason: {b.rejectionReason}
-                </p>
-              )}
-
-              <div className="mt-4 border-t border-cream-200 pt-4 dark:border-deep-800">
-                {rejectingId === b.id && (
-                  <div className="mb-3">
-                    <label className="block">
-                      <span className="block text-xs font-medium text-deep-700 dark:text-cream-300">
-                        Reason (optional — visible to the business)
-                      </span>
-                      <textarea
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                        rows={2}
-                        className="mt-1 w-full rounded-lg border border-cream-300 bg-cream-50 px-3 py-2 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 dark:border-deep-700 dark:bg-deep-950"
-                      />
-                    </label>
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-2">
-                  {b.verificationStatus !== "APPROVED" &&
-                    rejectingId !== b.id && (
-                      <button
-                        type="button"
-                        onClick={() => updateStatus(b.id, "APPROVED")}
-                        disabled={isPending && pendingId === b.id}
-                        className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
-                      >
-                        {isPending && pendingId === b.id
-                          ? "Approving…"
-                          : "Approve"}
-                      </button>
-                    )}
-
-                  {b.verificationStatus !== "REJECTED" &&
-                    rejectingId !== b.id && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRejectingId(b.id);
-                          setReason("");
-                        }}
-                        disabled={isPending}
-                        className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-800 transition hover:bg-red-100 disabled:opacity-60 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
-                      >
-                        Reject
-                      </button>
-                    )}
-
-                  {rejectingId === b.id && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => updateStatus(b.id, "REJECTED", reason)}
-                        disabled={isPending}
-                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-60"
-                      >
-                        {isPending ? "Rejecting…" : "Confirm rejection"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRejectingId(null);
-                          setReason("");
-                        }}
-                        disabled={isPending}
-                        className="rounded-lg border border-cream-300 px-4 py-2 text-sm font-medium transition hover:bg-cream-100 disabled:opacity-60 dark:border-deep-700 dark:hover:bg-deep-800"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
-
-                  {b.verificationStatus === "APPROVED" &&
-                    rejectingId !== b.id && (
-                      <button
-                        type="button"
-                        onClick={() => updateStatus(b.id, "SUSPENDED")}
-                        disabled={isPending && pendingId === b.id}
-                        className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 transition hover:bg-amber-100 disabled:opacity-60 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
-                      >
-                        {isPending && pendingId === b.id
-                          ? "Suspending…"
-                          : "Suspend"}
-                      </button>
-                    )}
-
-                  {b.verificationStatus === "SUSPENDED" && (
-                    <button
-                      type="button"
-                      onClick={() => updateStatus(b.id, "APPROVED")}
-                      disabled={isPending && pendingId === b.id}
-                      className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
-                    >
-                      {isPending && pendingId === b.id
-                        ? "Reinstating…"
-                        : "Reinstate"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </li>
+      {loading && rows.length === 0 && (
+        <div className="space-y-3">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-28 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
+            />
           ))}
-        </ul>
+        </div>
       )}
+
+      {!loading && filtered.length === 0 && (
+        <div className="rounded-2xl border-2 border-dashed border-deep-200 p-10 text-center text-sm text-deep-500 dark:border-deep-800 dark:text-cream-500">
+          No businesses match your current filters.
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {filtered.map((r) => (
+          <div
+            key={r.id}
+            className="relative overflow-hidden rounded-2xl border border-deep-200 bg-cream-50 p-5 pl-6 dark:border-deep-800 dark:bg-deep-900"
+          >
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-semibold text-deep-800 dark:text-cream-100">
+                    {r.businessName}
+                  </h3>
+                  <BusinessVerificationBadge
+                    status={r.verificationStatus as BusinessVerification}
+                  />
+                  {r.businessType === "TOUR_OPERATOR" && (
+                    <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
+                      Operator
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">
+                  {r.userEmail} · {r.listingCount} listings
+                </p>
+                <div className="mt-2 grid gap-1 text-xs text-deep-600 dark:text-cream-400 sm:grid-cols-2">
+                  {r.registrationNo && <p>Reg No: {r.registrationNo}</p>}
+                  {r.kraPin && <p>KRA PIN: {r.kraPin}</p>}
+                  {r.traLicenseNumber && (
+                    <p>
+                      TRA License:{" "}
+                      <span className="font-mono">{r.traLicenseNumber}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex shrink-0 flex-wrap gap-2">
+                {r.verificationStatus !== "APPROVED" && (
+                  <button
+                    type="button"
+                    onClick={() => handleStatusChange(r.id, "APPROVED")}
+                    disabled={pending}
+                    className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+                  >
+                    Approve
+                  </button>
+                )}
+                {r.verificationStatus !== "REJECTED" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const reason = prompt("Reason for rejection?");
+                      if (reason) handleStatusChange(r.id, "REJECTED", reason);
+                    }}
+                    disabled={pending}
+                    className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                  >
+                    Reject
+                  </button>
+                )}
+                {r.verificationStatus !== "SUSPENDED" && (
+                  <button
+                    type="button"
+                    onClick={() => handleStatusChange(r.id, "SUSPENDED")}
+                    disabled={pending}
+                    className="rounded-lg border border-amber-300 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:bg-amber-50 disabled:opacity-60 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/40"
+                  >
+                    Suspend
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
