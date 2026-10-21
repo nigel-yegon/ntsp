@@ -57,8 +57,8 @@ const ROLE_HOME: Record<string, string> = {
   CUSTOMER: "/dashboard",
   BUSINESS: "/dashboard",
   OPERATOR: "/dashboard",
-  PERUSER: "/review/perusal",            // ← added
-  VERIFIER: "/review/verification",      // ← corrected (was /review/perusal)
+  PERUSER: "/review/perusal",
+  VERIFIER: "/review/verification",
   COMMITTEE_MEMBER: "/review/committee",
   PERMANENT_SECRETARY: "/review/ps",
   ADMIN: "/admin",
@@ -69,7 +69,7 @@ const ROLE_LABEL: Record<string, string> = {
   CUSTOMER: "Traveller",
   BUSINESS: "Business",
   OPERATOR: "Tour Operator",
-  PERUSER: "Peruser",                    // ← added
+  PERUSER: "Peruser",
   VERIFIER: "Verifier",
   COMMITTEE_MEMBER: "Committee",
   PERMANENT_SECRETARY: "Permanent Secretary",
@@ -80,7 +80,7 @@ const APPLICATIONS_ROLES = new Set([
   "PERMANENT_SECRETARY",
   "COMMITTEE_MEMBER",
   "VERIFIER",
-  "PERUSER", 
+  "PERUSER",
 ]);
 
 // ─── Label for the "Applications" link per role ─────────────
@@ -149,6 +149,11 @@ export function Navbar({
     pathname.startsWith("/admin") ||
     pathname.startsWith("/services/applications");
 
+  // The admin area renders a plain, in-flow header — no sticky
+  // positioning, no blur, no scroll-hide. It scrolls with the page
+  // exactly like the dashboard's own header does.
+  const isAdminRoute = pathname.startsWith("/admin");
+
   useEffect(() => {
     setOpen(false);
     setMenuOpen(null);
@@ -206,18 +211,28 @@ export function Navbar({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
-  const hideHeader = !isDashboard && direction === "down" && scrolled;
+  // Only the marketing routes can hide-on-scroll. Admin routes are
+  // excluded so the header never translates on `/admin/*`.
+  const hideHeader =
+    !isAdminRoute && !isDashboard && direction === "down" && scrolled;
 
   return (
     <>
       <header
         className={[
-          "sticky top-0 z-50 border-b",
-          "transition-[transform,background-color,border-color] duration-200",
-          hideHeader ? "-translate-y-full" : "translate-y-0",
-          scrolled
-            ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
-            : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70",
+          "border-b",
+          isAdminRoute
+            ? // Admin route: plain block, scrolls with content.
+              "border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900"
+            : // Public / dashboard routes: sticky, glassy, animated.
+              [
+                "sticky top-0 z-50",
+                "transition-[transform,background-color,border-color] duration-200",
+                hideHeader ? "-translate-y-full" : "translate-y-0",
+                scrolled
+                  ? "border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-950/95"
+                  : "border-deep-200 bg-cream-100/70 backdrop-blur-sm dark:bg-deep-950/70",
+              ].join(" "),
         ].join(" ")}
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">

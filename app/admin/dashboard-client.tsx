@@ -12,6 +12,7 @@ import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
+import { useScrollDirection } from "../components/use-scroll-direction";
 
 import {
   getDashboardStats,
@@ -100,7 +101,7 @@ type ModuleTone = {
   icon: React.ReactNode;
 };
 
-// ─── Tones ─────────────────────────────────────────────────────────
+// ─── Module tones ──────────────────────────────────────────────────
 
 export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
   destinations: {
@@ -277,6 +278,17 @@ export function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Scroll-aware header.
+  //   direction: "up" | "down"   — last non-jittery scroll direction
+  //   scrolled:  boolean         — past the 8px threshold from top
+  const { direction, scrolled } = useScrollDirection(8);
+
+  // Only hide the header while scrolling down on modules with
+  // long lists. The overview keeps a stable header so the range
+  // toggle stays reachable at all times.
+  const hideHeader =
+    activeModule !== "overview" && direction === "down" && scrolled;
+
   useEffect(() => {
     let cancelled = false;
 
@@ -381,6 +393,8 @@ export function DashboardClient() {
             search={search}
             setSearch={setSearch}
             tone={activeModule !== "overview" ? TONES[activeModule] : undefined}
+            hidden={hideHeader}
+            scrolled={scrolled}
           />
 
           <div className="p-6 lg:p-8">
@@ -591,18 +605,22 @@ function DashboardSidebar({
   );
 }
 
-// ─── Header ────────────────────────────────────────────────────────
+// ─── Header (scroll-aware) ────────────────────────────────────────
 
 function DashboardHeader({
   activeModule,
   search,
   setSearch,
   tone,
+  hidden,
+  scrolled,
 }: {
   activeModule: ModuleKey;
   search: string;
   setSearch: (v: string) => void;
   tone?: ModuleTone;
+  hidden?: boolean;
+  scrolled?: boolean;
 }) {
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
@@ -622,7 +640,16 @@ function DashboardHeader({
   const searchable = activeModule !== "overview";
 
   return (
-    <header className="sticky top-0 z-30 border-b border-deep-200 bg-cream-100/95 backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95">
+    <header
+      className={[
+        "sticky top-0 z-30 border-b",
+        "transition-[transform,background-color,border-color,box-shadow] duration-200",
+        hidden ? "-translate-y-full" : "translate-y-0",
+        scrolled
+          ? "border-deep-200 bg-cream-100/95 shadow-sm backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95"
+          : "border-deep-200 bg-cream-100/90 backdrop-blur-sm dark:border-deep-800 dark:bg-deep-900/90",
+      ].join(" ")}
+    >
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
@@ -789,123 +816,78 @@ function Overview({
           onClick={() => onNavigate("inquiries")}
         />
       </section>
-{/* Row: Activity (50%) + Incident (25%) + Investor (25%) */}
-<section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-  {/* Activity by month — half width on lg+ */}
-  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900 lg:col-span-2">
-    <div className="mb-4">
-      <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-        Activity by month
-      </h2>
-      <p className="text-xs text-deep-400 dark:text-cream-600">
-        {range === "year"
-          ? "Monthly new records across four streams"
-          : "Daily new records across four streams"}
-      </p>
-    </div>
-    <CombinedLineChart data={combined} />
-  </div>
 
-  {/* Incident pipeline — quarter width on lg+ */}
-  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
-    <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-      Incident pipeline
-    </h2>
-    <Donut
-      total={stats.incidents.total}
-      centerLabel="Total"
-      segments={[
-        { label: "Open", value: stats.incidents.open, tone: "rose" },
-        { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
-        { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
-        { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
-        { label: "Closed", value: stats.incidents.closed, tone: "sky" },
-      ]}
-    />
-    <DonutLegend
-      segments={[
-        { label: "Open", value: stats.incidents.open, tone: "rose" },
-        { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
-        { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
-        { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
-        { label: "Closed", value: stats.incidents.closed, tone: "sky" },
-      ]}
-      total={stats.incidents.total}
-    />
-  </div>
-
-  {/* Investor funnel — quarter width on lg+ */}
-  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
-    <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-      Investor funnel
-    </h2>
-    <Donut
-      total={stats.inquiries.total}
-      centerLabel="Total"
-      segments={[
-        { label: "New", value: stats.inquiries.new, tone: "brand" },
-        { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
-        { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
-        { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
-      ]}
-    />
-    <DonutLegend
-      segments={[
-        { label: "New", value: stats.inquiries.new, tone: "brand" },
-        { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
-        { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
-        { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
-      ]}
-      total={stats.inquiries.total}
-    />
-  </div>
-</section>
-
-      {/* Content inventory */}
-      <section className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
-        <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-            Content inventory
-          </h2>
-          <p className="text-xs text-deep-400 dark:text-cream-600">
-            Published vs. draft per type
-          </p>
+      {/* Row: Activity (50%) + Incident (25%) + Investor (25%) */}
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900 lg:col-span-2">
+          <div className="mb-4">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+              Activity by month
+            </h2>
+            <p className="text-xs text-deep-400 dark:text-cream-600">
+              {range === "year"
+                ? "Monthly new records across four streams"
+                : "Daily new records across four streams"}
+            </p>
+          </div>
+          <CombinedLineChart data={combined} />
         </div>
-        <StackedBar
-          rows={[
-            {
-              label: `Packages (${stats.content.packages.total})`,
-              segments: [
-                { label: "Published", value: stats.content.packages.published, tone: "bg-indigo-500" },
-                { label: "Draft", value: stats.content.packages.total - stats.content.packages.published, tone: "bg-indigo-200 dark:bg-indigo-900" },
-              ],
-            },
-            {
-              label: `Blog posts (${stats.content.posts.total})`,
-              segments: [
-                { label: "Published", value: stats.content.posts.published, tone: "bg-sky-500" },
-                { label: "Draft", value: stats.content.posts.total - stats.content.posts.published, tone: "bg-sky-200 dark:bg-sky-900" },
-              ],
-            },
-            {
-              label: `Events (${stats.content.events.total})`,
-              segments: [
-                { label: "Upcoming", value: stats.content.events.upcoming, tone: "bg-violet-500" },
-                { label: "Past", value: stats.content.events.total - stats.content.events.upcoming, tone: "bg-violet-200 dark:bg-violet-900" },
-              ],
-            },
-            {
-              label: `Destinations (${stats.content.destinations.total})`,
-              segments: [
-                { label: "Featured", value: stats.content.destinations.featured, tone: "bg-brand-500" },
-                { label: "Standard", value: stats.content.destinations.total - stats.content.destinations.featured, tone: "bg-brand-200 dark:bg-brand-900" },
-              ],
-            },
-          ]}
-        />
+
+        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Incident pipeline
+          </h2>
+          <Donut
+            total={stats.incidents.total}
+            centerLabel="Total"
+            segments={[
+              { label: "Open", value: stats.incidents.open, tone: "rose" },
+              { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
+              { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
+              { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
+              { label: "Closed", value: stats.incidents.closed, tone: "sky" },
+            ]}
+          />
+          <DonutLegend
+            segments={[
+              { label: "Open", value: stats.incidents.open, tone: "rose" },
+              { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
+              { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
+              { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
+              { label: "Closed", value: stats.incidents.closed, tone: "sky" },
+            ]}
+            total={stats.incidents.total}
+          />
+        </div>
+
+        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            Investor funnel
+          </h2>
+          <Donut
+            total={stats.inquiries.total}
+            centerLabel="Total"
+            segments={[
+              { label: "New", value: stats.inquiries.new, tone: "brand" },
+              { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
+              { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
+              { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
+            ]}
+          />
+          <DonutLegend
+            segments={[
+              { label: "New", value: stats.inquiries.new, tone: "brand" },
+              { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
+              { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
+              { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
+            ]}
+            total={stats.inquiries.total}
+          />
+        </div>
       </section>
 
-      {/* Activity lists */}
+     
+      {/* Recent activity */}
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
@@ -951,11 +933,92 @@ function Overview({
           />
         </div>
       </section>
+       {/* Row: Content inventory (50%) + Overview summary (50%) */}
+      <section className="grid gap-4 md:grid-cols-2">
+        {/* Content inventory — left half */}
+        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+          <div className="mb-4 flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+              Content inventory
+            </h2>
+            <p className="text-xs text-deep-400 dark:text-cream-600">
+              Published vs. draft per type
+            </p>
+          </div>
+          <StackedBar
+            rows={[
+              {
+                label: `Packages (${stats.content.packages.total})`,
+                segments: [
+                  { label: "Published", value: stats.content.packages.published, tone: "bg-indigo-500" },
+                  { label: "Draft", value: stats.content.packages.total - stats.content.packages.published, tone: "bg-indigo-200 dark:bg-indigo-900" },
+                ],
+              },
+              {
+                label: `Blog posts (${stats.content.posts.total})`,
+                segments: [
+                  { label: "Published", value: stats.content.posts.published, tone: "bg-sky-500" },
+                  { label: "Draft", value: stats.content.posts.total - stats.content.posts.published, tone: "bg-sky-200 dark:bg-sky-900" },
+                ],
+              },
+              {
+                label: `Events (${stats.content.events.total})`,
+                segments: [
+                  { label: "Upcoming", value: stats.content.events.upcoming, tone: "bg-violet-500" },
+                  { label: "Past", value: stats.content.events.total - stats.content.events.upcoming, tone: "bg-violet-200 dark:bg-violet-900" },
+                ],
+              },
+              {
+                label: `Destinations (${stats.content.destinations.total})`,
+                segments: [
+                  { label: "Featured", value: stats.content.destinations.featured, tone: "bg-brand-500" },
+                  { label: "Standard", value: stats.content.destinations.total - stats.content.destinations.featured, tone: "bg-brand-200 dark:bg-brand-900" },
+                ],
+              },
+            ]}
+          />
+        </div>
+
+        {/* Overview summary — right half */}
+        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+          <div className="mb-4 flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+              What this dashboard tracks
+            </h2>
+            <p className="text-xs text-deep-400 dark:text-cream-600">
+              A quick reference
+            </p>
+          </div>
+
+          <ul className="space-y-3">
+            <SummaryRow
+              tone="businesses"
+              title="Businesses & tour operators"
+              body="Companies registered on the portal, split by verification status. Pending businesses need TRA or KTB approval before they can list tours, stays, or packages."
+            />
+            <SummaryRow
+              tone="incidents"
+              title="Reported incidents"
+              body="Safety, wildlife, operator, facility, and guide reports submitted through the public portal. Each one moves through open → under review → escalated or resolved."
+            />
+            <SummaryRow
+              tone="inquiries"
+              title="Investor inquiries"
+              body="Enquiries from local and foreign investors about lodge, coastal, eco-tourism, MICE, or infrastructure projects. Tracked from new through contact and closure."
+            />
+            <SummaryRow
+              tone="destinations"
+              title="Published content"
+              body="Destinations, experiences, packages, stays, events, and blog posts that power the public site. Featured items appear on the homepage."
+            />
+          </ul>
+        </div>
+      </section>
     </div>
   );
 }
 
-// ─── Overview helpers ──────────────────────────────────────────────
+// ─── Overview helpers ─────────────────────────────────────────────
 
 function KpiWithSpark({
   label,
@@ -1060,8 +1123,37 @@ function DonutLegend({
     </ul>
   );
 }
+function SummaryRow({
+  tone,
+  title,
+  body,
+}: {
+  tone: keyof typeof TONES;
+  title: string;
+  body: string;
+}) {
+  const meta = TONES[tone];
 
-// ─── Shared module cards ───────────────────────────────────────────
+  return (
+    <li className="flex items-start gap-3 rounded-xl border border-deep-100 bg-cream-100/40 px-3 py-2.5 dark:border-deep-800 dark:bg-deep-950/40">
+      <span
+        aria-hidden
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
+      >
+        {meta.icon}
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-deep-800 dark:text-cream-100">
+          {title}
+        </p>
+        <p className="mt-0.5 text-xs leading-5 text-deep-600 dark:text-cream-400">
+          {body}
+        </p>
+      </div>
+    </li>
+  );
+}
+// ─── Activity list ────────────────────────────────────────────────
 
 function ActivityList({
   title,
@@ -1132,7 +1224,7 @@ function ActivityList({
   );
 }
 
-// ─── Destinations ──────────────────────────────────────────────────
+// ─── Destinations module ─────────────────────────────────────────
 
 function DestinationsModule({
   destinations,
@@ -1193,9 +1285,7 @@ function DestinationsModule({
       title="Destinations"
       description="Manage the destinations displayed on the public destinations page."
       tone={tone}
-      action={
-        <AddButton onClick={handleCreate} pending={pending} label="Add destination" tone={tone} />
-      }
+      action={<AddButton onClick={handleCreate} pending={pending} label="Add destination" tone={tone} />}
       list={
         <div className="space-y-3">
           {loading && destinations.length === 0 && <LoadingSkeletons />}
@@ -1304,31 +1394,14 @@ function DestinationEditor({
       </Field>
 
       <Field label="Location on map">
-        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the destination&apos;s coordinates from Google Maps.
-        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
             <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
-            <input
-              type="number"
-              step="any"
-              value={latitude ?? ""}
-              onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))}
-              placeholder="-1.4850"
-              className={inputClass}
-            />
+            <input type="number" step="any" value={latitude ?? ""} onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="-1.4850" className={inputClass} />
           </label>
           <label className="block">
             <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
-            <input
-              type="number"
-              step="any"
-              value={longitude ?? ""}
-              onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))}
-              placeholder="35.3720"
-              className={inputClass}
-            />
+            <input type="number" step="any" value={longitude ?? ""} onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="35.3720" className={inputClass} />
           </label>
         </div>
         {latitude != null && longitude != null ? (
@@ -1345,7 +1418,7 @@ function DestinationEditor({
   );
 }
 
-// ─── Experiences ───────────────────────────────────────────────────
+// ─── Experiences module ───────────────────────────────────────────
 
 function ExperiencesModule({
   experiences,
@@ -1440,11 +1513,7 @@ function ExperiencesModule({
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState
-            title="Select an experience"
-            description="Choose an experience to edit."
-            tone={tone}
-          />
+          <EmptyEditorState title="Select an experience" description="Choose an experience to edit." tone={tone} />
         )
       }
     />
@@ -1493,14 +1562,7 @@ function ExperienceEditor({
   }
 
   return (
-    <EditorShell
-      eyebrow="Edit experience"
-      title="Experience details"
-      onClose={onClose}
-      saving={saving}
-      onSave={handleSave}
-      tone={tone}
-    >
+    <EditorShell eyebrow="Edit experience" title="Experience details" onClose={onClose} saving={saving} onSave={handleSave} tone={tone}>
       <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Category">
@@ -1511,13 +1573,8 @@ function ExperienceEditor({
           {destinations.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
       </Field>
-      <Field label="Description">
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} />
-      </Field>
-      <Field label="Image URL">
-        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} />
-      </Field>
-
+      <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
+      <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
       <Field label="Location on map">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -1534,7 +1591,7 @@ function ExperienceEditor({
   );
 }
 
-// ─── Packages ──────────────────────────────────────────────────────
+// ─── Packages module ──────────────────────────────────────────────
 
 function PackagesModule({
   packages,
@@ -1630,11 +1687,7 @@ function PackagesModule({
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState
-            title="Select a package"
-            description="Choose a package to edit."
-            tone={tone}
-          />
+          <EmptyEditorState title="Select a package" description="Choose a package to edit." tone={tone} />
         )
       }
     />
@@ -1685,14 +1738,7 @@ function PackageEditor({
   }
 
   return (
-    <EditorShell
-      eyebrow="Edit package"
-      title="Package details"
-      onClose={onClose}
-      saving={saving}
-      onSave={handleSave}
-      tone={tone}
-    >
+    <EditorShell eyebrow="Edit package" title="Package details" onClose={onClose} saving={saving} onSave={handleSave} tone={tone}>
       <Field label="Title"><input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Destination">
@@ -1707,7 +1753,6 @@ function PackageEditor({
       <Field label="Summary"><textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-
       <Field label="Location on map">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -1720,13 +1765,12 @@ function PackageEditor({
           </label>
         </div>
       </Field>
-
       <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );
 }
 
-// ─── Stay ──────────────────────────────────────────────────────────
+// ─── Stay module ──────────────────────────────────────────────────
 
 function StaysModule({
   stays,
@@ -1891,7 +1935,6 @@ function StayEditor({
       <Field label="Price range"><input value={priceRange} onChange={(e) => setPriceRange(e.target.value)} placeholder="KES 25,000 - 55,000" className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-
       <Field label="Location on map">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -1908,7 +1951,7 @@ function StayEditor({
   );
 }
 
-// ─── Events ────────────────────────────────────────────────────────
+// ─── Events module ────────────────────────────────────────────────
 
 function EventsModule({
   events,
@@ -2061,7 +2104,6 @@ function EventEditor({
       <Field label="Location"><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
-
       <Field label="Location on map">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -2074,13 +2116,12 @@ function EventEditor({
           </label>
         </div>
       </Field>
-
       <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
     </EditorShell>
   );
 }
 
-// ─── Posts ─────────────────────────────────────────────────────────
+// ─── Posts module ─────────────────────────────────────────────────
 
 function PostsModule({
   posts,
@@ -2222,7 +2263,7 @@ function PostEditor({
   );
 }
 
-// ─── Shared components ─────────────────────────────────────────────
+// ─── Shared components ────────────────────────────────────────────
 
 function ModuleLayout({
   title,
@@ -2301,9 +2342,7 @@ function RowCard({
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
             {badge && (
-              <span className={`rounded-full ${tone.pillBg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tone.pillText}`}>
-                {badge}
-              </span>
+              <span className={`rounded-full ${tone.pillBg} px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tone.pillText}`}>{badge}</span>
             )}
           </div>
           <p className="mt-1 text-xs text-deep-500 dark:text-cream-500">{subtitle}</p>
@@ -2454,7 +2493,7 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── Icons ─────────────────────────────────────────────────────────
+// ─── Icons ────────────────────────────────────────────────────────
 
 const iconBase = {
   fill: "none",
@@ -2492,7 +2531,7 @@ function TourGuideIcon() {
   );
 }
 
-// ─── Input styling ─────────────────────────────────────────────────
+// ─── Input style ──────────────────────────────────────────────────
 
 const inputClass =
   "w-full rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-brand-500 focus:bg-cream-50 focus:ring-2 focus:ring-brand-500/15 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:border-brand-500 dark:focus:bg-deep-950";
