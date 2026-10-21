@@ -8,7 +8,7 @@ import { IncidentsPanel } from "./incidents/incidents-panel";
 import { InquiriesPanel } from "./inquiries/inquiries-panel";
 import { ResourcesPanel } from "./resources/resources-panel";
 import { OperatorsPanel } from "./operators/operators-panel";
-import { ShieldIcon } from "lucide-react";
+import { House, ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
@@ -262,7 +262,7 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
 
 // ─── Root ──────────────────────────────────────────────────────────
 
-export function DashboardClient() {
+export function DashboardClient({ userName }: { userName: string }) {
   const [activeModule, setActiveModule] = useState<ModuleKey>("overview");
   const [search, setSearch] = useState("");
   const [range, setRange] = useState<StatsRange>("month");
@@ -376,7 +376,11 @@ export function DashboardClient() {
   return (
     <div className="min-h-screen bg-cream-200 dark:bg-deep-950">
       <div className="flex min-h-screen">
-        <DashboardSidebar activeModule={activeModule} onNavigate={setActiveModule} />
+        <DashboardSidebar
+          activeModule={activeModule}
+          onNavigate={setActiveModule}
+          userName={userName}
+        />
 
         <main className="min-w-0 flex-1">
           <DashboardHeader
@@ -476,9 +480,11 @@ export function DashboardClient() {
 function DashboardSidebar({
   activeModule,
   onNavigate,
+  userName,
 }: {
   activeModule: ModuleKey;
   onNavigate: (m: ModuleKey) => void;
+  userName: string;
 }) {
   const modules: {
     key: ModuleKey;
@@ -487,38 +493,59 @@ function DashboardSidebar({
     tone?: ModuleTone;
     icon: React.ReactNode;
   }[] = [
-    { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
-    { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
-    { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
-    { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
-    { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
-    { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
-    { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
-    { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
-    { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
-    { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
-    { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
-    { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-  ];
+      { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
+      { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+      { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
+      { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+      { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
+      { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
+      { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
+      { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
+      { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
+      { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
+      { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
+      { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+    ];
 
   return (
     <aside className="hidden w-72 shrink-0 lg:block">
       <div className="sticky top-0 h-screen">
         <div className="flex h-full flex-col border-r border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900">
-          <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
+          {/* <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
             <Link href="/" className="block">
-              <div className="flex items-center gap-2 text-lg font-bold tracking-tight text-deep-800 dark:text-cream-100">
-                <span>🇰🇪</span>
-                <span>
-                  NTSP<span className="text-brand-600 dark:text-brand-400">.</span>
-                </span>
+              <div className="flex items-center gap-2 text-base font-bold tracking-tight text-deep-800 dark:text-cream-100">
+                <span className="text-lg leading-none">🇰🇪</span>
+                <span className="truncate">Hello, {userName}</span>
               </div>
               <div className="mt-1 text-xs text-deep-500 dark:text-cream-500">
-                Content Dashboard
+                Go To NTSP Home
               </div>
             </Link>
-          </div>
+          </div> */}
+          <div className="border-b border-deep-200 px-6 py-5 dark:border-deep-800">
+            <Link
+              href="/"
+              className="group flex items-start justify-between gap-3"
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 text-base font-bold tracking-tight text-deep-800 dark:text-cream-100">
+                  <span className="text-lg leading-none">🇰🇪</span>
+                  <span className="truncate">Hello, {userName}.</span>
+                </div>
+                <div className="mt-1 px-2 py-0.5 flex items-center gap-1.5 text-xs text-deep-500 dark:text-cream-500">
+                  <House
+                    size={14}
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                    className="shrink-0"
+                  />
+                  <span>Go To NTSP Home</span>
+                </div>
+              </div>
 
+
+            </Link>
+          </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
             <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
               Content
@@ -641,9 +668,8 @@ function DashboardHeader({
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
-              className={`text-xs font-medium uppercase tracking-[0.16em] ${
-                tone?.text ?? "text-brand-600 dark:text-brand-400"
-              }`}
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600 dark:text-brand-400"
+                }`}
             >
               NTSP Content
             </div>
