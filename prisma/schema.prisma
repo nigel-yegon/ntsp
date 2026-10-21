@@ -795,3 +795,14 @@ model Resource {
   @@index([category])
   @@index([uploadedById])
 }
+
+// ─── Website visits ────────────────────────────────────────────────
+
+model SiteVisit {
+  id     Int      @id @default(autoincrement())
+  /** UTC day — one row per day. */
+  day    DateTime @db.Date @unique
+  count  Int      @default(0)
+
+  @@index([day])
+}

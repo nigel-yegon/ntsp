@@ -12,7 +12,6 @@ import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
-import { useScrollDirection } from "../components/use-scroll-direction";
 
 import {
   getDashboardStats,
@@ -278,17 +277,6 @@ export function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Scroll-aware header.
-  //   direction: "up" | "down"   — last non-jittery scroll direction
-  //   scrolled:  boolean         — past the 8px threshold from top
-  const { direction, scrolled } = useScrollDirection(8);
-
-  // Only hide the header while scrolling down on modules with
-  // long lists. The overview keeps a stable header so the range
-  // toggle stays reachable at all times.
-  const hideHeader =
-    activeModule !== "overview" && direction === "down" && scrolled;
-
   useEffect(() => {
     let cancelled = false;
 
@@ -393,8 +381,6 @@ export function DashboardClient() {
             search={search}
             setSearch={setSearch}
             tone={activeModule !== "overview" ? TONES[activeModule] : undefined}
-            hidden={hideHeader}
-            scrolled={scrolled}
           />
 
           <div className="p-6 lg:p-8">
@@ -497,19 +483,19 @@ function DashboardSidebar({
     tone?: ModuleTone;
     icon: React.ReactNode;
   }[] = [
-      { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
-      { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
-      { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
-      { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
-      { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
-      { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
-      { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
-      { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
-      { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
-      { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
-      { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
-      { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-    ];
+    { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
+    { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+    { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
+    { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+    { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
+    { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
+    { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
+    { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
+    { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
+    { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
+    { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
+    { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+  ];
 
   return (
     <aside className="hidden w-72 shrink-0 lg:block">
@@ -605,22 +591,18 @@ function DashboardSidebar({
   );
 }
 
-// ─── Header (scroll-aware) ────────────────────────────────────────
+// ─── Header ────────────────────────────────────────────────────────
 
 function DashboardHeader({
   activeModule,
   search,
   setSearch,
   tone,
-  hidden,
-  scrolled,
 }: {
   activeModule: ModuleKey;
   search: string;
   setSearch: (v: string) => void;
   tone?: ModuleTone;
-  hidden?: boolean;
-  scrolled?: boolean;
 }) {
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
@@ -640,22 +622,14 @@ function DashboardHeader({
   const searchable = activeModule !== "overview";
 
   return (
-    <header
-      className={[
-        "sticky top-0 z-30 border-b",
-        "transition-[transform,background-color,border-color,box-shadow] duration-200",
-        hidden ? "-translate-y-full" : "translate-y-0",
-        scrolled
-          ? "border-deep-200 bg-cream-100/95 shadow-sm backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95"
-          : "border-deep-200 bg-cream-100/90 backdrop-blur-sm dark:border-deep-800 dark:bg-deep-900/90",
-      ].join(" ")}
-    >
+    <header className="border-b border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900">
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
-              className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600 dark:text-brand-400"
-                }`}
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${
+                tone?.text ?? "text-brand-600 dark:text-brand-400"
+              }`}
             >
               NTSP Content
             </div>
@@ -886,8 +860,7 @@ function Overview({
         </div>
       </section>
 
-     
-      {/* Recent activity */}
+            {/* Recent activity */}
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
@@ -933,10 +906,11 @@ function Overview({
           />
         </div>
       </section>
-       {/* Row: Content inventory (50%) + Overview summary (50%) */}
+
+      {/* Row: Content inventory (50%) + Overview summary (50%) */}
       <section className="grid gap-4 md:grid-cols-2">
         {/* Content inventory — left half */}
-        <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+        <div className="flex flex-col rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
           <div className="mb-4 flex items-baseline justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
               Content inventory
@@ -945,8 +919,23 @@ function Overview({
               Published vs. draft per type
             </p>
           </div>
+
           <StackedBar
             rows={[
+              {
+                label: `Destinations (${stats.content.destinations.total})`,
+                segments: [
+                  { label: "Featured", value: stats.content.destinations.featured, tone: "bg-brand-500" },
+                  { label: "Standard", value: stats.content.destinations.total - stats.content.destinations.featured, tone: "bg-brand-200 dark:bg-brand-900" },
+                ],
+              },
+              {
+                label: `Experiences (${stats.content.experiences.total})`,
+                segments: [
+                  { label: "Published", value: stats.content.experiences.published, tone: "bg-emerald-500" },
+                  { label: "Draft", value: stats.content.experiences.total - stats.content.experiences.published, tone: "bg-emerald-200 dark:bg-emerald-900" },
+                ],
+              },
               {
                 label: `Packages (${stats.content.packages.total})`,
                 segments: [
@@ -955,10 +944,10 @@ function Overview({
                 ],
               },
               {
-                label: `Blog posts (${stats.content.posts.total})`,
+                label: `Stays (${stats.content.stays.total})`,
                 segments: [
-                  { label: "Published", value: stats.content.posts.published, tone: "bg-sky-500" },
-                  { label: "Draft", value: stats.content.posts.total - stats.content.posts.published, tone: "bg-sky-200 dark:bg-sky-900" },
+                  { label: "Published", value: stats.content.stays.published, tone: "bg-rose-500" },
+                  { label: "Draft", value: stats.content.stays.total - stats.content.stays.published, tone: "bg-rose-200 dark:bg-rose-900" },
                 ],
               },
               {
@@ -969,14 +958,33 @@ function Overview({
                 ],
               },
               {
-                label: `Destinations (${stats.content.destinations.total})`,
+                label: `Blog posts (${stats.content.posts.total})`,
                 segments: [
-                  { label: "Featured", value: stats.content.destinations.featured, tone: "bg-brand-500" },
-                  { label: "Standard", value: stats.content.destinations.total - stats.content.destinations.featured, tone: "bg-brand-200 dark:bg-brand-900" },
+                  { label: "Published", value: stats.content.posts.published, tone: "bg-sky-500" },
+                  { label: "Draft", value: stats.content.posts.total - stats.content.posts.published, tone: "bg-sky-200 dark:bg-sky-900" },
                 ],
               },
             ]}
           />
+
+          {/* Hairline + visitors block */}
+          <div className="mt-5 border-t border-deep-100 pt-4 dark:border-deep-800">
+            <div className="mb-3 flex items-baseline justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+                Website visitors
+              </h3>
+              <p className="text-xs text-deep-400 dark:text-cream-600">
+                Unique sessions
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <VisitorStat label="Today" value={stats.content.visitors.today} tone="brand" />
+              <VisitorStat label="Last 7 days" value={stats.content.visitors.last7Days} tone="emerald" />
+              <VisitorStat label="Last 30 days" value={stats.content.visitors.last30Days} tone="indigo" />
+              <VisitorStat label="All time" value={stats.content.visitors.total} tone="rose" />
+            </div>
+          </div>
         </div>
 
         {/* Overview summary — right half */}
@@ -1014,6 +1022,8 @@ function Overview({
           </ul>
         </div>
       </section>
+
+
     </div>
   );
 }
@@ -1123,6 +1133,7 @@ function DonutLegend({
     </ul>
   );
 }
+
 function SummaryRow({
   tone,
   title,
@@ -1153,6 +1164,39 @@ function SummaryRow({
     </li>
   );
 }
+
+function VisitorStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "brand" | "emerald" | "indigo" | "rose";
+}) {
+  const bar = {
+    brand: "bg-brand-500",
+    emerald: "bg-emerald-500",
+    indigo: "bg-indigo-500",
+    rose: "bg-rose-500",
+  }[tone];
+
+  return (
+    <div className="relative rounded-xl border border-deep-100 bg-cream-100/50 px-3 py-3 dark:border-deep-800 dark:bg-deep-950/40">
+      <span
+        aria-hidden
+        className={`absolute inset-y-0 left-0 w-1 rounded-l-xl ${bar}`}
+      />
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+        {label}
+      </p>
+      <p className="mt-1 text-xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
+        {value.toLocaleString()}
+      </p>
+    </div>
+  );
+}
+
 // ─── Activity list ────────────────────────────────────────────────
 
 function ActivityList({

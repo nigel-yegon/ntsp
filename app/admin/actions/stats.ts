@@ -65,11 +65,17 @@ export type DashboardStats = {
   };
   content: {
     destinations: { total: number; featured: number };
-    experiences: { total: number };
+    experiences: { total: number; published: number };
     packages: { total: number; published: number; featured: number };
-    stays: { total: number };
+    stays: { total: number; published: number };
     events: { total: number; upcoming: number; featured: number };
     posts: { total: number; published: number };
+    visitors: {
+      today: number;
+      last7Days: number;
+      last30Days: number;
+      total: number;
+    };
   };
   activity: {
     recentIncidents: {
@@ -123,10 +129,12 @@ function monthsAgo(n: number): Date {
   return d;
 }
 
-/**
- * Determines which rows are included in the range-restricted counts
- * and in the chart's source data.
- */
+function todayUTC(): Date {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
 function rangeToSince(range: StatsRange): Date {
   switch (range) {
     case "week":
@@ -221,6 +229,7 @@ export async function getDashboardStats(
 ): Promise<DashboardStats> {
   const since = rangeToSince(range);
   const since7 = daysAgo(6);
+  const today = todayUTC();
 
   const [
     businessTotal,
@@ -253,15 +262,21 @@ export async function getDashboardStats(
     destinationTotal,
     destinationFeatured,
     experienceTotal,
+    experiencePublished,
     packageTotal,
     packagePublished,
     packageFeatured,
     stayTotal,
+    stayPublished,
     eventTotal,
     eventUpcoming,
     eventFeatured,
     postTotal,
     postPublished,
+    visitToday,
+    visitsLast7,
+    visitsLast30,
+    visitsTotal,
     rawBusinesses,
     rawOperators,
     rawIncidents,
@@ -338,15 +353,36 @@ export async function getDashboardStats(
     prisma.destination.count(),
     prisma.destination.count({ where: { featured: true } }),
     prisma.attraction.count(),
+    prisma.attraction.count({ where: { published: true } }),
     prisma.tourPackage.count(),
     prisma.tourPackage.count({ where: { published: true } }),
     prisma.tourPackage.count({ where: { featured: true } }),
     prisma.accommodation.count(),
+    prisma.accommodation.count({ where: { published: true } }),
     prisma.event.count(),
     prisma.event.count({ where: { startDate: { gte: new Date() } } }),
     prisma.event.count({ where: { featured: true } }),
     prisma.post.count(),
     prisma.post.count({ where: { published: true } }),
+
+    // Visitor rollups — silently fall back to 0/null if the SiteVisit
+    // model doesn't exist in the schema (caught by the surrounding
+    // try/catch if not; the aggregation calls below always resolve).
+    prisma.siteVisit.findUnique({
+      where: { day: today },
+      select: { count: true },
+    }),
+    prisma.siteVisit.aggregate({
+      where: { day: { gte: daysAgo(6) } },
+      _sum: { count: true },
+    }),
+    prisma.siteVisit.aggregate({
+      where: { day: { gte: daysAgo(29) } },
+      _sum: { count: true },
+    }),
+    prisma.siteVisit.aggregate({
+      _sum: { count: true },
+    }),
 
     prisma.businessProfile.findMany({
       select: { createdAt: true },
@@ -427,20 +463,38 @@ export async function getDashboardStats(
       last7Days: inquiryLast7,
     },
     content: {
-      destinations: { total: destinationTotal, featured: destinationFeatured },
-      experiences: { total: experienceTotal },
+      destinations: {
+        total: destinationTotal,
+        featured: destinationFeatured,
+      },
+      experiences: {
+        total: experienceTotal,
+        published: experiencePublished,
+      },
       packages: {
         total: packageTotal,
         published: packagePublished,
         featured: packageFeatured,
       },
-      stays: { total: stayTotal },
+      stays: {
+        total: stayTotal,
+        published: stayPublished,
+      },
       events: {
         total: eventTotal,
         upcoming: eventUpcoming,
         featured: eventFeatured,
       },
-      posts: { total: postTotal, published: postPublished },
+      posts: {
+        total: postTotal,
+        published: postPublished,
+      },
+      visitors: {
+        today: visitToday?.count ?? 0,
+        last7Days: visitsLast7._sum.count ?? 0,
+        last30Days: visitsLast30._sum.count ?? 0,
+        total: visitsTotal._sum.count ?? 0,
+      },
     },
     activity: {
       recentIncidents,

@@ -9,6 +9,7 @@ import AccessibilityToolbar from "./components/accessibility/accessibility-toolb
 import { AppSessionProvider } from "./components/session-provider";
 import { CookieConsent } from "./components/cookie-consent";
 import { ScrollToTop } from "@/app/components/scroll-to-top";
+import { VisitBeacon } from "./components/visit-beacon";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -43,6 +44,7 @@ export default function RootLayout({
         </AppSessionProvider>
         <Analytics />
         <ScrollToTop />
+          <VisitBeacon />
       </body>
     </html>
   );
