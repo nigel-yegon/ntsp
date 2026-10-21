@@ -14,15 +14,17 @@ const plan = [
   { href: "/plan/visa", label: "Visa & Entry" },
   { href: "/plan/getting-around", label: "Getting Around" },
   { href: "/plan/tips", label: "Travel Tips" },
-  { href: "/blog", label: "Blog" },
+  { href: "/blog", label: "Our Travel Blog" },
 ];
 
 const business = [
-  { href: "/signup", label: "Create Account" },
   { href: "/login", label: "Sign In" },
-  { href: "/dashboard", label: "Business Dashboard" },
+  { href: "/signup", label: "Create Account" },
+  
+  
   { href: "/investment", label: "Investment" },
   { href: "/operators", label: "Tour Operators" },
+  { href: "/dashboard", label: "Business Dashboard" },
 ];
 
 const about = [
