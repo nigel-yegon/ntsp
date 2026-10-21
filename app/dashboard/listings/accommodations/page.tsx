@@ -17,9 +17,7 @@ export default async function AccommodationsListPage() {
   const accommodations = await prisma.accommodation.findMany({
     where: { businessId: session.user.id },
     orderBy: { createdAt: "desc" },
-    include: {
-      destination: { select: { name: true } },
-    },
+    include: { destination: { select: { name: true } } },
   });
 
   return (
@@ -35,20 +33,29 @@ export default async function AccommodationsListPage() {
           <h2 className="mt-2 text-lg font-semibold text-deep-800 dark:text-cream-100">
             Accommodations
           </h2>
+          <p className="mt-1 text-sm text-deep-500 dark:text-cream-400">
+            Manage your lodges, camps and resorts.
+          </p>
         </div>
         <Link
-          href="/dashboard/listings/new/accommodation"
+          href="/dashboard/listings/new"
           className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
         >
-          + Create Accommodation
+          + Create New Listing
         </Link>
       </div>
 
       {accommodations.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-10 text-center dark:border-deep-700 dark:bg-deep-900">
           <p className="text-sm text-deep-500 dark:text-cream-400">
-            You haven't created any accommodations yet.
+            You haven&apos;t created any accommodations yet.
           </p>
+          <Link
+            href="/dashboard/listings/new"
+            className="mt-4 inline-block text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          >
+            Create New Listing →
+          </Link>
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-cream-300 bg-cream-50 dark:border-deep-700 dark:bg-deep-900">
