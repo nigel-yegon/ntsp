@@ -12,6 +12,7 @@ import { ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
+import { useScrollDirection } from "../components/use-scroll-direction";
 
 import {
   getDashboardStats,
@@ -266,6 +267,8 @@ export function DashboardClient() {
   const [search, setSearch] = useState("");
   const [range, setRange] = useState<StatsRange>("month");
 
+  const { scrolled } = useScrollDirection(8);
+
   const [destinations, setDestinations] = useState<DestinationRow[]>([]);
   const [experiences, setExperiences] = useState<ExperienceRow[]>([]);
   const [packages, setPackages] = useState<PackageRow[]>([]);
@@ -381,6 +384,7 @@ export function DashboardClient() {
             search={search}
             setSearch={setSearch}
             tone={activeModule !== "overview" ? TONES[activeModule] : undefined}
+            scrolled={scrolled}
           />
 
           <div className="p-6 lg:p-8">
@@ -591,18 +595,20 @@ function DashboardSidebar({
   );
 }
 
-// ─── Header ────────────────────────────────────────────────────────
+// ─── Header (sticky) ──────────────────────────────────────────────
 
 function DashboardHeader({
   activeModule,
   search,
   setSearch,
   tone,
+  scrolled,
 }: {
   activeModule: ModuleKey;
   search: string;
   setSearch: (v: string) => void;
   tone?: ModuleTone;
+  scrolled?: boolean;
 }) {
   const titles: Record<ModuleKey, string> = {
     overview: "Dashboard",
@@ -622,7 +628,15 @@ function DashboardHeader({
   const searchable = activeModule !== "overview";
 
   return (
-    <header className="border-b border-deep-200 bg-cream-100 dark:border-deep-800 dark:bg-deep-900">
+    <header
+      className={[
+        "sticky top-0 z-30 border-b",
+        "transition-[background-color,border-color,box-shadow,backdrop-filter] duration-200",
+        scrolled
+          ? "border-deep-200 bg-cream-100/95 shadow-sm backdrop-blur-md dark:border-deep-800 dark:bg-deep-900/95"
+          : "border-deep-200 bg-cream-100/90 backdrop-blur-sm dark:border-deep-800 dark:bg-deep-900/90",
+      ].join(" ")}
+    >
       <div className="flex flex-col gap-5 px-6 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
@@ -860,7 +874,7 @@ function Overview({
         </div>
       </section>
 
-            {/* Recent activity */}
+      {/* Recent activity */}
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
@@ -1022,8 +1036,6 @@ function Overview({
           </ul>
         </div>
       </section>
-
-
     </div>
   );
 }
