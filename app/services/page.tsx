@@ -32,7 +32,7 @@ const publicServices: Service[] = [
   {
     title: "Tourism Licence Application",
     description: "Apply for or renew a tourism licence for your operation.",
-    href: "https://tra.go.ke/",
+    href: "https://licensing.tra.go.ke/index.php?r=site%2Fsignin",
     external: true,
   },
   {
