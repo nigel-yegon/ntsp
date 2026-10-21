@@ -57,7 +57,8 @@ const ROLE_HOME: Record<string, string> = {
   CUSTOMER: "/dashboard",
   BUSINESS: "/dashboard",
   OPERATOR: "/dashboard",
-  VERIFIER: "/review/perusal",
+  PERUSER: "/review/perusal",            // ← added
+  VERIFIER: "/review/verification",      // ← corrected (was /review/perusal)
   COMMITTEE_MEMBER: "/review/committee",
   PERMANENT_SECRETARY: "/review/ps",
   ADMIN: "/admin",
@@ -68,6 +69,7 @@ const ROLE_LABEL: Record<string, string> = {
   CUSTOMER: "Traveller",
   BUSINESS: "Business",
   OPERATOR: "Tour Operator",
+  PERUSER: "Peruser",                    // ← added
   VERIFIER: "Verifier",
   COMMITTEE_MEMBER: "Committee",
   PERMANENT_SECRETARY: "Permanent Secretary",
@@ -75,12 +77,29 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 const APPLICATIONS_ROLES = new Set([
+  "PERUSER",                             // ← added
   "PERMANENT_SECRETARY",
   "COMMITTEE_MEMBER",
   "VERIFIER",
 ]);
 
-// ─── Scroll direction hook (inlined) ────────────────────────
+// ─── Label for the "Applications" link per role ─────────────
+function applicationsLabelFor(role: string): string {
+  switch (role) {
+    case "COMMITTEE_MEMBER":
+      return "Committee reviews";
+    case "PERMANENT_SECRETARY":
+      return "PS reviews";
+    case "VERIFIER":
+      return "Verification queue";
+    case "PERUSER":
+      return "Perusal queue";
+    default:
+      return "Permit applications";
+  }
+}
+
+// ─── Scroll direction hook ──────────────────────────────────
 function useScrollDirection(threshold = 8) {
   const [direction, setDirection] = useState<"up" | "down">("up");
   const [scrolled, setScrolled] = useState(false);
@@ -130,14 +149,12 @@ export function Navbar({
     pathname.startsWith("/admin") ||
     pathname.startsWith("/services/applications");
 
-  // Close all menus on route change
   useEffect(() => {
     setOpen(false);
     setMenuOpen(null);
     setOpenDropdown(null);
   }, [pathname]);
 
-  // Close dropdowns/menus when the header hides on scroll-down
   useEffect(() => {
     if (direction === "down" && scrolled && !isDashboard) {
       setOpenDropdown(null);
@@ -145,7 +162,6 @@ export function Navbar({
     }
   }, [direction, scrolled, isDashboard]);
 
-  // Lock body scroll while mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -153,20 +169,15 @@ export function Navbar({
     };
   }, [open]);
 
-  // Close user/anon dropdown on outside click and Escape
   useEffect(() => {
     if (!menuOpen) return;
-
     function onClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
-      if (!target.closest("[data-user-menu]")) {
-        setMenuOpen(null);
-      }
+      if (!target.closest("[data-user-menu]")) setMenuOpen(null);
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setMenuOpen(null);
     }
-
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -175,20 +186,15 @@ export function Navbar({
     };
   }, [menuOpen]);
 
-  // Close top-level dropdown on outside click and Escape
   useEffect(() => {
     if (!openDropdown) return;
-
     function onClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
-      if (!target.closest("[data-dropdown-root]")) {
-        setOpenDropdown(null);
-      }
+      if (!target.closest("[data-dropdown-root]")) setOpenDropdown(null);
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpenDropdown(null);
     }
-
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -200,7 +206,6 @@ export function Navbar({
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
-  // Hide the header only on non-dashboard pages when scrolling down
   const hideHeader = !isDashboard && direction === "down" && scrolled;
 
   return (
@@ -233,7 +238,6 @@ export function Navbar({
             />
           </Link>
 
-          {/* Desktop navigation */}
           <ul className="hidden items-center gap-1 xl:flex">
             {links.map((l) => {
               const hasDropdown = "dropdown" in l && l.dropdown;
@@ -294,9 +298,7 @@ export function Navbar({
                       <ChevronDown
                         size={14}
                         aria-hidden
-                        className={`transition-transform ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
+                        className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
                       />
                     </button>
                   </div>
@@ -343,7 +345,6 @@ export function Navbar({
             })}
           </ul>
 
-          {/* Right side */}
           <div className="flex shrink-0 items-center gap-2">
             <ThemeToggle />
 
@@ -408,7 +409,7 @@ export function Navbar({
         </nav>
       </header>
 
-      {/* Mobile menu — unchanged */}
+      {/* Mobile menu */}
       {open && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <div
@@ -546,7 +547,7 @@ export function Navbar({
                       className="mb-2 flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-deep-700 hover:bg-cream-200 dark:text-cream-300 dark:hover:bg-deep-900"
                     >
                       <FileText size={16} aria-hidden="true" />
-                      Applications
+                      {applicationsLabelFor(session.role)}
                     </Link>
                   )}
 
@@ -626,15 +627,7 @@ function UserMenuPanel({
 }) {
   const home = ROLE_HOME[session.role] ?? "/";
   const canViewApplications = APPLICATIONS_ROLES.has(session.role);
-
-  const applicationsLabel =
-    session.role === "COMMITTEE_MEMBER"
-      ? "Committee reviews"
-      : session.role === "PERMANENT_SECRETARY"
-        ? "PS reviews"
-        : session.role === "VERIFIER"
-          ? "Verification queue"
-          : "Permit applications";
+  const applicationsLabel = applicationsLabelFor(session.role);
 
   return (
     <div
