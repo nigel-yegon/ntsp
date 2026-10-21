@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { StatusBadge } from "@/app/components/review/status-badge";
 
 export default async function PerusalListPage() {
-  await requireRole(["VERIFIER", "ADMIN"]);
+  await requireRole(["PERUSER", "ADMIN"]);
 
   const applications = await prisma.application.findMany({
     where: { status: { in: ["SUBMITTED", "UNDER_PERUSAL"] } },

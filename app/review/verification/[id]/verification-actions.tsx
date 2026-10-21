@@ -3,19 +3,28 @@
 
 import { useState } from "react";
 
+type Decision = "ACCEPTED" | "REJECTED" | "NEEDS_RESUBMISSION";
+
 export function VerificationDocumentActions({
   documentId,
   action,
+  currentDecision,
 }: {
   documentId: string;
   action: (formData: FormData) => Promise<void>;
+  /** Optional — when set, "Accept" is replaced by "Change decision"
+   *  and the buttons are always visible. Omit for the current
+   *  "only when PENDING" behaviour. */
+  currentDecision?: "PENDING" | Decision;
 }) {
   const [notesOpen, setNotesOpen] = useState(false);
-  const [pendingDecision, setPendingDecision] = useState<string | null>(null);
+  const [pendingDecision, setPendingDecision] = useState<Decision | null>(null);
+
+  const showButtons = currentDecision === undefined || currentDecision === "PENDING";
 
   return (
     <>
-      {!notesOpen && (
+      {!notesOpen && showButtons && (
         <div className="flex flex-wrap gap-2">
           <form action={action}>
             <input type="hidden" name="documentId" value={documentId} />

@@ -60,6 +60,16 @@ export type DocumentForGate = {
   verificationStatus: DocumentReviewStatus;
 };
 
+/** Whether an application in the given status is still editable by its owner. */
+export function isEditableByOwner(status: ApplicationStatus): boolean {
+  return status === "DRAFT";
+}
+
+/** Whether the given role can view/edit this application as its owner. */
+export function isOwnerRole(role: Role): boolean {
+  return role === "EMPLOYER";
+}
+
 // ─── Transition table ───────────────────────────────────────────
 
 export const TRANSITIONS: Record<

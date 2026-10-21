@@ -77,10 +77,10 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 const APPLICATIONS_ROLES = new Set([
-  "PERUSER",                             // ← added
   "PERMANENT_SECRETARY",
   "COMMITTEE_MEMBER",
   "VERIFIER",
+  "PERUSER", 
 ]);
 
 // ─── Label for the "Applications" link per role ─────────────

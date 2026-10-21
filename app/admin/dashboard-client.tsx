@@ -14,6 +14,19 @@ import FadeIn from "../components/fade-in";
 import { Stagger } from "../components/stagger";
 
 import {
+  getDashboardStats,
+  type DashboardStats,
+  type StatsRange,
+} from "./actions/stats";
+import {
+  CombinedLineChart,
+  Donut,
+  Sparkline,
+  type ChartTone,
+} from "./components/overview-charts";
+import { StackedBar } from "../components/stacked-bar";
+
+import {
   listDestinations,
   createDestination,
   updateDestination,
@@ -55,7 +68,8 @@ import {
   deletePost,
   type PostRow,
 } from "./actions/posts";
-import { getDashboardStats, type DashboardStats } from "./actions/stats";
+
+// ─── Types ─────────────────────────────────────────────────────────
 
 type ModuleKey =
   | "overview"
@@ -85,6 +99,8 @@ type ModuleTone = {
   pillText: string;
   icon: React.ReactNode;
 };
+
+// ─── Tones ─────────────────────────────────────────────────────────
 
 export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
   destinations: {
@@ -243,9 +259,12 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
   },
 };
 
+// ─── Root ──────────────────────────────────────────────────────────
+
 export function DashboardClient() {
   const [activeModule, setActiveModule] = useState<ModuleKey>("overview");
   const [search, setSearch] = useState("");
+  const [range, setRange] = useState<StatsRange>("month");
 
   const [destinations, setDestinations] = useState<DestinationRow[]>([]);
   const [experiences, setExperiences] = useState<ExperienceRow[]>([]);
@@ -255,7 +274,6 @@ export function DashboardClient() {
   const [posts, setPosts] = useState<PostRow[]>([]);
 
   const [stats, setStats] = useState<DashboardStats | null>(null);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -273,7 +291,7 @@ export function DashboardClient() {
           listStays(),
           listEvents(),
           listPosts(),
-          getDashboardStats(),
+          getDashboardStats(range),
         ]);
         if (cancelled) return;
         setDestinations(d);
@@ -284,8 +302,9 @@ export function DashboardClient() {
         setPosts(po);
         setStats(statData);
       } catch (err) {
-        if (!cancelled)
+        if (!cancelled) {
           setError(err instanceof Error ? err.message : "Failed to load data");
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -295,7 +314,7 @@ export function DashboardClient() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [range]);
 
   const filteredDestinations = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -372,25 +391,16 @@ export function DashboardClient() {
                 <Overview
                   stats={stats}
                   loading={loading}
+                  range={range}
+                  setRange={setRange}
                   onNavigate={setActiveModule}
                 />
               )}
 
-              {activeModule === "businesses" && (
-                <BusinessesPanel search={search} />
-              )}
-
-              {activeModule === "operators" && (
-                <OperatorsPanel search={search} />
-              )}
-
-              {activeModule === "incidents" && (
-                <IncidentsPanel search={search} />
-              )}
-
-              {activeModule === "inquiries" && (
-                <InquiriesPanel search={search} />
-              )}
+              {activeModule === "businesses" && <BusinessesPanel search={search} />}
+              {activeModule === "operators" && <OperatorsPanel search={search} />}
+              {activeModule === "incidents" && <IncidentsPanel search={search} />}
+              {activeModule === "inquiries" && <InquiriesPanel search={search} />}
               {activeModule === "resources" && <ResourcesPanel search={search} />}
 
               {activeModule === "destinations" && (
@@ -457,9 +467,7 @@ export function DashboardClient() {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* SIDEBAR                                                                    */
-/* -------------------------------------------------------------------------- */
+// ─── Sidebar ───────────────────────────────────────────────────────
 
 function DashboardSidebar({
   activeModule,
@@ -475,19 +483,19 @@ function DashboardSidebar({
     tone?: ModuleTone;
     icon: React.ReactNode;
   }[] = [
-    { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
-    { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
-    { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
-    { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
-    { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
-    { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
-    { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
-    { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
-    { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
-    { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
-    { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
-    { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-  ];
+      { key: "overview", label: "Overview", description: "Dashboard summary", icon: <GridIcon /> },
+      { key: "businesses", label: "Businesses", description: "Manage businesses", icon: TONES.businesses.icon, tone: TONES.businesses },
+      { key: "operators", label: "Tour Operators", description: "Verify TRA licenses", icon: TONES.operators.icon, tone: TONES.operators },
+      { key: "incidents", label: "Incidents", description: "Manage incidents", icon: TONES.incidents.icon, tone: TONES.incidents },
+      { key: "resources", label: "Resources", description: "Documents & downloads", icon: TONES.resources.icon, tone: TONES.resources },
+      { key: "inquiries", label: "Inquiries", description: "Investor inquiries", icon: TONES.inquiries.icon, tone: TONES.inquiries },
+      { key: "destinations", label: "Destinations", description: "Manage destinations", icon: TONES.destinations.icon, tone: TONES.destinations },
+      { key: "experiences", label: "Experiences", description: "Manage experiences", icon: TONES.experiences.icon, tone: TONES.experiences },
+      { key: "packages", label: "Packages", description: "Manage packages", icon: TONES.packages.icon, tone: TONES.packages },
+      { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
+      { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
+      { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+    ];
 
   return (
     <aside className="hidden w-72 shrink-0 lg:block">
@@ -544,13 +552,7 @@ function DashboardSidebar({
                           : "bg-cream-200 text-deep-500 group-hover:bg-cream-300 dark:bg-deep-800 dark:text-cream-500 dark:group-hover:bg-deep-700",
                       ].join(" ")}
                     >
-                      <span
-                        className={
-                          active && tone
-                            ? tone.text
-                            : "text-deep-500 dark:text-cream-500"
-                        }
-                      >
+                      <span className={active && tone ? tone.text : "text-deep-500 dark:text-cream-500"}>
                         {m.icon}
                       </span>
                     </span>
@@ -589,9 +591,7 @@ function DashboardSidebar({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* HEADER                                                                     */
-/* -------------------------------------------------------------------------- */
+// ─── Header ────────────────────────────────────────────────────────
 
 function DashboardHeader({
   activeModule,
@@ -627,9 +627,8 @@ function DashboardHeader({
         <FadeIn key={`title-${activeModule}`} duration={400}>
           <div>
             <div
-              className={`text-xs font-medium uppercase tracking-[0.16em] ${
-                tone?.text ?? "text-brand-600 dark:text-brand-400"
-              }`}
+              className={`text-xs font-medium uppercase tracking-[0.16em] ${tone?.text ?? "text-brand-600 dark:text-brand-400"
+                }`}
             >
               NTSP Content
             </div>
@@ -660,17 +659,19 @@ function DashboardHeader({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* OVERVIEW (analytics dashboard)                                             */
-/* -------------------------------------------------------------------------- */
+// ─── Overview ──────────────────────────────────────────────────────
 
 function Overview({
   stats,
   loading,
+  range,
+  setRange,
   onNavigate,
 }: {
   stats: DashboardStats;
   loading: boolean;
+  range: StatsRange;
+  setRange: (r: StatsRange) => void;
   onNavigate: (m: ModuleKey) => void;
 }) {
   if (loading) {
@@ -684,242 +685,227 @@ function Overview({
             />
           ))}
         </div>
-        <div className="grid gap-4 lg:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-64 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
-            />
-          ))}
-        </div>
+        <div className="h-72 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900" />
       </div>
     );
   }
 
+  const seriesBiz = stats.series.map((b) => b.businesses);
+  const seriesOps = stats.series.map((b) => b.operators);
+  const seriesInc = stats.series.map((b) => b.incidents);
+  const seriesInq = stats.series.map((b) => b.inquiries);
+
+  const combined = stats.series.map((b) => ({
+    date: b.date,
+    businesses: b.businesses,
+    operators: b.operators,
+    incidents: b.incidents,
+    inquiries: b.inquiries,
+  }));
+
+  const rangeLabel =
+    range === "week" ? "7 days" : range === "month" ? "30 days" : "12 months";
+
   return (
     <div className="mx-auto max-w-7xl space-y-8">
-      {/* ── KPI strip ── */}
-      <section>
-        <div className="mb-3 flex items-baseline justify-between">
+      {/* Range toggle */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-            Key metrics
+            Overview
           </h2>
           <p className="text-xs text-deep-400 dark:text-cream-600">
-            Live totals across all modules
+            Metrics across the last {rangeLabel}.
           </p>
         </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
-            label="Businesses"
-            value={stats.businesses.total}
-            hint={`${stats.businesses.pending} pending · ${stats.businesses.approved} approved`}
-            tone="businesses"
-            onClick={() => onNavigate("businesses")}
-            trend={
-              stats.businesses.pending > 0
-                ? { label: "needs review", tone: "amber" }
-                : { label: "all clear", tone: "emerald" }
-            }
-          />
-          <KpiCard
-            label="Tour operators"
-            value={stats.operators.total}
-            hint={`${stats.operators.pending} pending · ${stats.operators.approved} verified`}
-            tone="operators"
-            onClick={() => onNavigate("operators")}
-            trend={
-              stats.operators.pending > 0
-                ? {
-                    label: `${stats.operators.pending} to verify`,
-                    tone: "amber",
-                  }
-                : { label: "all verified", tone: "emerald" }
-            }
-          />
-          <KpiCard
-            label="Incidents"
-            value={stats.incidents.total}
-            hint={`${stats.incidents.open} open · ${stats.incidents.escalated} escalated`}
-            tone="incidents"
-            onClick={() => onNavigate("incidents")}
-            trend={
-              stats.incidents.open > 0
-                ? {
-                    label: `${stats.incidents.last7Days} in last 7d`,
-                    tone: "rose",
-                  }
-                : { label: "none open", tone: "emerald" }
-            }
-          />
-          <KpiCard
-            label="Investor inquiries"
-            value={stats.inquiries.total}
-            hint={`${stats.inquiries.new} new · ${stats.inquiries.inReview} in review`}
-            tone="inquiries"
-            onClick={() => onNavigate("inquiries")}
-            trend={
-              stats.inquiries.new > 0
-                ? {
-                    label: `${stats.inquiries.last7Days} in last 7d`,
-                    tone: "brand",
-                  }
-                : { label: "all handled", tone: "emerald" }
-            }
-          />
+        <div
+          role="group"
+          aria-label="Time range"
+          className="inline-flex overflow-hidden rounded-xl border border-deep-200 bg-cream-50 p-1 dark:border-deep-800 dark:bg-deep-900"
+        >
+          {(["week", "month", "year"] as const).map((r) => {
+            const active = range === r;
+            const label = r === "week" ? "Week" : r === "month" ? "Month" : "Year";
+            return (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRange(r)}
+                aria-pressed={active}
+                className={[
+                  "rounded-lg px-3 py-1.5 text-xs font-semibold transition",
+                  active
+                    ? "bg-brand-400 text-deep-900 dark:bg-brand-500"
+                    : "text-deep-600 hover:bg-cream-100 dark:text-cream-400 dark:hover:bg-deep-800",
+                ].join(" ")}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
+      </div>
+
+      {/* KPI strip */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiWithSpark
+          label="Businesses"
+          total={stats.totals.businesses}
+          inRange={stats.inRange.businesses}
+          hint={`${stats.businesses.pending} pending · ${stats.businesses.approved} approved`}
+          tone="businesses"
+          series={seriesBiz}
+          sparkTone="brand"
+          onClick={() => onNavigate("businesses")}
+        />
+        <KpiWithSpark
+          label="Tour operators"
+          total={stats.totals.operators}
+          inRange={stats.inRange.operators}
+          hint={`${stats.operators.pending} pending · ${stats.operators.approved} verified`}
+          tone="operators"
+          series={seriesOps}
+          sparkTone="indigo"
+          onClick={() => onNavigate("operators")}
+        />
+        <KpiWithSpark
+          label="Incidents"
+          total={stats.totals.incidents}
+          inRange={stats.inRange.incidents}
+          hint={`${stats.incidents.open} open · ${stats.incidents.escalated} escalated`}
+          tone="incidents"
+          series={seriesInc}
+          sparkTone="rose"
+          onClick={() => onNavigate("incidents")}
+        />
+        <KpiWithSpark
+          label="Investor inquiries"
+          total={stats.totals.inquiries}
+          inRange={stats.inRange.inquiries}
+          hint={`${stats.inquiries.new} new · ${stats.inquiries.inReview} in review`}
+          tone="inquiries"
+          series={seriesInq}
+          sparkTone="emerald"
+          onClick={() => onNavigate("inquiries")}
+        />
       </section>
+{/* Row: Activity (50%) + Incident (25%) + Investor (25%) */}
+<section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+  {/* Activity by month — half width on lg+ */}
+  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900 lg:col-span-2">
+    <div className="mb-4">
+      <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+        Activity by month
+      </h2>
+      <p className="text-xs text-deep-400 dark:text-cream-600">
+        {range === "year"
+          ? "Monthly new records across four streams"
+          : "Daily new records across four streams"}
+      </p>
+    </div>
+    <CombinedLineChart data={combined} />
+  </div>
 
-      {/* ── Status breakdown ── */}
-      <section>
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-            Status breakdown
-          </h2>
-        </div>
+  {/* Incident pipeline — quarter width on lg+ */}
+  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+    <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+      Incident pipeline
+    </h2>
+    <Donut
+      total={stats.incidents.total}
+      centerLabel="Total"
+      segments={[
+        { label: "Open", value: stats.incidents.open, tone: "rose" },
+        { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
+        { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
+        { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
+        { label: "Closed", value: stats.incidents.closed, tone: "sky" },
+      ]}
+    />
+    <DonutLegend
+      segments={[
+        { label: "Open", value: stats.incidents.open, tone: "rose" },
+        { label: "Under review", value: stats.incidents.underReview, tone: "amber" },
+        { label: "Escalated", value: stats.incidents.escalated, tone: "violet" },
+        { label: "Resolved", value: stats.incidents.resolved, tone: "emerald" },
+        { label: "Closed", value: stats.incidents.closed, tone: "sky" },
+      ]}
+      total={stats.incidents.total}
+    />
+  </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <StatusCard
-            title="Business composition"
-            rows={[
-              {
-                label: "Accommodation",
-                value: stats.businesses.byType.accommodation,
-                total: stats.businesses.total,
-                tone: "brand",
-              },
-              {
-                label: "Tour operators",
-                value: stats.businesses.byType.tourOperator,
-                total: stats.businesses.total,
-                tone: "indigo",
-              },
-            ]}
-            onNavigate={() => onNavigate("businesses")}
-          />
+  {/* Investor funnel — quarter width on lg+ */}
+  <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+    <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+      Investor funnel
+    </h2>
+    <Donut
+      total={stats.inquiries.total}
+      centerLabel="Total"
+      segments={[
+        { label: "New", value: stats.inquiries.new, tone: "brand" },
+        { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
+        { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
+        { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
+      ]}
+    />
+    <DonutLegend
+      segments={[
+        { label: "New", value: stats.inquiries.new, tone: "brand" },
+        { label: "In review", value: stats.inquiries.inReview, tone: "amber" },
+        { label: "Contacted", value: stats.inquiries.contacted, tone: "indigo" },
+        { label: "Closed", value: stats.inquiries.closed, tone: "emerald" },
+      ]}
+      total={stats.inquiries.total}
+    />
+  </div>
+</section>
 
-          <StatusCard
-            title="Incident pipeline"
-            rows={[
-              {
-                label: "Open",
-                value: stats.incidents.open,
-                total: stats.incidents.total,
-                tone: "rose",
-              },
-              {
-                label: "Under review",
-                value: stats.incidents.underReview,
-                total: stats.incidents.total,
-                tone: "amber",
-              },
-              {
-                label: "Escalated",
-                value: stats.incidents.escalated,
-                total: stats.incidents.total,
-                tone: "violet",
-              },
-              {
-                label: "Resolved",
-                value: stats.incidents.resolved + stats.incidents.closed,
-                total: stats.incidents.total,
-                tone: "emerald",
-              },
-            ]}
-            onNavigate={() => onNavigate("incidents")}
-          />
-
-          <StatusCard
-            title="Investor funnel"
-            rows={[
-              {
-                label: "New",
-                value: stats.inquiries.new,
-                total: stats.inquiries.total,
-                tone: "brand",
-              },
-              {
-                label: "In review",
-                value: stats.inquiries.inReview,
-                total: stats.inquiries.total,
-                tone: "amber",
-              },
-              {
-                label: "Contacted",
-                value: stats.inquiries.contacted,
-                total: stats.inquiries.total,
-                tone: "indigo",
-              },
-              {
-                label: "Closed",
-                value: stats.inquiries.closed,
-                total: stats.inquiries.total,
-                tone: "emerald",
-              },
-            ]}
-            onNavigate={() => onNavigate("inquiries")}
-          />
-        </div>
-      </section>
-
-      {/* ── Content inventory ── */}
-      <section>
-        <div className="mb-3 flex items-baseline justify-between">
+      {/* Content inventory */}
+      <section className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900">
+        <div className="mb-4 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
             Content inventory
           </h2>
           <p className="text-xs text-deep-400 dark:text-cream-600">
-            Public-facing content across the site
+            Published vs. draft per type
           </p>
         </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <ContentTile
-            label="Destinations"
-            total={stats.content.destinations.total}
-            hint={`${stats.content.destinations.featured} featured`}
-            tone="destinations"
-            onClick={() => onNavigate("destinations")}
-          />
-          <ContentTile
-            label="Experiences"
-            total={stats.content.experiences.total}
-            hint="attractions and activities"
-            tone="experiences"
-            onClick={() => onNavigate("experiences")}
-          />
-          <ContentTile
-            label="Packages"
-            total={stats.content.packages.total}
-            hint={`${stats.content.packages.published} published · ${stats.content.packages.featured} featured`}
-            tone="packages"
-            onClick={() => onNavigate("packages")}
-          />
-          <ContentTile
-            label="Stays"
-            total={stats.content.stays.total}
-            hint="hotels, lodges, camps"
-            tone="stay"
-            onClick={() => onNavigate("stay")}
-          />
-          <ContentTile
-            label="Events"
-            total={stats.content.events.total}
-            hint={`${stats.content.events.upcoming} upcoming · ${stats.content.events.featured} featured`}
-            tone="events"
-            onClick={() => onNavigate("events")}
-          />
-          <ContentTile
-            label="Blog posts"
-            total={stats.content.posts.total}
-            hint={`${stats.content.posts.published} published`}
-            tone="blog"
-            onClick={() => onNavigate("blog")}
-          />
-        </div>
+        <StackedBar
+          rows={[
+            {
+              label: `Packages (${stats.content.packages.total})`,
+              segments: [
+                { label: "Published", value: stats.content.packages.published, tone: "bg-indigo-500" },
+                { label: "Draft", value: stats.content.packages.total - stats.content.packages.published, tone: "bg-indigo-200 dark:bg-indigo-900" },
+              ],
+            },
+            {
+              label: `Blog posts (${stats.content.posts.total})`,
+              segments: [
+                { label: "Published", value: stats.content.posts.published, tone: "bg-sky-500" },
+                { label: "Draft", value: stats.content.posts.total - stats.content.posts.published, tone: "bg-sky-200 dark:bg-sky-900" },
+              ],
+            },
+            {
+              label: `Events (${stats.content.events.total})`,
+              segments: [
+                { label: "Upcoming", value: stats.content.events.upcoming, tone: "bg-violet-500" },
+                { label: "Past", value: stats.content.events.total - stats.content.events.upcoming, tone: "bg-violet-200 dark:bg-violet-900" },
+              ],
+            },
+            {
+              label: `Destinations (${stats.content.destinations.total})`,
+              segments: [
+                { label: "Featured", value: stats.content.destinations.featured, tone: "bg-brand-500" },
+                { label: "Standard", value: stats.content.destinations.total - stats.content.destinations.featured, tone: "bg-brand-200 dark:bg-brand-900" },
+              ],
+            },
+          ]}
+        />
       </section>
 
-      {/* ── Recent activity ── */}
+      {/* Activity lists */}
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
@@ -969,30 +955,28 @@ function Overview({
   );
 }
 
-function KpiCard({
+// ─── Overview helpers ──────────────────────────────────────────────
+
+function KpiWithSpark({
   label,
-  value,
+  total,
+  inRange,
   hint,
   tone,
-  trend,
+  series,
+  sparkTone,
   onClick,
 }: {
   label: string;
-  value: number;
+  total: number;
+  inRange: number;
   hint: string;
   tone: keyof typeof TONES;
-  trend?: { label: string; tone: "amber" | "emerald" | "rose" | "brand" };
+  series: number[];
+  sparkTone: ChartTone;
   onClick: () => void;
 }) {
   const meta = TONES[tone];
-  const trendTone =
-    trend?.tone === "amber"
-      ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-      : trend?.tone === "emerald"
-        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-        : trend?.tone === "rose"
-          ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
-          : "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300";
 
   return (
     <button
@@ -1014,148 +998,71 @@ function KpiCard({
         </span>
       </div>
 
-      {/* value — matches the original dashboard number style */}
       <div className="mt-3 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
-        {value.toLocaleString()}
+        {total.toLocaleString()}
       </div>
 
-      <div className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-        {hint}
+      <div className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+        +{inRange} in range
       </div>
 
-      {trend && (
-        <div className="mt-3 flex items-center gap-2">
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${trendTone}`}
-          >
-            {trend.label}
-          </span>
-        </div>
-      )}
+      <div className="-mx-1 mt-3">
+        <Sparkline
+          data={series.length > 1 ? series : [...series, ...series]}
+          tone={sparkTone}
+          height={40}
+        />
+      </div>
+
+      <div className="mt-2 text-xs text-deep-500 dark:text-cream-500">{hint}</div>
     </button>
   );
 }
 
-function StatusCard({
-  title,
-  rows,
-  onNavigate,
+function DonutLegend({
+  segments,
+  total,
 }: {
-  title: string;
-  rows: { label: string; value: number; total: number; tone: string }[];
-  onNavigate: () => void;
+  segments: Array<{ label: string; value: number; tone: ChartTone }>;
+  total: number;
 }) {
-  const colorFor = (tone: string) => {
-    switch (tone) {
-      case "rose":
-        return "bg-rose-500";
-      case "amber":
-        return "bg-amber-500";
-      case "violet":
-        return "bg-violet-500";
-      case "indigo":
-        return "bg-indigo-500";
-      case "emerald":
-        return "bg-emerald-500";
-      case "brand":
-        return "bg-brand-500";
-      default:
-        return "bg-deep-400";
-    }
+  const dot: Record<ChartTone, string> = {
+    brand: "bg-brand-500",
+    amber: "bg-amber-500",
+    emerald: "bg-emerald-500",
+    rose: "bg-rose-500",
+    violet: "bg-violet-500",
+    indigo: "bg-indigo-500",
+    sky: "bg-sky-500",
+    deep: "bg-deep-500",
+    cream: "bg-cream-500",
   };
 
   return (
-    <button
-      type="button"
-      onClick={onNavigate}
-      className="group flex flex-col rounded-2xl border border-deep-200 bg-cream-50 p-5 text-left transition hover:border-brand-400 dark:border-deep-800 dark:bg-deep-900 dark:hover:border-brand-500"
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
-          {title}
-        </span>
-        <span className="text-xs text-deep-400 transition group-hover:text-brand-500 dark:text-cream-600">
-          →
-        </span>
-      </div>
-
-      <div className="space-y-3">
-        {rows.map((r) => {
-          const pct = r.total > 0 ? Math.round((r.value / r.total) * 100) : 0;
-          return (
-            <div key={r.label}>
-              <div className="mb-1 flex items-baseline justify-between text-xs">
-                <span className="text-deep-600 dark:text-cream-400">
-                  {r.label}
-                </span>
-                <span className="text-deep-800 dark:text-cream-100">
-                  {r.value}
-                  <span className="ml-1 text-deep-400 dark:text-cream-600">
-                    / {r.total}
-                  </span>
-                </span>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream-200 dark:bg-deep-800">
-                <div
-                  className={`h-full rounded-full transition-all ${colorFor(r.tone)}`}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </button>
+    <ul className="mt-3 space-y-1 text-xs">
+      {segments.map((s) => (
+        <li key={s.label} className="flex items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className={`inline-block h-2 w-2 rounded-full ${dot[s.tone]}`}
+            />
+            <span className="text-deep-700 dark:text-cream-300">{s.label}</span>
+          </span>
+          <span className="font-mono text-deep-800 dark:text-cream-100">
+            {s.value}{" "}
+            <span className="text-deep-400 dark:text-cream-600">
+              ({total > 0 ? Math.round((s.value / total) * 100) : 0}%)
+            </span>
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
+// ─── Shared module cards ───────────────────────────────────────────
 
-function ContentTile({
-  label,
-  total,
-  hint,
-  tone,
-  onClick,
-}: {
-  label: string;
-  total: number;
-  hint: string;
-  tone: keyof typeof TONES;
-  onClick: () => void;
-}) {
-  const meta = TONES[tone];
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group flex items-center gap-3 rounded-xl border bg-cream-50 px-4 py-3 text-left transition hover:border-brand-400 dark:bg-deep-900 dark:hover:border-brand-500 ${meta.border}`}
-    >
-      <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
-        aria-hidden
-      >
-        {meta.icon}
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="text-xs font-semibold uppercase tracking-wider text-deep-500 dark:text-cream-500">
-          {label}
-        </div>
-        <div className="mt-0.5 flex items-baseline gap-2">
-          {/* total — uses default sans, matching module rows */}
-          <span className="text-lg font-bold text-deep-800 dark:text-cream-100">
-            {total}
-          </span>
-          <span className="truncate text-xs text-deep-500 dark:text-cream-500">
-            {hint}
-          </span>
-        </div>
-      </div>
-      <span className="text-deep-300 transition group-hover:text-brand-500 dark:text-cream-700">
-        →
-      </span>
-    </button>
-  );
-}
 function ActivityList({
   title,
   items,
@@ -1225,9 +1132,7 @@ function ActivityList({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* DESTINATIONS MODULE                                                        */
-/* -------------------------------------------------------------------------- */
+// ─── Destinations ──────────────────────────────────────────────────
 
 function DestinationsModule({
   destinations,
@@ -1353,12 +1258,8 @@ function DestinationEditor({
   const [description, setDescription] = useState(destination.description);
   const [imageUrl, setImageUrl] = useState(destination.imageUrl ?? "");
   const [featured, setFeatured] = useState(destination.featured);
-  const [latitude, setLatitude] = useState<number | null>(
-    destination.latitude ?? null
-  );
-  const [longitude, setLongitude] = useState<number | null>(
-    destination.longitude ?? null
-  );
+  const [latitude, setLatitude] = useState<number | null>(destination.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(destination.longitude ?? null);
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -1404,53 +1305,38 @@ function DestinationEditor({
 
       <Field label="Location on map">
         <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the destination&apos;s coordinates from Google Maps. The public
-          destination page will render this location.
+          Paste the destination&apos;s coordinates from Google Maps.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Latitude
-            </span>
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
             <input
               type="number"
               step="any"
               value={latitude ?? ""}
-              onChange={(e) =>
-                setLatitude(e.target.value === "" ? null : Number(e.target.value))
-              }
+              onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))}
               placeholder="-1.4850"
               className={inputClass}
             />
           </label>
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Longitude
-            </span>
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
             <input
               type="number"
               step="any"
               value={longitude ?? ""}
-              onChange={(e) =>
-                setLongitude(e.target.value === "" ? null : Number(e.target.value))
-              }
+              onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))}
               placeholder="35.3720"
               className={inputClass}
             />
           </label>
         </div>
-
         {latitude != null && longitude != null ? (
           <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-            Selected:{" "}
-            <span className="font-mono">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
+            Selected: <span className="font-mono">{latitude.toFixed(5)}, {longitude.toFixed(5)}</span>
           </p>
         ) : (
-          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
-            No coordinates set yet.
-          </p>
+          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">No coordinates set yet.</p>
         )}
       </Field>
 
@@ -1459,9 +1345,7 @@ function DestinationEditor({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* EXPERIENCES MODULE                                                         */
-/* -------------------------------------------------------------------------- */
+// ─── Experiences ───────────────────────────────────────────────────
 
 function ExperiencesModule({
   experiences,
@@ -1586,12 +1470,8 @@ function ExperienceEditor({
   const [category, setCategory] = useState(experience.category);
   const [imageUrl, setImageUrl] = useState(experience.imageUrl ?? "");
   const [destinationId, setDestinationId] = useState(experience.destinationId);
-  const [latitude, setLatitude] = useState<number | null>(
-    experience.latitude ?? null
-  );
-  const [longitude, setLongitude] = useState<number | null>(
-    experience.longitude ?? null
-  );
+  const [latitude, setLatitude] = useState<number | null>(experience.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(experience.longitude ?? null);
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -1621,24 +1501,14 @@ function ExperienceEditor({
       onSave={handleSave}
       tone={tone}
     >
-      <Field label="Name">
-        <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
-      </Field>
-      <Field label="Slug">
-        <input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
-      </Field>
+      <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
+      <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Category">
         <input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Wildlife, Cultural, Beach, Adventure" className={inputClass} />
       </Field>
       <Field label="Destination">
-        <select
-          value={destinationId}
-          onChange={(e) => setDestinationId(Number(e.target.value))}
-          className={inputClass}
-        >
-          {destinations.map((d) => (
-            <option key={d.id} value={d.id}>{d.name}</option>
-          ))}
+        <select value={destinationId} onChange={(e) => setDestinationId(Number(e.target.value))} className={inputClass}>
+          {destinations.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
       </Field>
       <Field label="Description">
@@ -1649,62 +1519,22 @@ function ExperienceEditor({
       </Field>
 
       <Field label="Location on map">
-        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the experience&apos;s coordinates from Google Maps. If unset,
-          the public page falls back to the parent destination&apos;s pin.
-        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Latitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={latitude ?? ""}
-              onChange={(e) =>
-                setLatitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="-1.4850"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
+            <input type="number" step="any" value={latitude ?? ""} onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="-1.4850" className={inputClass} />
           </label>
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Longitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={longitude ?? ""}
-              onChange={(e) =>
-                setLongitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="35.3720"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
+            <input type="number" step="any" value={longitude ?? ""} onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="35.3720" className={inputClass} />
           </label>
         </div>
-        {latitude != null && longitude != null ? (
-          <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-            Selected:{" "}
-            <span className="font-mono">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
-          </p>
-        ) : (
-          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
-            No coordinates set yet — will fall back to destination.
-          </p>
-        )}
       </Field>
     </EditorShell>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* PACKAGES MODULE                                                            */
-/* -------------------------------------------------------------------------- */
+// ─── Packages ──────────────────────────────────────────────────────
 
 function PackagesModule({
   packages,
@@ -1833,12 +1663,8 @@ function PackageEditor({
   const [imageUrl, setImageUrl] = useState(pkg.imageUrl ?? "");
   const [featured, setFeatured] = useState(pkg.featured);
   const [destinationId, setDestinationId] = useState(pkg.destinationId);
-  const [latitude, setLatitude] = useState<number | null>(
-    pkg.latitude ?? null
-  );
-  const [longitude, setLongitude] = useState<number | null>(
-    pkg.longitude ?? null
-  );
+  const [latitude, setLatitude] = useState<number | null>(pkg.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(pkg.longitude ?? null);
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -1875,66 +1701,24 @@ function PackageEditor({
         </select>
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Price (KES)">
-          <input type="number" value={priceKes} onChange={(e) => setPriceKes(Number(e.target.value))} className={inputClass} />
-        </Field>
-        <Field label="Duration (days)">
-          <input type="number" value={durationDays} onChange={(e) => setDurationDays(Number(e.target.value))} className={inputClass} />
-        </Field>
+        <Field label="Price (KES)"><input type="number" value={priceKes} onChange={(e) => setPriceKes(Number(e.target.value))} className={inputClass} /></Field>
+        <Field label="Duration (days)"><input type="number" value={durationDays} onChange={(e) => setDurationDays(Number(e.target.value))} className={inputClass} /></Field>
       </div>
       <Field label="Summary"><textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} className={inputClass} /></Field>
       <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
 
       <Field label="Location on map">
-        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the package&apos;s departure point or primary location
-          coordinates. If unset, falls back to the destination&apos;s pin.
-        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Latitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={latitude ?? ""}
-              onChange={(e) =>
-                setLatitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="-1.4850"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
+            <input type="number" step="any" value={latitude ?? ""} onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="-1.4850" className={inputClass} />
           </label>
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Longitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={longitude ?? ""}
-              onChange={(e) =>
-                setLongitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="35.3720"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
+            <input type="number" step="any" value={longitude ?? ""} onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="35.3720" className={inputClass} />
           </label>
         </div>
-        {latitude != null && longitude != null ? (
-          <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-            Selected:{" "}
-            <span className="font-mono">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
-          </p>
-        ) : (
-          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
-            No coordinates set yet — will fall back to destination.
-          </p>
-        )}
       </Field>
 
       <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
@@ -1942,9 +1726,7 @@ function PackageEditor({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* STAY MODULE                                                                */
-/* -------------------------------------------------------------------------- */
+// ─── Stay ──────────────────────────────────────────────────────────
 
 function StaysModule({
   stays,
@@ -2040,11 +1822,7 @@ function StaysModule({
             onSave={handleSave}
           />
         ) : (
-          <EmptyEditorState
-            title="Select a stay"
-            description="Choose a stay to edit."
-            tone={tone}
-          />
+          <EmptyEditorState title="Select a stay" description="Choose a stay to edit." tone={tone} />
         )
       }
     />
@@ -2072,12 +1850,8 @@ function StayEditor({
   const [priceRange, setPriceRange] = useState(stay.priceRange ?? "");
   const [imageUrl, setImageUrl] = useState(stay.imageUrl ?? "");
   const [destinationId, setDestinationId] = useState(stay.destinationId);
-  const [latitude, setLatitude] = useState<number | null>(
-    stay.latitude ?? null
-  );
-  const [longitude, setLongitude] = useState<number | null>(
-    stay.longitude ?? null
-  );
+  const [latitude, setLatitude] = useState<number | null>(stay.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(stay.longitude ?? null);
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -2097,14 +1871,7 @@ function StayEditor({
   }
 
   return (
-    <EditorShell
-      eyebrow="Edit stay"
-      title="Stay details"
-      onClose={onClose}
-      saving={saving}
-      onSave={handleSave}
-      tone={tone}
-    >
+    <EditorShell eyebrow="Edit stay" title="Stay details" onClose={onClose} saving={saving} onSave={handleSave} tone={tone}>
       <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Type">
@@ -2126,62 +1893,22 @@ function StayEditor({
       <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
 
       <Field label="Location on map">
-        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the lodge&apos;s coordinates from Google Maps. If unset, the
-          public page falls back to the parent destination&apos;s pin.
-        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Latitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={latitude ?? ""}
-              onChange={(e) =>
-                setLatitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="-1.4850"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
+            <input type="number" step="any" value={latitude ?? ""} onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="-1.4850" className={inputClass} />
           </label>
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Longitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={longitude ?? ""}
-              onChange={(e) =>
-                setLongitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="35.3720"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
+            <input type="number" step="any" value={longitude ?? ""} onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="35.3720" className={inputClass} />
           </label>
         </div>
-        {latitude != null && longitude != null ? (
-          <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-            Selected:{" "}
-            <span className="font-mono">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
-          </p>
-        ) : (
-          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
-            No coordinates set yet — will fall back to destination.
-          </p>
-        )}
       </Field>
     </EditorShell>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* EVENTS MODULE                                                              */
-/* -------------------------------------------------------------------------- */
+// ─── Events ────────────────────────────────────────────────────────
 
 function EventsModule({
   events,
@@ -2277,19 +2004,9 @@ function EventsModule({
       }
       editor={
         editing ? (
-          <EventEditor
-            key={editing.id}
-            event={editing}
-            tone={tone}
-            onClose={() => setEditingId(null)}
-            onSave={handleSave}
-          />
+          <EventEditor key={editing.id} event={editing} tone={tone} onClose={() => setEditingId(null)} onSave={handleSave} />
         ) : (
-          <EmptyEditorState
-            title="Select an event"
-            description="Choose an event to edit."
-            tone={tone}
-          />
+          <EmptyEditorState title="Select an event" description="Choose an event to edit." tone={tone} />
         )
       }
     />
@@ -2315,12 +2032,8 @@ function EventEditor({
   const [endDate, setEndDate] = useState(event.endDate ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
   const [featured, setFeatured] = useState(event.featured);
-  const [latitude, setLatitude] = useState<number | null>(
-    event.latitude ?? null
-  );
-  const [longitude, setLongitude] = useState<number | null>(
-    event.longitude ?? null
-  );
+  const [latitude, setLatitude] = useState<number | null>(event.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(event.longitude ?? null);
   const [saving, startSave] = useTransition();
 
   function handleSave() {
@@ -2328,8 +2041,7 @@ function EventEditor({
       await onSave({
         ...event,
         name, slug, description, location,
-        startDate,
-        endDate: endDate || null,
+        startDate, endDate: endDate || null,
         imageUrl: imageUrl.trim() || null,
         featured,
         latitude,
@@ -2339,88 +2051,28 @@ function EventEditor({
   }
 
   return (
-    <EditorShell
-      eyebrow="Edit event"
-      title="Event details"
-      onClose={onClose}
-      saving={saving}
-      onSave={handleSave}
-      tone={tone}
-    >
-      <Field label="Name">
-        <input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
-      </Field>
-      <Field label="Slug">
-        <input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
-      </Field>
+    <EditorShell eyebrow="Edit event" title="Event details" onClose={onClose} saving={saving} onSave={handleSave} tone={tone}>
+      <Field label="Name"><input value={name} onChange={(e) => setName(e.target.value)} className={inputClass} /></Field>
+      <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Start date">
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
-        </Field>
-        <Field label="End date">
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
-        </Field>
+        <Field label="Start date"><input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} /></Field>
+        <Field label="End date"><input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} /></Field>
       </div>
-      <Field label="Location">
-        <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} />
-      </Field>
-      <Field label="Description">
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} />
-      </Field>
-      <Field label="Image URL">
-        <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} />
-      </Field>
+      <Field label="Location"><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} /></Field>
+      <Field label="Description"><textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className={inputClass} /></Field>
+      <Field label="Image URL"><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} /></Field>
 
       <Field label="Location on map">
-        <p className="mb-2 text-xs text-deep-500 dark:text-cream-500">
-          Paste the event&apos;s coordinates from Google Maps. The public event
-          page will render this location.
-        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Latitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={latitude ?? ""}
-              onChange={(e) =>
-                setLatitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="-1.4850"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Latitude</span>
+            <input type="number" step="any" value={latitude ?? ""} onChange={(e) => setLatitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="-1.4850" className={inputClass} />
           </label>
           <label className="block">
-            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-              Longitude
-            </span>
-            <input
-              type="number"
-              step="any"
-              value={longitude ?? ""}
-              onChange={(e) =>
-                setLongitude(e.target.value === "" ? null : Number(e.target.value))
-              }
-              placeholder="35.3720"
-              className={inputClass}
-            />
+            <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">Longitude</span>
+            <input type="number" step="any" value={longitude ?? ""} onChange={(e) => setLongitude(e.target.value === "" ? null : Number(e.target.value))} placeholder="35.3720" className={inputClass} />
           </label>
         </div>
-
-        {latitude != null && longitude != null ? (
-          <p className="mt-2 text-xs text-deep-500 dark:text-cream-500">
-            Selected:{" "}
-            <span className="font-mono">
-              {latitude.toFixed(5)}, {longitude.toFixed(5)}
-            </span>
-          </p>
-        ) : (
-          <p className="mt-2 text-xs text-deep-400 dark:text-cream-600">
-            No coordinates set yet.
-          </p>
-        )}
       </Field>
 
       <ToggleField label="Featured" checked={featured} onChange={setFeatured} tone={tone} />
@@ -2428,9 +2080,7 @@ function EventEditor({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* POSTS MODULE                                                               */
-/* -------------------------------------------------------------------------- */
+// ─── Posts ─────────────────────────────────────────────────────────
 
 function PostsModule({
   posts,
@@ -2515,19 +2165,9 @@ function PostsModule({
       }
       editor={
         editing ? (
-          <PostEditor
-            key={editing.id}
-            post={editing}
-            tone={tone}
-            onClose={() => setEditingId(null)}
-            onSave={handleSave}
-          />
+          <PostEditor key={editing.id} post={editing} tone={tone} onClose={() => setEditingId(null)} onSave={handleSave} />
         ) : (
-          <EmptyEditorState
-            title="Select a post"
-            description="Choose a post to edit."
-            tone={tone}
-          />
+          <EmptyEditorState title="Select a post" description="Choose a post to edit." tone={tone} />
         )
       }
     />
@@ -2569,35 +2209,20 @@ function PostEditor({
   }
 
   return (
-    <EditorShell
-      eyebrow="Edit post"
-      title="Post details"
-      onClose={onClose}
-      saving={saving}
-      onSave={handleSave}
-      tone={tone}
-    >
+    <EditorShell eyebrow="Edit post" title="Post details" onClose={onClose} saving={saving} onSave={handleSave} tone={tone}>
       <Field label="Title"><input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} /></Field>
       <Field label="Slug"><input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} /></Field>
       <Field label="Excerpt"><textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={3} className={inputClass} /></Field>
-      <Field label="Content">
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={12} className={inputClass} />
-      </Field>
+      <Field label="Content"><textarea value={content} onChange={(e) => setContent(e.target.value)} rows={12} className={inputClass} /></Field>
       <Field label="Cover image URL"><input value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className={inputClass} /></Field>
-      <Field label="Tags (comma separated)">
-        <input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="Safari, Wildlife, Planning" className={inputClass} />
-      </Field>
-      <Field label="Published date">
-        <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={inputClass} />
-      </Field>
+      <Field label="Tags (comma separated)"><input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="Safari, Wildlife, Planning" className={inputClass} /></Field>
+      <Field label="Published date"><input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={inputClass} /></Field>
       <ToggleField label="Published (visible on public site)" checked={published} onChange={setPublished} tone={tone} />
     </EditorShell>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* SHARED COMPONENTS                                                          */
-/* -------------------------------------------------------------------------- */
+// ─── Shared components ─────────────────────────────────────────────
 
 function ModuleLayout({
   title,
@@ -2619,17 +2244,12 @@ function ModuleLayout({
       <FadeIn>
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex items-start gap-3">
-            <span
-              className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`}
-              aria-hidden
-            >
+            <span className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone.bgSoft} ${tone.text}`} aria-hidden>
               {tone.icon}
             </span>
             <div>
               <h2 className={`text-xl font-bold ${tone.text}`}>{title}</h2>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
-                {description}
-              </p>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">{description}</p>
             </div>
           </div>
           {action}
@@ -2638,9 +2258,7 @@ function ModuleLayout({
 
       <div className="grid gap-4 xl:grid-cols-[1fr_420px]">
         <div>{list}</div>
-        <div>
-          <FadeIn delay={0.15}>{editor}</FadeIn>
-        </div>
+        <div><FadeIn delay={0.15}>{editor}</FadeIn></div>
       </div>
     </div>
   );
@@ -2676,12 +2294,7 @@ function RowCard({
           : `border-deep-200 ${tone.borderHover} dark:border-deep-800`,
       ].join(" ")}
     >
-      <span
-        className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${
-          active ? "opacity-100" : "opacity-40"
-        }`}
-        aria-hidden
-      />
+      <span className={`absolute inset-y-0 left-0 w-1 ${tone.bar} ${active ? "opacity-100" : "opacity-40"}`} aria-hidden />
 
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
@@ -2699,19 +2312,10 @@ function RowCard({
           </p>
         </div>
         <div className="flex shrink-0 gap-2">
-          <button
-            type="button"
-            onClick={onEdit}
-            className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${tone.border} ${tone.text} ${tone.bgSoft} hover:opacity-80 dark:hover:opacity-90`}
-          >
+          <button type="button" onClick={onEdit} className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${tone.border} ${tone.text} ${tone.bgSoft} hover:opacity-80 dark:hover:opacity-90`}>
             Edit
           </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            disabled={disabled}
-            className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
-          >
+          <button type="button" onClick={onDelete} disabled={disabled} className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40">
             Delete
           </button>
         </div>
@@ -2720,24 +2324,9 @@ function RowCard({
   );
 }
 
-function AddButton({
-  onClick,
-  pending,
-  label,
-  tone,
-}: {
-  onClick: () => void;
-  pending: boolean;
-  label: string;
-  tone: ModuleTone;
-}) {
+function AddButton({ onClick, pending, label, tone }: { onClick: () => void; pending: boolean; label: string; tone: ModuleTone }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={pending}
-      className={`inline-flex items-center gap-2 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60`}
-    >
+    <button type="button" onClick={onClick} disabled={pending} className={`inline-flex items-center gap-2 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60`}>
       <PlusIcon />
       {pending ? "Adding…" : label}
     </button>
@@ -2767,17 +2356,10 @@ function EditorShell({
 
       <div className="flex items-start justify-between border-b border-deep-200 bg-cream-50 px-5 py-4 dark:border-deep-800 dark:bg-deep-900">
         <div>
-          <div className={`text-xs font-semibold uppercase tracking-[0.14em] ${tone.text}`}>
-            {eyebrow}
-          </div>
+          <div className={`text-xs font-semibold uppercase tracking-[0.14em] ${tone.text}`}>{eyebrow}</div>
           <h3 className="mt-1 font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-deep-400 transition hover:text-deep-700 dark:text-cream-500 dark:hover:text-cream-100"
-          aria-label="Close editor"
-        >
+        <button type="button" onClick={onClose} className="text-deep-400 transition hover:text-deep-700 dark:text-cream-500 dark:hover:text-cream-100" aria-label="Close editor">
           <XIcon />
         </button>
       </div>
@@ -2787,20 +2369,10 @@ function EditorShell({
           {children}
 
           <div className="flex gap-2 border-t border-deep-200 pt-4 dark:border-deep-800">
-            <button
-              type="button"
-              onClick={onSave}
-              disabled={saving}
-              className={`flex-1 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60`}
-            >
+            <button type="button" onClick={onSave} disabled={saving} className={`flex-1 rounded-xl ${tone.button} ${tone.buttonHover} px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60`}>
               {saving ? "Saving…" : "Save changes"}
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={saving}
-              className="rounded-xl border border-deep-200 px-4 py-2.5 text-sm font-semibold text-deep-600 transition hover:bg-cream-100 dark:border-deep-800 dark:text-cream-300 dark:hover:bg-deep-800"
-            >
+            <button type="button" onClick={onClose} disabled={saving} className="rounded-xl border border-deep-200 px-4 py-2.5 text-sm font-semibold text-deep-600 transition hover:bg-cream-100 dark:border-deep-800 dark:text-cream-300 dark:hover:bg-deep-800">
               Cancel
             </button>
           </div>
@@ -2813,9 +2385,7 @@ function EditorShell({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
-        {label}
-      </span>
+      <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">{label}</span>
       {children}
     </label>
   );
@@ -2833,9 +2403,7 @@ function ToggleField({
   tone: ModuleTone;
 }) {
   return (
-    <label
-      className={`flex items-center gap-3 rounded-xl border ${tone.border} ${tone.bgSoft} px-3.5 py-3 text-sm`}
-    >
+    <label className={`flex items-center gap-3 rounded-xl border ${tone.border} ${tone.bgSoft} px-3.5 py-3 text-sm`}>
       <input
         type="checkbox"
         checked={checked}
@@ -2848,30 +2416,14 @@ function ToggleField({
   );
 }
 
-function EmptyEditorState({
-  title,
-  description,
-  tone,
-}: {
-  title: string;
-  description: string;
-  tone: ModuleTone;
-}) {
+function EmptyEditorState({ title, description, tone }: { title: string; description: string; tone: ModuleTone }) {
   return (
-    <div
-      className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}
-    >
-      <div
-        className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}
-      >
+    <div className={`sticky top-6 rounded-2xl border-2 border-dashed ${tone.border} ${tone.bgSoft} p-8 text-center`}>
+      <div className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${tone.pillBg} ${tone.text}`}>
         <PencilLineIcon />
       </div>
-      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">
-        {title}
-      </h3>
-      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">
-        {description}
-      </p>
+      <h3 className="mt-4 text-sm font-semibold text-deep-800 dark:text-cream-100">{title}</h3>
+      <p className="mx-auto mt-2 max-w-xs text-xs leading-5 text-deep-600 dark:text-cream-400">{description}</p>
     </div>
   );
 }
@@ -2888,10 +2440,7 @@ function LoadingSkeletons() {
   return (
     <Stagger delayStart={0.05} delayStep={0.06} maxDelay={0.25}>
       {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          className="h-28 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900"
-        />
+        <div key={i} className="h-28 animate-pulse rounded-2xl border border-deep-200 bg-cream-50 dark:border-deep-800 dark:bg-deep-900" />
       ))}
     </Stagger>
   );
@@ -2905,9 +2454,7 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* ICONS                                                                      */
-/* -------------------------------------------------------------------------- */
+// ─── Icons ─────────────────────────────────────────────────────────
 
 const iconBase = {
   fill: "none",
@@ -2919,159 +2466,33 @@ const iconBase = {
   className: "h-5 w-5",
 };
 
-function GridIcon() {
-  return (
-    <svg {...iconBase}>
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
-
-function CompassMarkIcon() {
-  return (
-    <svg {...iconBase}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
-    </svg>
-  );
-}
-
-function BuildingIcon() {
-  return (
-    <svg {...iconBase}>
-      <rect x="4" y="3" width="16" height="18" rx="2" />
-      <path d="M9 21v-4h6v4M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01" />
-    </svg>
-  );
-}
-
-function PawIcon() {
-  return (
-    <svg {...iconBase}>
-      <circle cx="7" cy="9" r="2" />
-      <circle cx="12" cy="6.5" r="2" />
-      <circle cx="17" cy="9" r="2" />
-      <circle cx="5.5" cy="14" r="2" />
-      <path d="M9.5 20c1.5-2 4.5-2.5 6-1 1.5 1 3.5 1 5-1" />
-    </svg>
-  );
-}
-
-function RouteIcon() {
-  return (
-    <svg {...iconBase}>
-      <circle cx="6" cy="19" r="2" />
-      <circle cx="18" cy="5" r="2" />
-      <path d="M8 19h9a3 3 0 0 0 0-6H7a3 3 0 0 1 0-6h9" />
-    </svg>
-  );
-}
-
-function BedIcon() {
-  return (
-    <svg {...iconBase}>
-      <path d="M3 20V8m0 5h18v7M21 20v-4a3 3 0 0 0-3-3H9v7" />
-      <path d="M6.5 11.5a1.5 1.5 0 1 0 0-.01" />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg {...iconBase}>
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M3 10h18M8 3v4M16 3v4" />
-    </svg>
-  );
-}
-
-function PenIcon() {
-  return (
-    <svg {...iconBase}>
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg {...iconBase} className="h-4 w-4">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg {...iconBase} className="h-4 w-4">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-4-4" />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg {...iconBase} className="h-5 w-5">
-      <path d="M6 6l12 12M18 6 6 18" />
-    </svg>
-  );
-}
-
-function ArrowLeftIcon() {
-  return (
-    <svg {...iconBase} className="h-4 w-4">
-      <path d="M19 12H5M11 18l-6-6 6-6" />
-    </svg>
-  );
-}
-
-function PencilLineIcon() {
-  return (
-    <svg {...iconBase} className="h-5 w-5">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" />
-    </svg>
-  );
-}
-
-function InquiryIcon() {
-  return (
-    <svg {...iconBase} className="h-5 w-5">
-      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
-      <path d="m3 8 9 6 9-6" />
-    </svg>
-  );
-}
-function FolderIcon() {
-  return (
-    <svg {...iconBase} className="h-5 w-5">
-      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" />
-      <path d="m3 8 9 6 9-6" />
-    </svg>
-  );
-}
+function GridIcon() { return (<svg {...iconBase}><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>); }
+function CompassMarkIcon() { return (<svg {...iconBase}><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" /></svg>); }
+function BuildingIcon() { return (<svg {...iconBase}><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 21v-4h6v4M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01" /></svg>); }
+function PawIcon() { return (<svg {...iconBase}><circle cx="7" cy="9" r="2" /><circle cx="12" cy="6.5" r="2" /><circle cx="17" cy="9" r="2" /><circle cx="5.5" cy="14" r="2" /><path d="M9.5 20c1.5-2 4.5-2.5 6-1 1.5 1 3.5 1 5-1" /></svg>); }
+function RouteIcon() { return (<svg {...iconBase}><circle cx="6" cy="19" r="2" /><circle cx="18" cy="5" r="2" /><path d="M8 19h9a3 3 0 0 0 0-6H7a3 3 0 0 1 0-6h9" /></svg>); }
+function BedIcon() { return (<svg {...iconBase}><path d="M3 20V8m0 5h18v7M21 20v-4a3 3 0 0 0-3-3H9v7" /><path d="M6.5 11.5a1.5 1.5 0 1 0 0-.01" /></svg>); }
+function CalendarIcon() { return (<svg {...iconBase}><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>); }
+function PenIcon() { return (<svg {...iconBase}><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" /></svg>); }
+function PlusIcon() { return (<svg {...iconBase} className="h-4 w-4"><path d="M12 5v14M5 12h14" /></svg>); }
+function SearchIcon() { return (<svg {...iconBase} className="h-4 w-4"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>); }
+function XIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M6 6l12 12M18 6 6 18" /></svg>); }
+function ArrowLeftIcon() { return (<svg {...iconBase} className="h-4 w-4"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>); }
+function PencilLineIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" /></svg>); }
+function InquiryIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" /><path d="m3 8 9 6 9-6" /></svg>); }
+function FolderIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" /><path d="m3 8 9 6 9-6" /></svg>); }
 function TourGuideIcon() {
   return (
     <svg {...iconBase}>
-      {/* head */}
       <circle cx="10" cy="5" r="2.25" />
-      {/* body / shoulders */}
       <path d="M6.5 20v-3.5a3.5 3.5 0 0 1 3.5-3.5h.5" />
-      {/* guide flag pole */}
       <path d="M14 8.5V20" />
-      {/* flag pennant */}
       <path d="M14 8.5h5.5l-2 2.25 2 2.25H14Z" />
     </svg>
   );
 }
-/* -------------------------------------------------------------------------- */
-/* STYLES                                                                     */
-/* -------------------------------------------------------------------------- */
+
+// ─── Input styling ─────────────────────────────────────────────────
 
 const inputClass =
   "w-full rounded-xl border border-deep-200 bg-cream-100 px-3.5 py-3 text-sm text-deep-800 outline-none transition placeholder:text-deep-400 focus:border-brand-500 focus:bg-cream-50 focus:ring-2 focus:ring-brand-500/15 dark:border-deep-800 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500 dark:focus:border-brand-500 dark:focus:bg-deep-950";

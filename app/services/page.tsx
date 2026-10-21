@@ -32,33 +32,33 @@ const publicServices: Service[] = [
   {
     title: "Tourism Licence Application",
     description: "Apply for or renew a tourism licence for your operation.",
-    href: "https://tourkenya.go.ke/",
+    href: "https://tra.go.ke/",
     external: true,
   },
   {
     title: "Travel & Safety Information",
     description:
       "Current advisories, entry requirements, and safety guidance for visitors.",
-    href: "https://tourkenya.go.ke/",
+    href: "/safety",
     external: true,
   },
   {
     title: "Report an Incident / Occurrence",
     description:
       "Report an incident involving a licensed operator, guide, or tourism facility.",
-    href: "https://tourkenya.go.ke/",
+    href: "/report-an-incident",
     external: true,
   },
   {
     title: "Local Guides & Experts",
     description: "Find licensed guides and tourism professionals across Kenya.",
-    href: "https://tourkenya.go.ke/",
+    href: "/operators",
     external: true,
   },
   {
     title: "Events & Activity Calendar",
     description: "Upcoming tourism events, festivals, and activities.",
-    href: "https://tourkenya.go.ke/",
+    href: "/events",
     external: true,
   },
 ];

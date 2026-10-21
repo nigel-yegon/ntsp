@@ -222,7 +222,7 @@ export default function GovernmentAgenciesPage() {
             About NTSP
           </p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-deep-900 dark:text-cream-100 sm:text-4xl">
-            Government Agencies
+            State and Government Agencies
           </h1>
           <div className="divider-gold mt-5 w-24" />
           <p className="mt-5 max-w-3xl text-sm leading-relaxed text-deep-600 dark:text-cream-300 sm:text-base">
