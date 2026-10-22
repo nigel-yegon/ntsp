@@ -429,7 +429,7 @@ export default async function Home() {
       prisma.tourPackage.findMany({
         where: { featured: true },
         include: { destination: true },
-        take: 6,
+        take: 3,
         orderBy: { priceKes: "asc" },
       }),
       prisma.event.findMany({
@@ -441,10 +441,10 @@ export default async function Home() {
           ],
         },
         orderBy: { startDate: "asc" },
-        take: 6,
+        take: 4,
       }),
       prisma.attraction.findMany({
-        take: 6,
+        take: 3,
         include: { destination: true },
         orderBy: { name: "asc" },
       }),
