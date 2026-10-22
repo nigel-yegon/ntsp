@@ -84,7 +84,8 @@ type ModuleKey =
   | "stay"
   | "events"
   | "blog"
-  | "resources";
+  | "resources"
+  | "reports";
 
 type ModuleTone = {
   ring: string;
@@ -258,6 +259,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillText: "text-sky-800 dark:text-sky-200",
     icon: <PenIcon />,
   },
+   reports: {
+    ring: "ring-brand-500/20",
+    border: "border-brand-300 dark:border-brand-800",
+    borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
+    bgSoft: "bg-brand-50 dark:bg-brand-950/40",
+    bgActive: "bg-brand-100 dark:bg-brand-950/70",
+    text: "text-brand-700 dark:text-brand-300",
+    button: "bg-brand-600",
+    buttonHover: "hover:bg-brand-700",
+    bar: "bg-brand-500",
+    pillBg: "bg-brand-100 dark:bg-brand-950",
+    pillText: "text-brand-800 dark:text-brand-200",
+    icon: <FileTextIcon />,
+  },
 };
 
 // ─── Root ──────────────────────────────────────────────────────────
@@ -410,6 +425,7 @@ export function DashboardClient({ userName }: { userName: string }) {
               {activeModule === "incidents" && <IncidentsPanel search={search} />}
               {activeModule === "inquiries" && <InquiriesPanel search={search} />}
               {activeModule === "resources" && <ResourcesPanel search={search} />}
+              {activeModule === "reports" && <ReportsModule />}
 
               {activeModule === "destinations" && (
                 <DestinationsModule
@@ -505,6 +521,7 @@ function DashboardSidebar({
       { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
       { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
       { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
+      { key: "reports", label: "Reports", description: "Review & generate reports", icon: TONES.reports.icon, tone: TONES.reports}
     ];
 
   return (
@@ -547,9 +564,9 @@ function DashboardSidebar({
             </Link>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6">
-            <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
+            {/* <div className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
               Content
-            </div>
+            </div> */}
             <Stagger delayStart={0.05} delayStep={0.04} maxDelay={0.4}>
               {modules.map((m) => {
                 const active = activeModule === m.key;
@@ -650,9 +667,11 @@ function DashboardHeader({
     stay: "Stay",
     events: "Events",
     blog: "Blog",
+    reports: "Reports",
   };
 
-  const searchable = activeModule !== "overview";
+  const searchable = activeModule !== "overview" &&
+  activeModule !== "reports";
 
   return (
     <header
@@ -1069,23 +1088,10 @@ function Overview({
 // ─── Overview helpers ─────────────────────────────────────────────
 
 function KpiWithSpark({
-  label,
-  total,
-  inRange,
-  hint,
-  tone,
-  series,
-  sparkTone,
-  onClick,
+  label, total, inRange, hint, tone, series, sparkTone, onClick,
 }: {
-  label: string;
-  total: number;
-  inRange: number;
-  hint: string;
-  tone: keyof typeof TONES;
-  series: number[];
-  sparkTone: ChartTone;
-  onClick: () => void;
+  label: string; total: number; inRange: number; hint: string;
+  tone: keyof typeof TONES; series: number[]; sparkTone: ChartTone; onClick: () => void;
 }) {
   const meta = TONES[tone];
 
@@ -1093,43 +1099,44 @@ function KpiWithSpark({
     <button
       type="button"
       onClick={onClick}
-      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-cream-50 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900 ${meta.border}`}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-cream-50 py-2 px-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-deep-900 ${meta.border}`}
     >
       <span className={`absolute inset-y-0 left-0 w-1 ${meta.bar}`} aria-hidden />
 
       <div className="flex items-start justify-between gap-3">
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
           {label}
         </span>
         <span
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${meta.bgSoft} ${meta.text}`}
           aria-hidden
         >
           {meta.icon}
         </span>
       </div>
 
-      <div className="mt-3 text-3xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
+      <div className="mt-2 text-2xl font-bold tracking-tight text-deep-800 dark:text-cream-100">
         {total.toLocaleString()}
       </div>
 
-      <div className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
+      <div className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-deep-500 dark:text-cream-500">
         +{inRange} in range
       </div>
 
-      <div className="-mx-1 mt-3">
+      <div className="-mx-1 mt-2">
         <Sparkline
           data={series.length > 1 ? series : [...series, ...series]}
           tone={sparkTone}
-          height={40}
+          height={32}
         />
       </div>
 
-      <div className="mt-2 text-xs text-deep-500 dark:text-cream-500">{hint}</div>
+      <div className="mt-1.5 text-[11px] leading-tight text-deep-500 dark:text-cream-500">
+        {hint}
+      </div>
     </button>
   );
 }
-
 function DonutLegend({
   segments,
   total,
@@ -2575,6 +2582,40 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ─── Reports Placeholder ─────────────────────────────────────────
+
+function ReportsModule() {
+  return (
+    <div className="mx-auto max-w-7xl">
+      <FadeIn>
+        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-300" aria-hidden>
+              <FileTextIcon />
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-slate-700 dark:text-slate-300">Reports</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-deep-600 dark:text-cream-400">
+                Generate, view, and export analytics and data reports across all NTSP modules.
+              </p>
+            </div>
+          </div>
+        </div>
+      </FadeIn>
+
+      <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-deep-200 bg-cream-50 p-10 text-center dark:border-deep-800 dark:bg-deep-900">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cream-200 text-deep-400 dark:bg-deep-800 dark:text-cream-500">
+          <FileTextIcon />
+        </div>
+        <h3 className="text-lg font-semibold text-deep-800 dark:text-cream-100">Reports Module Coming Soon</h3>
+        <p className="mt-2 max-w-sm text-sm text-deep-500 dark:text-cream-500">
+          This section will contain data exports, PDF generation, and statistical summaries for incidents, inquiries, and business performance.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Icons ────────────────────────────────────────────────────────
 
 const iconBase = {
@@ -2601,7 +2642,24 @@ function XIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M6 6l
 function ArrowLeftIcon() { return (<svg {...iconBase} className="h-4 w-4"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>); }
 function PencilLineIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z" /></svg>); }
 function InquiryIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" /><path d="m3 8 9 6 9-6" /></svg>); }
-function FolderIcon() { return (<svg {...iconBase} className="h-5 w-5"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" /><path d="m3 8 9 6 9-6" /></svg>); }
+function FolderIcon() {
+  return (
+    <svg {...iconBase} className="h-5 w-5">
+      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+    </svg>
+  );
+}
+function FileTextIcon() {
+  return (
+    <svg {...iconBase}>
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <line x1="10" y1="9" x2="8" y2="9" />
+    </svg>
+  );
+}
 function TourGuideIcon() {
   return (
     <svg {...iconBase}>

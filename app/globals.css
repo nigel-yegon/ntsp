@@ -111,6 +111,22 @@
   --color-ink-950: var(--cream-950);
 }
 
+/* app/globals.css */
+
+/* Add this near the top, after the @theme block */
+html {
+  scroll-behavior: smooth;
+  /* Optional: offset the scroll so sticky headers don't cover the target heading */
+  scroll-padding-top: 5rem; 
+}
+
+/* Accessibility: Disable smooth scroll for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
