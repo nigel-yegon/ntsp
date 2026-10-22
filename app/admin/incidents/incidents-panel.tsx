@@ -672,7 +672,7 @@ function IncidentDetail({
                   </div>
                 </div>
               ) : (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="p-3 flex flex-wrap gap-2">
                   {nextSteps.map((s) => {
                     const isEscalate = s === "ESCALATED";
                     return (

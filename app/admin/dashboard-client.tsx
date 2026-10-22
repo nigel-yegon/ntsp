@@ -259,7 +259,7 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillText: "text-sky-800 dark:text-sky-200",
     icon: <PenIcon />,
   },
-   reports: {
+  reports: {
     ring: "ring-brand-500/20",
     border: "border-brand-300 dark:border-brand-800",
     borderHover: "hover:border-brand-500 dark:hover:border-brand-500",
@@ -521,7 +521,7 @@ function DashboardSidebar({
       { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
       { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
       { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-      { key: "reports", label: "Reports", description: "Review & generate reports", icon: TONES.reports.icon, tone: TONES.reports}
+      { key: "reports", label: "Reports", description: "Review & generate reports", icon: TONES.reports.icon, tone: TONES.reports }
     ];
 
   return (
@@ -671,7 +671,7 @@ function DashboardHeader({
   };
 
   const searchable = activeModule !== "overview" &&
-  activeModule !== "reports";
+    activeModule !== "reports";
 
   return (
     <header
@@ -855,12 +855,18 @@ function Overview({
         <div className="rounded-2xl border border-deep-200 bg-cream-50 p-5 shadow-sm dark:border-deep-800 dark:bg-deep-900 lg:col-span-2">
           <div className="mb-4">
             <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-deep-500 dark:text-cream-500">
-              Activity by month
+              {range === "year"
+                ? "Annual Activity"
+                : range === "month"
+                  ? "Monthly Activity"
+                  : "Weekly Activity"}
             </h2>
             <p className="text-xs text-deep-400 dark:text-cream-600">
               {range === "year"
-                ? "Monthly new records across four streams"
-                : "Daily new records across four streams"}
+                ? "Monthly new records across four streams over the last 12 months"
+                : range === "month"
+                  ? "Daily new records across four streams over the last 30 days"
+                  : "Daily new records across four streams over the last 7 days"}
             </p>
           </div>
           <CombinedLineChart data={combined} />
