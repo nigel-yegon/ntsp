@@ -36,6 +36,10 @@ model User {
 
   companyId String?
   company   Company? @relation(fields: [companyId], references: [id])
+ 
+  // NEW: Relation to groups
+  groups UserGroup[] @relation("UserGroups")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -76,6 +80,16 @@ model User {
 
   @@index([role])
   @@index([companyId])
+}
+
+// NEW: User Groups model
+model UserGroup {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  users       User[]   @relation("UserGroups")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ─── OAuth accounts ────────────────────────────────────────────

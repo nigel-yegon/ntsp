@@ -48,8 +48,11 @@ export function ProfileForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <fieldset disabled={submitting} className="space-y-4">
-        <legend className="text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">
+      <fieldset
+        disabled={submitting}
+        className="space-y-4 rounded-2xl border border-deep-200 bg-cream-50 p-6 dark:border-deep-800 dark:bg-deep-900"
+      >
+        <legend className="px-2 text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">
           Your details
         </legend>
         <Field
@@ -60,23 +63,26 @@ export function ProfileForm({
           defaultValue={defaultName}
         />
         <label className="block">
-          <span className="block text-sm font-medium text-deep-800 dark:text-cream-100">
+          <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
             Email
           </span>
           <input
             type="email"
             value={defaultEmail}
             readOnly
-            className="mt-1 w-full cursor-not-allowed rounded-lg border border-cream-200 bg-cream-100 px-3 py-2 text-sm text-deep-500 dark:border-deep-800 dark:bg-deep-900 dark:text-cream-400"
+            className="w-full cursor-not-allowed rounded-lg border border-deep-200 bg-cream-100 px-3 py-2 text-sm text-deep-500 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-500"
           />
-          <span className="mt-1 block text-xs text-deep-500 dark:text-cream-400">
+          <span className="mt-1 block text-xs text-deep-500 dark:text-cream-500">
             Tied to your sign-in. Contact support to change it.
           </span>
         </label>
       </fieldset>
 
-      <fieldset disabled={submitting} className="space-y-4">
-        <legend className="text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">
+      <fieldset
+        disabled={submitting}
+        className="space-y-4 rounded-2xl border border-deep-200 bg-cream-50 p-6 dark:border-deep-800 dark:bg-deep-900"
+      >
+        <legend className="px-2 text-sm font-semibold uppercase tracking-wide text-deep-500 dark:text-cream-400">
           Your company
         </legend>
         <Field name="companyName" label="Company name" required />
@@ -101,7 +107,7 @@ export function ProfileForm({
       {errors.length > 0 && (
         <ul
           role="alert"
-          className="space-y-1 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
+          className="space-y-1 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
         >
           {errors.map((e) => (
             <li key={e}>{e}</li>
@@ -112,7 +118,7 @@ export function ProfileForm({
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-brand-400 px-4 py-2.5 text-sm font-medium text-deep-800 transition hover:bg-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 disabled:opacity-60 dark:focus-visible:ring-offset-deep-950"
+        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 disabled:opacity-60 dark:bg-brand-500 dark:text-deep-900 dark:hover:bg-brand-400 dark:focus-visible:ring-offset-deep-950"
       >
         {submitting ? "Saving…" : "Complete profile"}
       </button>
@@ -139,7 +145,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="block text-sm font-medium text-deep-800 dark:text-cream-100">
+      <span className="mb-2 block text-xs font-semibold text-deep-700 dark:text-cream-300">
         {label}
         {required && (
           <span
@@ -156,10 +162,10 @@ function Field({
         required={required}
         autoComplete={autoComplete}
         defaultValue={defaultValue}
-        className="mt-1 w-full rounded-lg border border-cream-300 bg-cream-50 px-3 py-2 text-sm text-deep-800 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-100"
+        className="w-full rounded-lg border border-deep-200 bg-cream-100 px-3 py-2 text-sm text-deep-800 transition placeholder:text-deep-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-deep-700 dark:bg-deep-950 dark:text-cream-100 dark:placeholder:text-cream-500"
       />
       {hint && (
-        <span className="mt-1 block text-xs text-deep-500 dark:text-cream-400">
+        <span className="mt-1 block text-xs text-deep-500 dark:text-cream-500">
           {hint}
         </span>
       )}

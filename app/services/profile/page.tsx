@@ -45,6 +45,7 @@ export default async function ProfilePage() {
           Before you can submit work permit applications, we need a few details
           about your company.
         </p>
+        <div className="divider-gold mt-6" />
       </header>
 
       <ProfileForm

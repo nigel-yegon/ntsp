@@ -8,6 +8,7 @@ import { IncidentsPanel } from "./incidents/incidents-panel";
 import { InquiriesPanel } from "./inquiries/inquiries-panel";
 import { ResourcesPanel } from "./resources/resources-panel";
 import { OperatorsPanel } from "./operators/operators-panel";
+import { UsersPanel } from "./users/users-panel";
 import { House, ShieldIcon } from "lucide-react";
 
 import FadeIn from "../components/fade-in";
@@ -85,7 +86,8 @@ type ModuleKey =
   | "events"
   | "blog"
   | "resources"
-  | "reports";
+  | "reports"
+  | "users";
 
 type ModuleTone = {
   ring: string;
@@ -244,6 +246,20 @@ export const TONES: Record<Exclude<ModuleKey, "overview">, ModuleTone> = {
     pillBg: "bg-violet-100 dark:bg-violet-950",
     pillText: "text-violet-800 dark:text-violet-200",
     icon: <CalendarIcon />,
+  },
+  users: {
+    ring: "ring-violet-500/20",
+    border: "border-violet-300 dark:border-violet-800",
+    borderHover: "hover:border-violet-500 dark:hover:border-violet-500",
+    bgSoft: "bg-violet-50 dark:bg-violet-950/40",
+    bgActive: "bg-violet-100 dark:bg-violet-950/70",
+    text: "text-violet-700 dark:text-violet-300",
+    button: "bg-violet-700",
+    buttonHover: "hover:bg-violet-800",
+    bar: "bg-violet-600",
+    pillBg: "bg-violet-100 dark:bg-violet-950",
+    pillText: "text-violet-800 dark:text-violet-200",
+    icon: <UsersIcon />,
   },
   blog: {
     ring: "ring-sky-500/20",
@@ -483,6 +499,9 @@ export function DashboardClient({ userName }: { userName: string }) {
                   tone={TONES.blog}
                 />
               )}
+              {activeModule === "users" && (
+  <UsersPanel search={search} />
+)}
             </div>
           </div>
         </main>
@@ -521,7 +540,8 @@ function DashboardSidebar({
       { key: "stay", label: "Stay", description: "Manage accommodation", icon: TONES.stay.icon, tone: TONES.stay },
       { key: "events", label: "Events", description: "Manage events", icon: TONES.events.icon, tone: TONES.events },
       { key: "blog", label: "Blog", description: "Manage blog posts", icon: TONES.blog.icon, tone: TONES.blog },
-      { key: "reports", label: "Reports", description: "Review & generate reports", icon: TONES.reports.icon, tone: TONES.reports }
+      { key: "reports", label: "Reports", description: "Review & generate reports", icon: TONES.reports.icon, tone: TONES.reports },      
+      { key: "users", label: "Users & Groups", description: "Manage roles and access", icon: TONES.users.icon, tone: TONES.users },
     ];
 
   return (
@@ -668,6 +688,7 @@ function DashboardHeader({
     events: "Events",
     blog: "Blog",
     reports: "Reports",
+    users: "Users"
   };
 
   const searchable = activeModule !== "overview" &&
@@ -2663,6 +2684,27 @@ function FileTextIcon() {
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
       <line x1="10" y1="9" x2="8" y2="9" />
+    </svg>
+  );
+}
+function UsersIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   );
 }
