@@ -5,8 +5,11 @@ import { prisma } from "@/lib/prisma";
 import { CardImage } from "@/app/components/card-image";
 import { MapEmbed } from "@/app/components/map-embed";
 import { resolveImageUrl } from "@/lib/image-url";
+import { ModalShell } from "@/app/components/modal-shell";
+import { ExperienceModalContent } from "../modal-content";
 
 type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ modal?: string }>;
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
@@ -18,8 +21,15 @@ export async function generateMetadata({ params }: { params: Params }) {
   };
 }
 
-export default async function ExperiencePage({ params }: { params: Params }) {
+export default async function ExperiencePage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: SearchParams;
+}) {
   const { slug } = await params;
+  const { modal } = await searchParams;
 
   const attraction = await prisma.attraction.findFirst({
     where: { slug },
@@ -28,6 +38,19 @@ export default async function ExperiencePage({ params }: { params: Params }) {
 
   if (!attraction) notFound();
 
+  // ── Modal branch ─────────────────────────────────────────
+  // Renders the same content in a <dialog> over /experiences
+  // instead of as a full page. Only reached when the list page
+  // appends ?modal=1 to the card href.
+  if (modal === "1") {
+    return (
+      <ModalShell eyebrow="Experience" title={attraction.name}>
+        <ExperienceModalContent experience={attraction} />
+      </ModalShell>
+    );
+  }
+
+  // ── Full-page branch (unchanged) ─────────────────────────
   const nearby = await prisma.attraction.findMany({
     where: {
       destinationId: attraction.destinationId,
@@ -98,7 +121,6 @@ export default async function ExperiencePage({ params }: { params: Params }) {
           {attraction.description}
         </p>
 
-        {/* ── Getting there — inherited from destination ── */}
         {mapLat != null && mapLng != null && (
           <section className="mt-10">
             <div className="mb-4">

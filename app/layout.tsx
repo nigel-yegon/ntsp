@@ -1,3 +1,4 @@
+// app/layout.tsx
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -21,7 +22,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  modal,
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -37,6 +39,7 @@ export default function RootLayout({
           >
             <AccessibilityProvider>
               <SiteChrome>{children}</SiteChrome>
+              {modal}
               <AccessibilityToolbar />
               <CookieConsent />
             </AccessibilityProvider>
@@ -44,7 +47,7 @@ export default function RootLayout({
         </AppSessionProvider>
         <Analytics />
         <ScrollToTop />
-          <VisitBeacon />
+        <VisitBeacon />
       </body>
     </html>
   );
