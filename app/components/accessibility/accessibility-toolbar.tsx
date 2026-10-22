@@ -63,7 +63,7 @@ export default function AccessibilityToolbar() {
 
   return (
     // Top-right anchor. Bump to top-24 if your fixed header is taller than ~80px.
-    <div className="fixed right-4 top-20 z-9999 sm:right-6">
+    <div className="fixed right-4 top-4 z-9999 sm:right-6">
       {/* Trigger */}
       <button
         ref={triggerRef}

@@ -102,7 +102,7 @@ export default async function ServicesPage() {
     <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-10">
         <h1 className="text-3xl font-semibold text-deep-800 dark:text-cream-100">
-          Expatriate Vetting & Work Permits
+        Expatriate Vetting for Work Permits & Services
         </h1>
         <p className="mt-2 max-w-2xl text-deep-500 dark:text-cream-400">
           Access National Tourism Service Portal services. Some open on the
@@ -239,7 +239,7 @@ export default async function ServicesPage() {
       {/* ── Public services list — always rendered ── */}
       <section>
         <h2 className="mb-4 text-lg font-semibold text-deep-800 dark:text-cream-100">
-          All services
+          All Services
         </h2>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {publicServices.map((service) => (
