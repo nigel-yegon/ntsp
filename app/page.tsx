@@ -472,7 +472,7 @@ export default async function Home() {
             </span>
           </>
         }
-        subtitle="From the Great Migration in the Maasai Mara to the white sands of Diani — browse destinations, book packages, and plan your trip."
+        subtitle="From the Great Migration in the Maasai Mara to the white sands of Diani — browse destinations, book packages, and plan your amazing trip."
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
